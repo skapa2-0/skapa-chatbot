@@ -1,0 +1,58 @@
+[
+  {
+    "id": "4e10baa5-bfbf-4b57-b7d3-82dc08430b38",
+    "training_id": "26903a16-f969-4706-a5da-83a7b5949a1f",
+    "start_date": "2026-05-20",
+    "end_date": "2026-05-20",
+    "location": "",
+    "created_at": "2026-04-28T13:13:29.827368+00:00"
+  },
+  {
+    "id": "7c58aa34-cd5d-486d-b09b-aebd09da6bf9",
+    "training_id": "7cd6f4fe-77a4-4e0e-8926-1f495e21285f",
+    "start_date": "2026-05-29",
+    "end_date": "2026-05-29",
+    "location": "",
+    "created_at": "2026-04-28T13:17:31.183429+00:00"
+  },
+  {
+    "id": "9483169f-e1c3-4dd0-ad20-350c94a46cfe",
+    "training_id": "797009d7-aa80-443d-8459-046a807f1aee",
+    "start_date": "2026-06-24",
+    "end_date": "2026-06-24",
+    "location": "Distanciel",
+    "created_at": "2026-03-26T14:10:22.692799+00:00"
+  },
+  {
+    "id": "a95a3dc5-76fb-4172-88f5-23800f1dc1c3",
+    "training_id": "26903a16-f969-4706-a5da-83a7b5949a1f",
+    "start_date": "2026-07-22",
+    "end_date": "2026-07-22",
+    "location": "",
+    "created_at": "2026-04-28T13:15:11.500393+00:00"
+  },
+  {
+    "id": "c74e5ddc-8013-499e-9d19-ea48541d559c",
+    "training_id": "7cd6f4fe-77a4-4e0e-8926-1f495e21285f",
+    "start_date": "2026-07-28",
+    "end_date": "2026-07-28",
+    "location": "",
+    "created_at": "2026-04-28T13:18:30.571992+00:00"
+  },
+  {
+    "id": "e9ecdd8a-5c04-4dd0-b8b1-5fac007b8cde",
+    "training_id": "7cd6f4fe-77a4-4e0e-8926-1f495e21285f",
+    "start_date": "2026-06-24",
+    "end_date": "2026-06-24",
+    "location": "",
+    "created_at": "2026-04-28T13:17:49.464286+00:00"
+  },
+  {
+    "id": "fd8b33c3-b81f-4517-84b1-ccbfa9b55e7b",
+    "training_id": "26903a16-f969-4706-a5da-83a7b5949a1f",
+    "start_date": "2026-06-18",
+    "end_date": "2026-06-18",
+    "location": "",
+    "created_at": "2026-04-28T13:14:50.021511+00:00"
+  }
+]

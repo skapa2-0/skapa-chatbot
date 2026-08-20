@@ -1,0 +1,1497 @@
+[
+  {
+    "id": "037b846f-dcfa-49c7-a880-67e9de6da504",
+    "slug": "claude-code-maitriser-un-terminal-booste-a-l-ia",
+    "title": "Claude Code - Maîtriser un terminal boosté à l'IA",
+    "description": "Sortez de l'interface web de Claude pour prendre le contrôle total de votre environnement de travail. Claude Code n'est pas réservé aux développeurs : c'est un agent local capable de lire vos fichiers, d'exécuter des actions et de connecter vos outils préférés directement depuis votre terminal. Cette formation vous apprend à transformer votre ordinateur en un système expert capable d'automatiser des tâches complexes en parallèle et de piloter votre écosystème digital en langage naturel.",
+    "category": [
+      "IA"
+    ],
+    "duration": "1 jour",
+    "level": "Intermédiaire",
+    "price": "790 € HT",
+    "image_url": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/037b846f-dcfa-49c7-a880-67e9de6da504-1776339832002.png",
+    "format": "Présentiel, Distanciel",
+    "objectives": [
+      "Installer et configurer Claude Code comme assistant local permanent.",
+      "Manipuler, analyser et générer des structures de fichiers complexes sans coder.",
+      "Orchestrer son écosystème d'outils via les serveurs MCP en ligne de commande.",
+      "Créer des workflows automatisés (Skills) pour supprimer les tâches répétitives sur son ordinateur."
+    ],
+    "public_target": [
+      "Chef de projet",
+      "Product manager",
+      "Product owner",
+      "Consultant / Freelance",
+      "Operations & Ops Managers (SalesOps, MarketingOps, RevOps)",
+      "Tout profil curieux"
+    ],
+    "prerequisites": [
+      "Usage régulier de Claude (Interface Web) et connaissance des fondamentaux de l'IA.",
+      "Aisance numérique",
+      "Curiosité numérique"
+    ],
+    "program": [
+      {
+        "items": [
+          "Installation de Claude Code et configuration de l'accès sécurisé aux fichiers locaux.",
+          "Apprendre à \"parler\" à son ordinateur : les commandes de base pour naviguer et agir.",
+          "Comprendre la différence entre l'interface web et l'agent local (vitesse, accès, sécurité).",
+          "Mise en pratique : Premier projet local — faire analyser et restructurer un dossier complet par Claude."
+        ],
+        "title": "Module 1 — Le Terminal comme nouveau bureau"
+      },
+      {
+        "items": [
+          "Le fichier CLAUDE.md : créer le \"cerveau\" de votre projet pour que l'IA respecte vos règles.",
+          "Analyse multi-fichiers : faire le lien entre des documents épars pour en extraire une synthèse cohérente.",
+          "Automatisation de la production documentaire : générer des rapports, des structures de données ou du contenu formaté en masse."
+        ],
+        "title": "Module 2 — Manipulation de fichiers et Knowledge Management"
+      },
+      {
+        "items": [
+          "Configuration des serveurs MCP dans le terminal (Notion, Figma, Slack, etc.).",
+          "Cas pratique Notion : Interroger, mettre à jour et synchroniser des bases de données sans ouvrir son navigateur.",
+          "Cas pratique Figma : Extraire des données visuelles pour les transformer en structures exploitables.",
+          "Interconnexion : Faire circuler la donnée entre Figma et Notion via Claude Code."
+        ],
+        "title": "Module 3 — L'écosystème MCP : Piloter ses outils en direct"
+      },
+      {
+        "items": [
+          "Définir et enregistrer des \"Skills\" : vos propres commandes personnalisées.",
+          "Automatiser des chaînes d'actions complexes : \"Prends ce fichier, résume-le, crée une page Notion et prépare le post Slack\".",
+          "Partage et maintenance de ses propres bibliothèques de commandes IA."
+        ],
+        "title": "Module 4 — Création de \"Skills\" (Vos super-pouvoirs)"
+      },
+      {
+        "items": [
+          "Utiliser les sub-agents pour déléguer plusieurs parties d'un projet simultanément.",
+          "Orchestrer une \"équipe d'agents\" pour effectuer de la veille, du tri de données ou du clean-up de fichiers en parallèle.",
+          "Projet Final : Construire un pipeline métier complet (ex: Veille -> Analyse -> Archivage Notion) piloté entièrement en une ligne de commande."
+        ],
+        "title": "Module 5 — Puissance de calcul : Sub-agents et Multi-tâches"
+      }
+    ],
+    "evaluation": [],
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-04-16T11:43:53.305334+00:00",
+    "updated_at": "2026-04-16T14:02:47.392+00:00",
+    "show_sessions": false,
+    "photo_url_1": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/037b846f-dcfa-49c7-a880-67e9de6da504-photo1-1776339833075.jpg",
+    "photo_url_2": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/037b846f-dcfa-49c7-a880-67e9de6da504-photo2-1776339833452.png",
+    "photo_url_3": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/037b846f-dcfa-49c7-a880-67e9de6da504-photo3-1776339833854.jpg",
+    "photo_url_4": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/037b846f-dcfa-49c7-a880-67e9de6da504-photo4-1776339834199.png",
+    "card_description": "Sortez de l'interface web de Claude pour prendre le contrôle total de votre environnement de travail. Cette formation vous apprend à transformer votre ordinateur en un système expert capable d'automatiser des tâches complexes en parallèle et de piloter votre écosystème digital en langage naturel.",
+    "display_order": 8,
+    "certification_enabled": false,
+    "certification_text": "",
+    "registration_enabled": false,
+    "registration_text": "",
+    "price_enabled": true
+  },
+  {
+    "id": "060cea28-5fbb-4b05-8ae7-83c3f4b43ece",
+    "slug": "certification-istqb-testeur-certifie-niveau-fondation",
+    "title": "Certification ISTQB – Testeur certifié Niveau Fondation",
+    "description": "<p>Dans un contexte où la qualité logicielle est un enjeu clé pour la compétitivité des entreprises, la maîtrise des processus et des techniques de test est devenue indispensable pour garantir la fiabilité, l’efficacité et la conformité des livrables. Cette formation répond aux besoins croissants en compétences certifiées, à la fois pour renforcer les équipes de test et pour assurer un alignement avec les standards internationaux reconnus. Pour les participants, elle représente une étape essentielle dans un parcours certifiant, améliorant leur employabilité et ouvrant des perspectives d’évolution vers des niveaux avancés et des spécialisations ISTQB.</p>",
+    "category": [
+      "QA"
+    ],
+    "duration": "3 jours",
+    "level": "Débutant",
+    "price": "2100 € HT",
+    "image_url": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/060cea28-5fbb-4b05-8ae7-83c3f4b43ece-1778079824424.png",
+    "format": "Distanciel",
+    "objectives": [
+      "Interpréter les fondamentaux des tests",
+      "Rappeler et interpréter le test statique",
+      "Suivre une procédure d’analyse et de conception des tests",
+      "Appliquer les techniques boîte noire, boîte blanche et basées sur l’expérience pour construire des cas de test",
+      "Simuler un plan de test complet aligné aux critères ISTQB",
+      "Préparer et passer l’examen de certification"
+    ],
+    "public_target": [
+      "Chef de projet",
+      "Développeur",
+      "Manager",
+      "Product owner",
+      "Testeur",
+      "Ingénieur qualité",
+      "Analyste de test",
+      "Responsable qualité"
+    ],
+    "prerequisites": [
+      "Connaissance de base des processus de développement logiciel et des tests manuels",
+      "Compréhension générale des méthodes de développement agiles et classiques",
+      "Familiarité avec la documentation projet (spécifications, cahiers des charges)"
+    ],
+    "program": [
+      {
+        "items": [
+          "Introduction (30 min) : Présentation des objectifs de la formation, du syllabus ISTQB, du déroulé pédagogique, des modalités de certification, et recueil des attentes des participants",
+          "Chapitre 1 – Fondamentaux des tests (180 min) : Définitions clés, différence test/débogage, assurance qualité, principes du test, activités de test, rôles, bonnes pratiques, indépendance des tests"
+        ],
+        "title": "Jour 1 – Matin (3h30)"
+      },
+      {
+        "items": [
+          "Chapitre 2 – Tester tout au long du développement logiciel (130 min) : Cycle de vie, shift-left, DevOps, niveaux de test, tests fonctionnels/non fonctionnels, régression, maintenance",
+          "Chapitre 3 – Test statique (80 min) : Feedback précoce, processus de revue, rôles, types de revues, facteurs de succès"
+        ],
+        "title": "Jour 1 – Après-midi (3h30)"
+      },
+      {
+        "items": [
+          "Chapitre 4 – Analyse et conception des tests (1/2) : Partition d’équivalence, valeurs limites, tables de décision, transitions d’état, test des instructions, test des branches"
+        ],
+        "title": "Jour 2 – Matin (3h30)"
+      },
+      {
+        "items": [
+          "Chapitre 4 – Analyse et conception des tests (suite) : Estimation d’erreurs, tests exploratoires, checklists, ATDD, user stories, critères d’acceptation",
+          "Chapitre 5 – Gestion des activités de test (120 min) : Plan de test, estimation, priorisation, gestion des risques, métriques, rapports, clôture"
+        ],
+        "title": "Jour 2 – Après-midi (3h30)"
+      },
+      {
+        "items": [
+          "Chapitre 5 – Gestion des activités de test (suite) : Gestion de configuration, gestion des défauts",
+          "Chapitre 6 – Outils de test (20 min) : Types d’outils, bénéfices, risques",
+          "Révision finale – Partie 1 (~80 min) : Synthèse des chapitres, questions/réponses, préparation ciblée à l’examen"
+        ],
+        "title": "Jour 3 – Matin (3h30)"
+      },
+      {
+        "items": [
+          "Révision finale – Partie 2 (120 min) : Entraînement intensif sur des questions types ISTQB, conseils de gestion du temps, dernières clarifications",
+          "Examen ISTQB Fondation : Passage officiel de l’examen à distance"
+        ],
+        "title": "Jour 3 – Après-midi (3h30)"
+      }
+    ],
+    "evaluation": [
+      "<p>La formation repose sur une alternance rigoureuse entre apports théoriques (70 %) et travaux pratiques (30 %), avec une forte dimension de préparation à l’examen de certification ISTQB® Foundation Level v4.0.</p><p><br><u>Chaque chapitre suit scrupuleusement les recommandations du syllabus et se clôt par :</u></p><ul><li><p>Un QCM de validation des acquis aligné avec le niveau de complexité défini dans le syllabus (K1 à K3)</p></li><li><p>Un temps d’échange questions-réponses pour traiter les problématiques spécifiques des participants</p></li></ul><p>Un QCM blanc de 40 questions est organisé en fin de formation pour simuler les conditions de l’examen. La correction est réalisée collectivement avec explication détaillée de chaque réponse.</p><p></p><p><u>Un temps d’investissement personnel est attendu :</u></p><ul><li><p>Avant la formation : 1 à 2 heures de lecture des documents officiels et réalisation de QCM d'entraînement.</p></li><li><p>Pendant la formation : prévoir idéalement 1 à 2 heures de révision personnelle chaque jour.</p></li></ul><p></p><p><strong>Évaluation en amont</strong></p><p>Le positionnement à l'entrée en formation respecte les critères qualité QUALIOPI et aux exigences OPCO Atlas. Dès son inscription définitive, l'apprenant reçoit :</p><ul><li><p>un questionnaire de positionnement / diagnostic envoyé aux participants afin de recueillir les attentes, le niveau initial et détecter d’éventuels besoins spécifiques</p></li><li><p>des informations spécifiques sur le déroulement de l’examen</p></li><li><p>une recommandation de lecture des documents officiels (syllabus, glossaire, QCM types)</p></li></ul><p></p>"
+    ],
+    "is_active": false,
+    "is_featured": false,
+    "created_at": "2026-05-06T15:02:59.796904+00:00",
+    "updated_at": "2026-05-08T14:54:42.147+00:00",
+    "show_sessions": false,
+    "photo_url_1": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/060cea28-5fbb-4b05-8ae7-83c3f4b43ece-photo1-1778080340421.jpg",
+    "photo_url_2": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/060cea28-5fbb-4b05-8ae7-83c3f4b43ece-photo2-1778080341241.png",
+    "photo_url_3": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/060cea28-5fbb-4b05-8ae7-83c3f4b43ece-photo3-1778080341724.jpg",
+    "photo_url_4": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/060cea28-5fbb-4b05-8ae7-83c3f4b43ece-photo4-1778080342095.png",
+    "card_description": "Cette formation de 3 jours préparera efficacement les participants à la certification ISTQB Niveau Fondation en leur transmettant les fondamentaux des tests logiciels et en leur permettant d’appliquer des techniques structurées et performantes dans leurs projets.",
+    "display_order": 0,
+    "certification_enabled": true,
+    "certification_text": "<ul><li><p>QCM de 40 questions à distance</p></li><li><p>Durée 60 minutes (certains participants peuvent bénéficier de 25% de temps supplémentaire)</p></li><li><p>Obtention certificat : au moins 65% de bonnes réponses (26 points ou plus)</p></li></ul><p></p>",
+    "registration_enabled": false,
+    "registration_text": "",
+    "price_enabled": true
+  },
+  {
+    "id": "26903a16-f969-4706-a5da-83a7b5949a1f",
+    "slug": "product-builder-vibe-coder-avec-lovable",
+    "title": "Product Builder - Vibe coder avec Lovable",
+    "description": "Vous avez une idée de produit mais pas de développeur ? Cette formation vous prouve qu'en une journée, vous pouvez construire, déployer et même monétiser une application web fonctionnelle  sans écrire une seule ligne de code. En combinant Claude pour structurer votre idée, Lovable pour générer l'application et Stripe pour encaisser vos premiers clients, vous passez de l'idée au produit en ligne avant la fin de la journée.",
+    "category": [
+      "IA",
+      "Product Management",
+      "Design"
+    ],
+    "duration": "1 jour",
+    "level": "Débutant",
+    "price": "790 € HT",
+    "image_url": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/26903a16-f969-4706-a5da-83a7b5949a1f-1774877967303.jpg",
+    "format": "Présentiel, Distanciel",
+    "objectives": [
+      "Transformer une idée vague en concept de produit structuré avec une proposition de valeur claire",
+      "Utiliser Claude comme co-fondateur pour valider l'idée, générer le copywriting et préparer le brief technique",
+      "Maîtriser Lovable pour générer, itérer et déployer une application web en langage naturel"
+    ],
+    "public_target": [
+      "Porteur de projet / Entrepreneur",
+      "Product manager",
+      "Product Designer ",
+      "Créateur de contenu",
+      "Freelance / Consultant",
+      "Tout profil curieux"
+    ],
+    "prerequisites": [
+      " Avoir déjà utilisé un LLM (ChatGPT, Claude ou équivalent)",
+      "Aucune compétence en code requise"
+    ],
+    "program": [
+      {
+        "items": [
+          "Comment transformer une idée vague en concept de produit structuré",
+          "Définir son utilisateur cible et ses vrais problèmes",
+          "Construire sa proposition de valeur en une phrase",
+          "Les erreurs classiques des primo-builders à éviter"
+        ],
+        "title": "Module 1 - Penser comme un Product Builder"
+      },
+      {
+        "items": [
+          "Utiliser Claude pour valider et affiner son idée produit",
+          "Générer son copywriting : nom, baseline, description produit",
+          "Structurer la logique métier de son application en langage naturel",
+          "Préparer le brief complet prêt à coller dans Lovable"
+        ],
+        "title": "Module 2 — Utiliser Claude comme co-fondateur"
+      },
+      {
+        "items": [
+          "Comprendre la structure d'une bonne landing page : hero, proposition de valeur, CTA, social proof",
+          "Générer sa landing page en langage naturel depuis son brief Claude",
+          "Itérer sur le copywriting, la mise en page et les sections clés",
+          "Rendre sa page responsive et prête à être partagée"
+        ],
+        "title": "Module 3 - Créer sa landing page avec Lovable"
+      },
+      {
+        "items": [
+          "Comprendre ce qu'est un back office et pourquoi en avoir un",
+          "Connecter Supabase à son projet Lovable sans configuration technique",
+          "Mettre en place l'authentification utilisateurs (inscription, connexion)",
+          "Gérer les droits d'accès et sécuriser ses données avec les politiques Supabase"
+        ],
+        "title": "Module 4 - Ajouter un back office avec Supabase"
+      }
+    ],
+    "evaluation": [
+      "En fonction de la nature de la formation, le formateur évalue la progression pédagogique du participant tout au long de la formation au moyen de QCM, mises en situation, travaux pratiques…\n\nLa formation est conçue selon les principes suivants :\n\n- Répartition du temps d'apprentissage entre 40% de théorie et 60% de pratique\n- Illustration sur des cas concrets\n- Échanges réguliers avec le formateur et les participants\n- Évaluation et analyse par un formateur-consultant expert\n- Évaluation en amont\n\nLe positionnement à l'entrée en formation respecte les critères qualité Qualiopi. Dès son inscription définitive, l'apprenant reçoit un questionnaire d'auto-évaluation nous permettant d'apprécier son niveau estimé sur différents types de technologies, ses attentes et objectifs personnels quant à la formation à venir, dans les limites imposées par le format sélectionné."
+    ],
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-03-30T13:39:25.173685+00:00",
+    "updated_at": "2026-04-28T13:15:10.551+00:00",
+    "show_sessions": true,
+    "photo_url_1": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/26903a16-f969-4706-a5da-83a7b5949a1f-photo1-1774877967844.jpg",
+    "photo_url_2": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/26903a16-f969-4706-a5da-83a7b5949a1f-photo2-1774877968834.jpg",
+    "photo_url_3": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/26903a16-f969-4706-a5da-83a7b5949a1f-photo3-1774877969832.jpg",
+    "photo_url_4": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/26903a16-f969-4706-a5da-83a7b5949a1f-photo4-1774877970262.jpg",
+    "card_description": "Vous avez une idée de produit mais pas de développeur ? Cette formation vous prouve qu'en une journée, vous pouvez construire, déployer et même monétiser une application web fonctionnelle  sans écrire une seule ligne de code.",
+    "display_order": 3,
+    "certification_enabled": false,
+    "certification_text": "",
+    "registration_enabled": false,
+    "registration_text": "",
+    "price_enabled": true
+  },
+  {
+    "id": "34818abc-a293-4539-82a7-0382f1ed9a30",
+    "slug": "agentIA",
+    "title": " Créer son premier assistant IA",
+    "description": "Vous maîtrisez les bases du prompting et si vous passiez à l'étape supérieure ?\nCette formation vous apprend à concevoir et déployer votre propre assistant IA personnalisé, sans aucune compétence technique. En une journée, vous définissez le rôle de votre agent, l'alimentez avec vos documents métier et le testez en conditions réelles. Vous repartez avec un assistant IA opérationnel, prêt à prendre en charge vos tâches récurrentes.",
+    "category": [
+      "IA"
+    ],
+    "duration": "1 jour",
+    "level": "Débutant",
+    "price": "790 € HT",
+    "image_url": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/34818abc-a293-4539-82a7-0382f1ed9a30-1774869501965.jpg",
+    "format": "Présentiel, Distanciel",
+    "objectives": [
+      "Comprendre la différence entre un prompt ponctuel, un chatbot et un agent IA personnalisé",
+      "Concevoir son agent : définir son rôle, son périmètre, son ton et ses instructions système",
+      "Choisir et prendre en main la bonne plateforme selon son contexte (GPTs, Gems, Projets Claude...)",
+      "Créer, tester et améliorer son agent sur des cas concrets issus de son quotidien professionnel"
+    ],
+    "public_target": [
+      "Chef de projet",
+      "Commercial / Marketing",
+      "RH / Office Manager",
+      "Manager",
+      "Consultant / Freelance",
+      "Tout profil curieux"
+    ],
+    "prerequisites": [
+      "Avoir suivi la formation Prompting ou être à l'aise sur les techniques de prompting ",
+      "Aucune compétence technique requise"
+    ],
+    "program": [
+      {
+        "items": [
+          "La limite du prompt ponctuel : pourquoi ça ne suffit plus pour des tâches répétitives ou complexes",
+          "Présentation comparative : GPTs vs Gems vs Projets Claude - forces, limites, cas d'usage adaptés",
+          "La différence entre un chatbot générique et un assistant personnalisé",
+          "Comment choisir la bonne plateforme selon son contexte (outils déjà utilisés en entreprise, budget, accès)"
+        ],
+        "title": "Module 1 - Du prompt à l'agent : qu'est-ce qui change ? "
+      },
+      {
+        "items": [
+          "Les 5 questions à se poser avant de créer un agent : quel rôle ? pour qui ? quel contexte ? quelles limites ? quel format de réponse ?",
+          "Écrire le \"système de personnalité\" de son agent : ton, posture, expertise, périmètre",
+          "Définir ce que l'agent doit savoir : quels documents, quelles informations lui transmettre",
+          "Éviter les erreurs classiques : un agent trop vague, trop permissif, ou mal ciblé",
+          "Mise en pratique : chaque participant rédige la fiche de conception de son agent"
+        ],
+        "title": "Module 2 - Concevoir son assistant avant de le créer "
+      },
+      {
+        "items": [
+          "Rédaction du system prompt complet à partir de la fiche de conception",
+          "Intégration du contexte métier : téléchargement de documents, instructions spécifiques, exemples de réponses attendues",
+          "Tests en conditions réelles : soumettre les cas d'usage du quotidien à son agent",
+          "Identification des axes d'amélioration : pourquoi mon agent répond mal, comment le corriger",
+          "Partage en groupe : démonstration de 2 à 3 agents créés, retours collectifs et améliorations"
+        ],
+        "title": "Module 3 - Atelier : créer son assistant IA personnalisé"
+      },
+      {
+        "items": [
+          "Compréhension du protocole MCP : donner des \"mains\" à l'IA pour agir sur les logiciels",
+          "Différence entre consulter des documents et manipuler des applications en temps réel",
+          "Démonstration \"Live\" d'interconnexion",
+          "Panorama des serveurs MCP disponibles pour automatiser son propre écosystème métier."
+        ],
+        "title": "Module 4 - Connecter son assistant à ses outils (Protocole MCP)"
+      }
+    ],
+    "evaluation": [],
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-03-26T14:56:16.997865+00:00",
+    "updated_at": "2026-04-16T14:02:40.905+00:00",
+    "show_sessions": false,
+    "photo_url_1": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/34818abc-a293-4539-82a7-0382f1ed9a30-photo1-1774869487553.jpg",
+    "photo_url_2": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/34818abc-a293-4539-82a7-0382f1ed9a30-photo2-1774869488458.jpg",
+    "photo_url_3": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/34818abc-a293-4539-82a7-0382f1ed9a30-photo3-1774869489172.jpg",
+    "photo_url_4": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/34818abc-a293-4539-82a7-0382f1ed9a30-photo4-1774869489535.png",
+    "card_description": "Cette formation vous apprend à concevoir et déployer votre propre assistant IA personnalisé, sans aucune compétence technique. Vous définissez le rôle de votre assistant, l'alimentez avec vos documents métier et le testez en conditions réelles.",
+    "display_order": 1,
+    "certification_enabled": false,
+    "certification_text": "",
+    "registration_enabled": false,
+    "registration_text": "",
+    "price_enabled": true
+  },
+  {
+    "id": "351a292a-c45e-4a9e-8ec6-970c0df321ca",
+    "slug": "l-agent-ia-donner-de-l-autonomie-a-votre-ia-avec-n8n",
+    "title": "L'agent IA : Donner de l'autonomie à votre IA avec N8N",
+    "description": "L'automatisation classique est rigide : elle suit un chemin tracé. L'Agent Autonome, lui, suit un objectif. Cette formation intermédiaire vous apprend à passer de la \"ligne droite\" à la \"boucle de décision\". Vous apprendrez à transformer vos workflows n8n en outils (tools) que l'IA pourra appeler d'elle-même selon la situation. C'est l'étape ultime pour créer des systèmes qui gèrent l'imprévu.",
+    "category": [
+      "IA"
+    ],
+    "duration": "1 jour",
+    "level": "Intermédiaire",
+    "price": "790 € HT",
+    "image_url": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/351a292a-c45e-4a9e-8ec6-970c0df321ca-1776336458092.png",
+    "format": "Présentiel, Distanciel",
+    "objectives": [
+      "Maîtriser le nœud AI Agent de n8n et comprendre les différents types d'agents (Plan & Execute vs ReAct).",
+      "Apprendre le Tool Use : transformer n'importe quel workflow ou API en outil utilisable par l'IA",
+      "Gérer la mémoire de l'agent (mémoire tampon et mémoire à long terme via Vector DB).",
+      "Mettre en place des boucles de contrôle pour éviter que l'agent ne tourne en rond ou ne consomme trop de tokens."
+    ],
+    "public_target": [
+      "Operations & Ops Managers (SalesOps, MarketingOps, RevOps)",
+      "Consultant / Freelance",
+      "Product manager",
+      "Product owner",
+      "Architectes Solutions No-Code",
+      "Collaborateur souhaitant automatiser ses tâches répétitives"
+    ],
+    "prerequisites": [
+      "Maîtrise basique de n8n (Nodes fondamentaux, Trigger, HTTP Request).",
+      "Manipulation de données (Notion de JSON)",
+      "Usage des LLM",
+      "Optionnel : Avoir suivi la formation \"n8n Débutant\"."
+    ],
+    "program": [
+      {
+        "items": [
+          "Passer de l'automatisation linéaire au paradigme de l'agent autonome",
+          "Maîtriser le framework ReAct (Reasoning + Acting) pour structurer la réflexion de l'IA",
+          "Configurer le nœud AI Agent de n8n selon les cas d'usage (Plan & Execute vs Tool Agent)",
+          "Sélectionner et benchmarker les modèles (GPT-4o, Claude 3.5) pour la prise de décision",
+          "Rédiger des instructions système (System Prompt) pour cadrer l'autonomie et le ton"
+        ],
+        "title": "Module 1 - Architecture et Logique Agentique"
+      },
+      {
+        "items": [
+          "Transformer des workflows n8n et des APIs en outils actionnables par l'IA",
+          "Configurer les schémas de données pour permettre à l'IA d'appeler les bonnes fonctions",
+          "Extraire dynamiquement des paramètres (dates, noms, IDs) depuis une requête utilisateur",
+          "Piloter des applications tierces sans connecteurs natifs via des appels d'outils personnalisés",
+          "Gérer les conflits de décision lorsque l'agent dispose de plusieurs outils simultanés"
+        ],
+        "title": "Module 2 - Tool Use : Connecter l'IA au monde réel"
+      },
+      {
+        "items": [
+          "Implémenter une mémoire de session pour maintenir la cohérence des échanges longs",
+          "Connecter l'agent à des bases de connaissances via les Vector Stores",
+          "Gérer la fenêtre de contexte pour injecter les données critiques au bon moment",
+          "Optimiser l'historique des conversations pour réduire les coûts et la latence",
+          "Créer une persistance des données pour que l'agent reconnaisse l'utilisateur sur plusieurs jours"
+        ],
+        "title": "Module 3 - Mémoire et Contextualisation métier"
+      },
+      {
+        "items": [
+          "Déployer des boucles d'auto-correction pour gérer les échecs d'exécution",
+          "Intégrer des circuits de validation humaine (Human-in-the-loop) via Slack ou Email",
+          "Paramétrer des garde-fous pour éviter les boucles infinies et les hallucinations",
+          "Monitorer les journaux de réflexion (logs) pour auditer le raisonnement de l'agent",
+          "Maîtriser les coûts via le contrôle strict des itérations et des tokens consommés"
+        ],
+        "title": "Module 4 - Fiabilisation et Contrôle des Agents"
+      }
+    ],
+    "evaluation": [
+      "En fonction de la nature de la formation, le formateur évalue la progression pédagogique du participant tout au long de la formation au moyen de QCM, mises en situation, travaux pratiques…\n\nLa formation est conçue selon les principes suivants :\n\n- Répartition du temps d'apprentissage entre 40% de théorie et 60% de pratique\n- Illustration sur des cas concrets\n- Échanges réguliers avec le formateur et les participants\n- Évaluation et analyse par un formateur-consultant expert\n- Évaluation en amont\n\nLe positionnement à l'entrée en formation respecte les critères qualité Qualiopi. Dès son inscription définitive, l'apprenant reçoit un questionnaire d'auto-évaluation nous permettant d'apprécier son niveau estimé sur différents types de technologies, ses attentes et objectifs personnels quant à la formation à venir, dans les limites imposées par le format sélectionné."
+    ],
+    "is_active": false,
+    "is_featured": false,
+    "created_at": "2026-04-16T10:16:26.507341+00:00",
+    "updated_at": "2026-05-01T15:58:11.364+00:00",
+    "show_sessions": false,
+    "photo_url_1": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/351a292a-c45e-4a9e-8ec6-970c0df321ca-photo1-1776334585196.jpg",
+    "photo_url_2": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/351a292a-c45e-4a9e-8ec6-970c0df321ca-photo2-1776336468636.png",
+    "photo_url_3": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/351a292a-c45e-4a9e-8ec6-970c0df321ca-photo3-1776334585831.jpg",
+    "photo_url_4": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/351a292a-c45e-4a9e-8ec6-970c0df321ca-photo4-1776336469047.jpg",
+    "card_description": "L'automatisation classique est rigide : elle suit un chemin tracé. L'Agent Autonome, lui, suit un objectif. Cette formation intermédiaire vous apprend à passer de la \"ligne droite\" à la \"boucle de décision\". Vous apprendrez à transformer vos workflows n8n en outils (tools) que l'IA pourra appeler d'elle-même selon la situation. C'est l'étape ultime pour créer des systèmes qui gèrent l'imprévu.",
+    "display_order": 9,
+    "certification_enabled": false,
+    "certification_text": "",
+    "registration_enabled": false,
+    "registration_text": "",
+    "price_enabled": true
+  },
+  {
+    "id": "53600d23-3243-4ab3-8370-c26da2e008f2",
+    "slug": "product-builder-vibe-coder-avec-cursor",
+    "title": " Product Builder - Créer et piloter son produit avec Cursor",
+    "description": "Vous avez les bases du développement et vous voulez décupler votre vitesse de production grâce à l'IA ? Cette formation de 2 jours vous plonge dans le workflow du développeur augmenté : Cursor comme environnement de code IA-first, Claude comme copilote, Supabase pour le backend, Figma pour le design, Vercel pour le déploiement et Stripe pour la monétisation. Vous repartez avec un produit fonctionnel, déployé et prêt à générer ses premiers revenus.",
+    "category": [
+      "IA",
+      "Product Management"
+    ],
+    "duration": "2 jours",
+    "level": "Intermédiaire",
+    "price": "1590 € HT",
+    "image_url": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/53600d23-3243-4ab3-8370-c26da2e008f2-1775490258680.webp",
+    "format": "Présentiel, Distanciel",
+    "objectives": [
+      "Utiliser Cursor et Claude pour construire, itérer et corriger son produit en langage naturel ",
+      "Mettre en place un backend avec Supabase : gérer ses données, ses utilisateurs et ses accès sans configuration technique",
+      "Transformer ses maquettes Figma en produit fonctionnel grâce à l'IA, et le déployer en ligne en quelques clics",
+      "Intégrer Stripe pour monétiser son produit et suivre sa croissance avec les bonnes métriques"
+    ],
+    "public_target": [
+      "Product manager",
+      "Product Designer",
+      "Consultant / Freelance",
+      "Porteur de projet / Entrepreneur",
+      "Tout profil curieux"
+    ],
+    "prerequisites": [
+      "Avoir déjà utilisé un LLM (ChatGPT, Claude ou équivalent)",
+      "Avoir une première expérience avec un outil de vibe coding (Lovable, Figma Make ou équivalent)",
+      "Être à l'aise avec les notions de base des produits digitaux",
+      "Aucune compétence en code requise"
+    ],
+    "program": [
+      {
+        "items": [
+          "Configurer Cursor et comprendre pourquoi il change radicalement la façon de construire un produit",
+          "Piloter son projet par l'intention : décrire ce qu'on veut en langage naturel plutôt que de coder",
+          "Utiliser le Composer de Cursor pour générer plusieurs fichiers cohérents en une seule instruction",
+          "Indexer sa documentation et ses ressources pour que l'IA comprenne le contexte de son produit"
+        ],
+        "title": "Module 1 — Adopter la posture du Vibe Coder"
+      },
+      {
+        "items": [
+          "Transformer une maquette Figma ou un croquis papier en interface fonctionnelle grâce à l'IA",
+          "Itérer sur le design en dialogue avec l'IA : couleurs, typographie, espacements, composants",
+          "Créer des éléments interactifs (menus, modales, formulaires) en les décrivant en langage naturel",
+          "Assurer le rendu mobile dès les premières étapes"
+        ],
+        "title": "Module 2 — Donner vie à son interface"
+      },
+      {
+        "items": [
+          "Comprendre ce qu'est un backend et pourquoi c'est indispensable",
+          "Créer des formulaires qui capturent et stockent des informations réelles",
+          "Mettre en place l'inscription et la connexion des utilisateurs avec l'aide de l'IA",
+          "Générer des listes dynamiques qui s'actualisent selon les entrées utilisateurs",
+          "Apprendre à lire les messages d'erreur de l'IA comme des feedbacks pour corriger son produit"
+        ],
+        "title": "Module 3 — Connecter les données et les utilisateurs"
+      },
+      {
+        "items": [
+          "Comprendre comment votre application peut appeler une IA pour effectuer des actions à la place de l'utilisateur",
+          "Ajouter des fonctionnalités propulsées par l'IA : génération de contenu, analyse de document, réponse automatique, suggestion contextuelle",
+          "Utiliser Claude pour écrire les instructions qui définiront le comportement de l'IA dans votre produit",
+          "Tester et affiner le résultat pour que l'expérience soit fluide pour l'utilisateur final"
+        ],
+        "title": "Module 4 — Rendre son produit intelligent"
+      },
+      {
+        "items": [
+          "Intégrer Stripe pour transformer son produit en business réel : paiement unique ou abonnement",
+          "Optimiser le parcours utilisateur en demandant à Claude d'identifier les points de friction",
+          "Préparer son produit à être partagé et référencé"
+        ],
+        "title": "Module 5 — Monétiser et optimiser le parcours utilisateur"
+      },
+      {
+        "items": [
+          "Mettre son application en ligne en quelques minutes avec Vercel",
+          "Associer un nom de domaine professionnel",
+          "Apprendre à mettre à jour son produit après des modifications",
+          "Suivre les bonnes métriques pour faire évoluer son produit : activation, rétention, revenus",
+          "Définir les prochaines étapes pour passer du MVP à un produit qui grandit"
+        ],
+        "title": "Module 6 — Déployer et piloter la croissance"
+      }
+    ],
+    "evaluation": [
+      "En fonction de la nature de la formation, le formateur évalue la progression pédagogique du participant tout au long de la formation au moyen de QCM, mises en situation, travaux pratiques…\n\nLa formation est conçue selon les principes suivants :\n\n- Répartition du temps d'apprentissage entre 40% de théorie et 60% de pratique\n- Illustration sur des cas concrets\n- Échanges réguliers avec le formateur et les participants\n- Évaluation et analyse par un formateur-consultant expert\n- Évaluation en amont\n\nLe positionnement à l'entrée en formation respecte les critères qualité Qualiopi. Dès son inscription définitive, l'apprenant reçoit un questionnaire d'auto-évaluation nous permettant d'apprécier son niveau estimé sur différents types de technologies, ses attentes et objectifs personnels quant à la formation à venir, dans les limites imposées par le format sélectionné."
+    ],
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-04-06T15:44:17.729846+00:00",
+    "updated_at": "2026-04-16T14:02:40.905+00:00",
+    "show_sessions": false,
+    "photo_url_1": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/53600d23-3243-4ab3-8370-c26da2e008f2-photo1-1775490259673.jpg",
+    "photo_url_2": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/53600d23-3243-4ab3-8370-c26da2e008f2-photo2-1775490261657.webp",
+    "photo_url_3": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/53600d23-3243-4ab3-8370-c26da2e008f2-photo3-1775490262196.jpg",
+    "photo_url_4": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/53600d23-3243-4ab3-8370-c26da2e008f2-photo4-1775490264140.png",
+    "card_description": "Vous avez les bases du développement et vous voulez décupler votre vitesse de production grâce à l'IA ? Cette formation de 2 jours vous plonge dans le workflow du développeur augmenté. Vous repartez avec un produit fonctionnel, déployé et prêt à générer ses premiers revenus.",
+    "display_order": 7,
+    "certification_enabled": false,
+    "certification_text": "",
+    "registration_enabled": false,
+    "registration_text": "",
+    "price_enabled": true
+  },
+  {
+    "id": "6de433a0-a6f8-449c-95fc-6919deda3571",
+    "slug": "genai-pour-managers-et-decideurs",
+    "title": " GenAI pour managers et décideurs",
+    "description": "Cette formation de 2 jours a été conçue pour les managers et décideurs qui souhaitent comprendre l'IA générative en profondeur et en tirer parti dans leur périmètre. Au-delà de la culture générale, elle aborde des enjeux concrets : maîtriser le prompting comme outil d'analyse et d'aide à la décision, repenser ses processus de recrutement et d'intégration à l'ère de l'IA, accompagner la montée en compétences de ses équipes et gérer les résistances. Chaque module s'appuie sur des exercices ancrés dans des situations managériales réelles. Les participants repartent avec une feuille de route personnelle 30/60/90 jours, prête à être mise en œuvre.",
+    "category": [
+      "IA",
+      "Management"
+    ],
+    "duration": "2 jours",
+    "level": "Débutant",
+    "price": "1590 € HT",
+    "image_url": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/6de433a0-a6f8-449c-95fc-6919deda3571-1776010029792.png",
+    "format": "Présentiel, Distanciel",
+    "objectives": [
+      "Comprendre l'état réel de l'IA en 2026 et ce qu'elle change concrètement pour les décideurs",
+      "Maîtriser les concepts clés : prompting, agents IA, automatisation ",
+      "Repenser ses processus RH : recrutement, onboarding et évaluation à l'ère de l'IA",
+      "Accompagner la montée en compétences IA de son équipe et adopter une posture de manager-coach",
+      "Repartir avec une feuille de route personnelle 30/60/90 jours"
+    ],
+    "public_target": [
+      "Manager",
+      "RH / Office Manager",
+      "Responsable de BU",
+      "Directeur / DG "
+    ],
+    "prerequisites": [
+      "Exercer une fonction managériale ou être en charge d’une équipe",
+      "Être à l'aise avec les outils digitaux du quotidien",
+      "Avoir déjà utilisé un outil IA, même ponctuellement (ChatGPT, Copilot, etc.)",
+      "Aucune compétence technique requise"
+    ],
+    "program": [
+      {
+        "items": [
+          "Ce qui a fondamentalement changé en 2 ans : où en est vraiment l'IA générative",
+          "Les 3 niveaux d'impact : productivité individuelle, transformation des métiers, nouveaux modèles d'affaires",
+          "Tour d'horizon des outils LLM : ChatGPT, Claude, Gemini, Copilot",
+          "Distinguer l'usage de l'IA pour la création (texte/image) vs l'analyse (données/documents)",
+          "Les limites actuelles à connaître : hallucinations, fiabilité, données sensibles"
+        ],
+        "title": "Module 1 — L'IA en 2026 : état des lieux"
+      },
+      {
+        "items": [
+          "Le prompting : pourquoi la façon de parler à l'IA change tout au résultat — démonstration live",
+          "Les agents IA : ce que c'est, ce qu'ils font concrètement et ce qu'ils ne font pas encore",
+          "L'automatisation par l'IA : quand l'IA travaille sans qu'on lui demande à chaque fois",
+          "Les différents niveaux de maturité : de l'outil ponctuel au système IA intégré",
+          "Ce qu'un manager doit comprendre pour prendre de bonnes décisions sur ces sujets"
+        ],
+        "title": "Module 2 — Comprendre les sujets clés : prompting, agents et automatisation"
+      },
+      {
+        "items": [
+          "Maîtriser l'ingénierie de prompt structurée (Rôle, Contexte, Objectif, Format)",
+          "Créer des Personas d'assistants (ex: \"Expert en analyse de données\" ou \"Coach en management\")",
+          "Charger et analyser des documents complexes (PDF, Excel, rapports) pour en extraire des insights",
+          "Détecter les biais et les hallucinations pour garantir une prise de décision fiable"
+        ],
+        "title": "Module 3 — Pilotage par le Prompt et Analyse de Données"
+      },
+      {
+        "items": [
+          "Rédiger des fiches de poste \"IA-Native\" en intégrant les compétences en GenAI comme prérequis",
+          "Optimiser le sourcing et le tri des CV via l'IA sans perdre l'aspect humain ni créer de biais",
+          "Repenser l'entretien d'embauche pour tester la capacité d'un candidat à collaborer avec une machine",
+          "Acculturer les nouveaux arrivants aux outils et à la charte IA de l'équipe dès leur arrivée"
+        ],
+        "title": "Module 4 — Recrutement et intégration (Onboarding) à l'ère de l'IA"
+      },
+      {
+        "items": [
+          "Réaliser un audit de maturité digitale pour identifier les écarts de compétences dans l'équipe",
+          "Concevoir des parcours d'apprentissage et des micro-formations internes pour uniformiser le niveau",
+          "Définir des objectifs de maîtrise des outils IA lors des entretiens annuels pour mesurer la progression",
+          "Identifier les résistances liées à la peur de l'obsolescence et adopter une posture de manager-coach",
+          "Réallouer le temps libéré par l'IA vers des tâches à haute valeur relationnelle ou stratégique"
+        ],
+        "title": "Module 5 — Accompagner la montée en compétences"
+      },
+      {
+        "items": [
+          "Choisir les 3 chantiers prioritaires à mener pour les 3 prochains mois",
+          "Identifier un premier \"Quick Win\" à automatiser dès le retour au bureau pour prouver la valeur de l'IA",
+          "Finaliser les règles du jeu collectives concernant la transparence et la sécurité des données",
+          "Préparer les arguments pour lever les freins budgétaires ou techniques auprès de sa hiérarchie",
+          "\"Ma Feuille de Route 30/60/90 jours\" — Rédaction individuelle d'un plan d'action avec des objectifs datés pour soi-même et pour son équipe"
+        ],
+        "title": "Module 6 — Plan d'action : piloter la transformation au quotidien"
+      }
+    ],
+    "evaluation": [
+      "En fonction de la nature de la formation, le formateur évalue la progression pédagogique du participant tout au long de la formation au moyen de QCM, mises en situation, travaux pratiques…\n\nLa formation est conçue selon les principes suivants :\n\n- Répartition du temps d'apprentissage entre 40% de théorie et 60% de pratique\n- Illustration sur des cas concrets\n- Échanges réguliers avec le formateur et les participants\n- Évaluation et analyse par un formateur-consultant expert\n- Évaluation en amont\n\nLe positionnement à l'entrée en formation respecte les critères qualité Qualiopi. Dès son inscription définitive, l'apprenant reçoit un questionnaire d'auto-évaluation nous permettant d'apprécier son niveau estimé sur différents types de technologies, ses attentes et objectifs personnels quant à la formation à venir, dans les limites imposées par le format sélectionné."
+    ],
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-04-12T16:07:09.665558+00:00",
+    "updated_at": "2026-04-16T14:02:40.905+00:00",
+    "show_sessions": false,
+    "photo_url_1": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/6de433a0-a6f8-449c-95fc-6919deda3571-photo1-1776010030494.jpg",
+    "photo_url_2": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/6de433a0-a6f8-449c-95fc-6919deda3571-photo2-1776010030920.png",
+    "photo_url_3": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/6de433a0-a6f8-449c-95fc-6919deda3571-photo3-1776010031329.jpg",
+    "photo_url_4": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/6de433a0-a6f8-449c-95fc-6919deda3571-photo4-1776010031738.jpg",
+    "card_description": "Cette formation de 2 jours a été conçue pour les managers et décideurs qui souhaitent comprendre l'IA générative en profondeur et en tirer parti dans leur périmètre.",
+    "display_order": 5,
+    "certification_enabled": false,
+    "certification_text": "",
+    "registration_enabled": false,
+    "registration_text": "",
+    "price_enabled": true
+  },
+  {
+    "id": "759b7ea9-5ca7-4dd7-8f7a-e7121aefcd97",
+    "slug": "ingenierie-des-systemes-multi-agents-construire-des-systemes-agentiques-robustes",
+    "title": "Ingénierie des systèmes multi-agents - Construire des systèmes agentiques robustes ",
+    "description": "Cette formation de 5 jours couvre l'ingénierie agentique de bout en bout : architecture multi-agents, tool use, orchestration, gestion de la mémoire et mise en production. Vous travaillez sur Claude API en natif, avec une exploration des principaux frameworks (LangGraph, CrewAI, AutoGen). Vous repartez avec un système multi-agents complet, testé et déployé sur un cas concret.",
+    "category": [
+      "IA"
+    ],
+    "duration": "5 jours",
+    "level": "Expert",
+    "price": "3990 € HT",
+    "image_url": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/759b7ea9-5ca7-4dd7-8f7a-e7121aefcd97-1775925643777.png",
+    "format": "Présentiel, Distanciel",
+    "objectives": [
+      "Concevoir une architecture multi-agents adaptée à un problème complexe : rôles, patterns et choix d'orchestration",
+      "Implémenter le tool use et le function calling avec Claude API pour créer des agents fiables et des outils réutilisables",
+      "Orchestrer un pipeline multi-agents : gestion du contexte, conditions d'arrêt, logging et détection d'erreurs",
+      "Gérer la mémoire court et long terme des agents et intégrer des systèmes externes ",
+      "Évaluer, tester et déployer un système multi-agents en production avec monitoring, tracing et maîtrise des coûts"
+    ],
+    "public_target": [
+      "Développeur",
+      "AI Engineer",
+      "Tech Lead",
+      "Architecte SI",
+      "Consultant technique"
+    ],
+    "prerequisites": [
+      "Bonne maîtrise de Python ou TypeScript",
+      "Expérience confirmée avec les APIs REST et le concept de tool calling / function calling",
+      "Notions d'architecture logicielle (séquentiel, parallèle, event-driven",
+      "Une expérience préalable avec un framework d'orchestration (LangChain, LangGraph, CrewAI ou équivalent) est un plus"
+    ],
+    "program": [
+      {
+        "items": [
+          "Limites d'un agent unique : pourquoi passer au multi-agents",
+          "Qu'est-ce qu'un système multi-agents ? Concepts clés : orchestrateur, sous-agents, outils",
+          "Patterns d'architecture : séquentiel, parallèle, hiérarchique, pipeline",
+          "Tour d'horizon des frameworks : LangGraph, CrewAI, AutoGen, Claude API natif"
+        ],
+        "title": "Module 1 - Introduction aux systèmes multi-agents"
+      },
+      {
+        "items": [
+          "Décomposer un problème complexe en tâches agentiques",
+          "Définir les rôles, responsabilités et périmètres de chaque agent",
+          "Communication entre agents : comment structurer les messages et le contexte partagé",
+          "Quand orchestrer avec du code vs avec un LLM",
+          "Mise en pratique : conception d'une architecture multi-agents sur un cas métier réel"
+        ],
+        "title": "Module 2 - Concevoir son architecture multi-agents"
+      },
+      {
+        "items": [
+          "Anatomie d'un tool call : définition, appel, résultat",
+          "Concevoir des outils fiables et réutilisables",
+          "Parallel tool calling : accélérer les traitements",
+          "Gestion des erreurs et stratégies de retry",
+          "Mise en pratique : implémentation d'un agent avec plusieurs outils chaînés"
+        ],
+        "title": "Module 3 - Tool use et function calling avec Claude API"
+      },
+      {
+        "items": [
+          "Implémenter un orchestrateur avec Claude API",
+          "Passer le contexte entre agents sans exploser la fenêtre de tokens",
+          "Conditions d'arrêt, boucles et détection d'états d'erreur",
+          "Logging des décisions agentiques pour le debugging",
+          "Mise en pratique : construction d'un premier pipeline multi-agents fonctionnel"
+        ],
+        "title": "Module 4 - Orchestration et gestion du flux"
+      },
+      {
+        "items": [
+          "Mémoire court terme : gestion du contexte dans la conversation",
+          "Mémoire long terme : vector store, base de données, fichiers",
+          "Partage de mémoire entre agents",
+          "Patterns de mise à jour et de récupération de la mémoire"
+        ],
+        "title": "Module 5 — Mémoire et persistance"
+      },
+      {
+        "items": [
+          "Pattern supervisor : un agent qui délègue et évalue",
+          "Pattern critique : un agent qui vérifie le travail d'un autre",
+          "Human-in-the-loop : intégrer des points de validation humaine",
+          "Agents avec accès web, fichiers, bases de données"
+        ],
+        "title": "Module 6 - Patterns avancés d'orchestration"
+      },
+      {
+        "items": [
+          "Cas d'usage : agent de veille concurrentielle autonome, agent de traitement documentaire, agent commercial",
+          "Architecture complète de bout en bout",
+          "Intégration avec des systèmes externes (CRM, Notion, Slack, API REST)",
+          "Mise en pratique : chaque participant construit un système multi-agents sur son propre cas"
+        ],
+        "title": "Module 7 - Construire un système multi-agents complet"
+      },
+      {
+        "items": [
+          "Comment tester un comportement agentique : défis et approches",
+          "Construire un jeu de tests reproductibles",
+          "Détecter les régressions sur des systèmes non-déterministes",
+          "Outils d'évaluation : LangSmith, Braintrust, évaluation par LLM"
+        ],
+        "title": "Module 8 - Évaluation et testing"
+      },
+      {
+        "items": [
+          "Déploiement d'un système multi-agents : architecture technique",
+          "Monitoring et tracing : suivre chaque décision agentique",
+          "Gestion des coûts : maîtriser les appels LLM en cascade",
+          "Sécurité : sandboxing, contrôle des outils, prévention des boucles infinies",
+          "Questions / Réponses et synthèse"
+        ],
+        "title": "Module 9 - Production et observabilité"
+      }
+    ],
+    "evaluation": [
+      "En fonction de la nature de la formation, le formateur évalue la progression pédagogique du participant tout au long de la formation au moyen de QCM, mises en situation, travaux pratiques…\n\nLa formation est conçue selon les principes suivants :\n· Répartition du temps d’apprentissage entre 40% de théorie et 60% de pratique\n· Illustration sur des cas concrets\n· Échanges réguliers avec le formateur et les participants\n· Évaluation et analyse par un formateur-consultant expert\n\nÉvaluation en amont\nLe positionnement à l'entrée en formation respecte les critères qualité Qualiopi. Dès son inscription définitive, l'apprenant reçoit un questionnaire d’auto-évaluation nous permettant d’apprécier son niveau estimé sur différents types de technologies, ses attentes et objectifs personnels quant à la formation à venir, dans les limites imposées par le format sélectionné."
+    ],
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-04-11T16:40:45.106337+00:00",
+    "updated_at": "2026-04-16T14:03:58.038+00:00",
+    "show_sessions": false,
+    "photo_url_1": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/759b7ea9-5ca7-4dd7-8f7a-e7121aefcd97-photo1-1775925644548.jpg",
+    "photo_url_2": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/759b7ea9-5ca7-4dd7-8f7a-e7121aefcd97-photo2-1775925644917.png",
+    "photo_url_3": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/759b7ea9-5ca7-4dd7-8f7a-e7121aefcd97-photo3-1775925645290.jpg",
+    "photo_url_4": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/759b7ea9-5ca7-4dd7-8f7a-e7121aefcd97-photo4-1775925645655.jpg",
+    "card_description": "Cette formation de 5 jours couvre l'ingénierie agentique de bout en bout : architecture multi-agents, tool use, orchestration, gestion de la mémoire et mise en production. Vous travaillez sur Claude API en natif, avec une exploration des principaux frameworks (LangGraph, CrewAI, AutoGen).",
+    "display_order": 12,
+    "certification_enabled": false,
+    "certification_text": "",
+    "registration_enabled": false,
+    "registration_text": "",
+    "price_enabled": true
+  },
+  {
+    "id": "797009d7-aa80-443d-8459-046a807f1aee",
+    "slug": "prompt-engineering",
+    "title": "Maîtriser le Prompting en IA",
+    "description": "L'IA générative est déjà dans les mains de vos équipes mais est-elle vraiment exploitée à son plein potentiel ? \nCette formation d'une journée vous donne les clés pour formuler des prompts précis, efficaces et adaptés à votre métier. De la génération de texte à la création d'images, en passant par la construction d'une prompt library réutilisable, vous repartez avec des outils concrets et immédiatement opérationnels. ",
+    "category": [
+      "IA"
+    ],
+    "duration": "1 jour",
+    "level": "Débutant",
+    "price": "790 € HT",
+    "image_url": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/797009d7-aa80-443d-8459-046a807f1aee-1774535693037.png",
+    "format": "Présentiel, Distanciel",
+    "objectives": [
+      "Comprendre le fonctionnement des grands modèles LLM et savoir choisir l'outil adapté à son contexte",
+      "Maîtriser les techniques de prompting essentielles : prompts directs, par l'exemple, de rôle, itératifs et de cadrage",
+      "Appliquer le prompting à des cas concrets de son métier (rédaction, analyse, synthèse, communication)",
+      "Construire et structurer une prompt library personnalisée, réutilisable au quotidien"
+    ],
+    "public_target": [
+      "Chef de projet",
+      "Commercial / Marketing",
+      "RH / Office Manager",
+      "Tout profil curieux"
+    ],
+    "prerequisites": [
+      "Maîtrise des usages de base d'un ordinateur et d'un navigateur web",
+      "Avoir déjà utilisé un outil d'IA générative, même ponctuellement",
+      "Aucune compétence technique requise"
+    ],
+    "program": [
+      {
+        "items": [
+          "Comprendre ce qu'est un LLM et comment il fonctionne, sans prérequis technique",
+          "Tour d'horizon des principaux modèles du marché : ChatGPT, Mistral, Copilot, Claude, Gemini",
+          "Comparatif des outils : points forts, limites, cas d'usage adaptés et positionnement tarifaire",
+          "Critères de sélection selon le contexte et les besoins métier"
+        ],
+        "title": "Module 1 - Panorama des grands modèles LLM "
+      },
+      {
+        "items": [
+          "Anatomie d'un prompt efficace : rôle, contexte, instruction, format, contraintes",
+          "Les différents types de prompts",
+          "Écrire ou parler à l'IA : différences d'usage selon le contexte",
+          "Prompt itératif : affiner une demande sur plusieurs échanges successifs",
+          "Contrôler le ton, le style et la longueur des réponses",
+          "Demander un format de sortie précis : tableau, liste, fiche synthèse, rapport",
+          "Mise en pratique : rédaction d'un prompt sur un cas concret, test en direct, identification des axes d'amélioration et réécriture"
+        ],
+        "title": "Module 2 - Bases et techniques de prompting"
+      },
+      {
+        "items": [
+          "Présentation des principaux outils de génération d'images",
+          "Ce qui distingue le prompt image du prompt texte",
+          "Les éléments clés d'un prompt image réussi : sujet, style, ambiance, cadrage, palette de couleurs, références visuelles",
+          "Mise en pratique : génération de visuels adaptés à un usage professionnel (présentation, communication interne, réseaux sociaux)"
+        ],
+        "title": "Module 3 - Prompter pour générer des images "
+      },
+      {
+        "items": [
+          "Identification par chaque participant de 2 à 3 cas concrets issus de son quotidien professionnel",
+          "Phase 1 — Prompts métier par filière : construction de prompts adaptés selon le profil présent dans la salle",
+          "Phase 2 — Prompt library personnalisée : chaque participant structure ses meilleurs prompts dans un modèle réutilisable"
+        ],
+        "title": "Module 4 - Ateliers métier : prompting appliqué à mon quotidien"
+      }
+    ],
+    "evaluation": [
+      "En fonction de la nature de la formation, le formateur évalue la progression pédagogique du participant tout au long de la formation au moyen de QCM, mises en situation, travaux pratiques…\n\nLa formation est conçue selon les principes suivants :\n- Répartition du temps d'apprentissage entre 40% de théorie et 60% de pratique\n- Illustration sur des cas concrets\n- Échanges réguliers avec le formateur et les participants\n- Évaluation et analyse par un formateur-consultant expert\n\nÉvaluation en amont\n\nLe positionnement à l'entrée en formation respecte les critères qualité Qualiopi. Dès son inscription définitive, l'apprenant reçoit un questionnaire d'auto-évaluation nous permettant d'apprécier son niveau estimé sur différents types de technologies, ses attentes et objectifs personnels quant à la formation à venir, dans les limites imposées par le format sélectionné."
+    ],
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-03-26T09:51:16.350059+00:00",
+    "updated_at": "2026-05-05T18:28:57.249+00:00",
+    "show_sessions": false,
+    "photo_url_1": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/797009d7-aa80-443d-8459-046a807f1aee-photo1-1774864624283.jpg",
+    "photo_url_2": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/797009d7-aa80-443d-8459-046a807f1aee-photo2-1774864624927.png",
+    "photo_url_3": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/797009d7-aa80-443d-8459-046a807f1aee-photo3-1774864626430.jpg",
+    "photo_url_4": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/797009d7-aa80-443d-8459-046a807f1aee-photo4-1774864627372.jpg",
+    "card_description": "Cette formation d'une journée vous donne les clés pour formuler des prompts précis, efficaces et adaptés à votre métier. Vous repartez avec des outils concrets et immédiatement opérationnels. ",
+    "display_order": 0,
+    "certification_enabled": false,
+    "certification_text": "",
+    "registration_enabled": false,
+    "registration_text": "",
+    "price_enabled": true
+  },
+  {
+    "id": "7cd6f4fe-77a4-4e0e-8926-1f495e21285f",
+    "slug": "maitriser-claude-passer-du-chatbot-au-systeme-de-travail",
+    "title": "Claude - Passer du chatbot au système de travail",
+    "description": "La plupart des utilisateurs de Claude l'ouvrent, tapent un message, et espèrent un bon résultat comme on ouvrirait Excel sans savoir faire une formule. Cette formation vous apprend à faire tout autre chose : configurer Claude pour qu'il vous connaisse, s'organise avec vous et travaille pour vous de manière reproductible. En une journée, vous construisez votre environnement Claude sur mesure : un Project structuré avec vos documents et règles, une mémoire persistante que vous guidez, des Skills personnalisés pour vos tâches récurrentes, et les premières connexions avec vos outils du quotidien compatibles. ",
+    "category": [
+      "IA"
+    ],
+    "duration": "1 jour",
+    "level": "Débutant",
+    "price": "790 € HT",
+    "image_url": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/7cd6f4fe-77a4-4e0e-8926-1f495e21285f-1775032637073.jpg",
+    "format": "Présentiel, Distanciel",
+    "objectives": [
+      "Comprendre ce qui distingue Claude des autres LLMs",
+      "Créer et structurer un Claude Project ",
+      "Comprendre et piloter le système de mémoire persistante de Claude",
+      "Créer ses propres Skills Claude",
+      "Connecter Claude à ses outils compatibles du quotidien via les intégrations MCP"
+    ],
+    "public_target": [
+      "Chef de projet",
+      "Commercial / Marketing",
+      "Consultant / Freelance",
+      "Manager",
+      "Porteur de projet / Entrepreneur",
+      "Tout profil curieux"
+    ],
+    "prerequisites": [
+      "Avoir suivi la formation Prompting Skapa ou avoir une pratique régulière d'un LLM",
+      "Aucune compétence technique requise"
+    ],
+    "program": [
+      {
+        "items": [
+          "Fenêtre de contexte, mémoire persistante, Projects : comment Claude gère l'information",
+          "Ce que Claude retient, ce qu'il oublie, et pourquoi c'est fondamental",
+          "Claude vs ChatGPT vs Gemini : différences structurelles qui changent l'usage",
+          "La logique chatbot ponctuel vs environnement de travail configuré — démo comparative en direct"
+        ],
+        "title": "Module 1 - Claude n'est pas un chatbot : comprendre son architecture"
+      },
+      {
+        "items": [
+          "Créer un Project Claude et comprendre à quoi il sert (vs conversation simple)",
+          "Rédiger son system prompt : qui suis-je, comment je travaille, ce que j'attends de Claude",
+          "Ajouter ses documents de référence : fiches clients, process internes, templates existants",
+          "Organiser l'espace documentaire : quoi mettre, quoi ne pas mettre, comment nommer",
+          "Tester et itérer : vérifier que Claude utilise bien le contexte fourni"
+        ],
+        "title": "Module 2 - Construire son Claude Project : identité, documents et règles de travail"
+      },
+      {
+        "items": [
+          "Différence entre mémoire contextuelle (dans la conversation) et mémoire persistante (entre sessions)",
+          "Comment Claude génère et stocke ses mémoires — ce que vous pouvez contrôler",
+          "Enrichir activement la mémoire : lui dire ce qu'il doit retenir, corriger, oublier",
+          "Vérifier et auditer ce que Claude a mémorisé",
+          "Exercice : après 3 échanges simulés, Claude doit anticiper sans qu'on lui répète"
+        ],
+        "title": "Module 3 - Piloter la mémoire de Claude"
+      },
+      {
+        "items": [
+          "Ce qu'est un Skill Claude : une instruction nommée, stockée dans un Project, déclenchée par un slash command",
+          "Identifier ses tâches récurrentes : les 3 à 5 cas qui se répètent chaque semaine",
+          "Rédiger un Skill efficace : nom, déclencheur, instructions précises, format de sortie attendu",
+          "Exemples construits en live : /proposition, /cr-reunion, /relance, /brief, /analyse",
+          "Chaque participant crée au minimum 2 Skills adaptés à son métier",
+          "Test croisé : un participant teste le Skill d'un autre — retours et ajustements collectifs"
+        ],
+        "title": "Module 4 - Créer ses Skills Claude"
+      },
+      {
+        "items": [
+          "Présentation du protocole MCP : ce que c'est, pourquoi ça change tout",
+          "Les outils compatibles nativement : Gmail, Google Drive, Notion, Slack, HubSpot, Asana...",
+          "Démo en direct : Claude lit un email → crée une note Notion → prépare une réponse",
+          "Configuration pratique d'une connexion sur l'outil de son choix"
+        ],
+        "title": "Module 5 - Connecter Claude à ses outils compatibles du quotidien"
+      },
+      {
+        "items": [
+          "Claude Co-Work",
+          "Claude Code "
+        ],
+        "title": "Module 6 - Ouverture : l'écosystème Claude"
+      }
+    ],
+    "evaluation": [
+      "En fonction de la nature de la formation, le formateur évalue la progression pédagogique du participant tout au long de la formation au moyen de QCM, mises en situation, travaux pratiques…\n\nLa formation est conçue selon les principes suivants :\n\n- Répartition du temps d'apprentissage entre 40% de théorie et 60% de pratique\n- Illustration sur des cas concrets\n- Échanges réguliers avec le formateur et les participants\n- Évaluation et analyse par un formateur-consultant expert\n- Évaluation en amont\n\nLe positionnement à l'entrée en formation respecte les critères qualité Qualiopi. Dès son inscription définitive, l'apprenant reçoit un questionnaire d'auto-évaluation nous permettant d'apprécier son niveau estimé sur différents types de technologies, ses attentes et objectifs personnels quant à la formation à venir, dans les limites imposées par le format sélectionné."
+    ],
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-04-01T08:37:16.331528+00:00",
+    "updated_at": "2026-04-28T13:18:47.806+00:00",
+    "show_sessions": true,
+    "photo_url_1": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/7cd6f4fe-77a4-4e0e-8926-1f495e21285f-photo1-1775032638391.jpg",
+    "photo_url_2": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/7cd6f4fe-77a4-4e0e-8926-1f495e21285f-photo2-1775032638795.jpg",
+    "photo_url_3": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/7cd6f4fe-77a4-4e0e-8926-1f495e21285f-photo3-1775032639297.jpg",
+    "photo_url_4": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/7cd6f4fe-77a4-4e0e-8926-1f495e21285f-photo4-1775032639501.webp",
+    "card_description": " En une journée, vous construisez votre environnement Claude sur mesure : un Project structuré avec vos documents et règles, une mémoire persistante que vous guidez, des Skills personnalisés pour vos tâches récurrentes, et les premières connexions avec vos outils du quotidien compatibles.",
+    "display_order": 2,
+    "certification_enabled": false,
+    "certification_text": "",
+    "registration_enabled": false,
+    "registration_text": "",
+    "price_enabled": true
+  },
+  {
+    "id": "933a3fce-d161-4a10-a5ea-c305d356ef17",
+    "slug": "multi-agents-creer-son-systeme-d-agents-ia-avec-n8n",
+    "title": "Multi-agents - Créer son système d'agents IA avec N8N",
+    "description": "Vous savez automatiser des workflows avec N8N mais que se passe-t-il quand une seule IA ne suffit plus ? Cette formation vous apprend à concevoir des systèmes où plusieurs agents collaborent, se délèguent des tâches et s'enchaînent automatiquement. Veille automatisée, traitement de demandes RH, pipeline commercial : vous construisez un système multi-agents complet, adapté à votre propre contexte métier.",
+    "category": [
+      "IA"
+    ],
+    "duration": "2 jours",
+    "level": "Avancé",
+    "price": "1590 € HT",
+    "image_url": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/933a3fce-d161-4a10-a5ea-c305d356ef17-1774878935781.jpg",
+    "format": "Présentiel, Distanciel",
+    "objectives": [
+      "Comprendre la différence entre un agent unique et un système multi-agents, et identifier quand passer à l'échelle",
+      "Décomposer un processus métier complexe en tâches agentiques et concevoir l'architecture adaptée",
+      "Maîtriser les nodes IA dans N8N pour orchestrer des agents spécialisés qui se transmettent le contexte",
+      "Construire un pipeline multi-agents complet sur un cas concret ",
+      "Tester, fiabiliser et maintenir un système multi-agents dans le tempsTester, fiabiliser et maintenir un système multi-agents dans le temps"
+    ],
+    "public_target": [
+      "Commercial / Business Developer",
+      "RH / Office Manager",
+      "Manager",
+      "Consultant / Freelance",
+      "Tout profil curieux"
+    ],
+    "prerequisites": [
+      "Avoir suivi la formation AI Automatisation -  Automatiser vos workflows avec N8N",
+      " Être à l'aise avec la création de workflows dans N8N"
+    ],
+    "program": [
+      {
+        "items": [
+          "La différence entre un chatbot, un agent seul et un système multi-agents",
+          "Pourquoi un seul agent ne suffit pas pour des tâches complexes",
+          "Comment plusieurs agents peuvent se diviser le travail, se déléguer des tâches et collaborer"
+        ],
+        "title": "Module 1 - Du chatbot à l'agent, de l'agent au système"
+      },
+      {
+        "items": [
+          "Comment décomposer un processus métier en tâches agentiques",
+          "Identifier le bon rôle pour chaque agent : collecteur, analyseur, rédacteur, décideur, diffuseur",
+          "Dessiner le flux : quel agent parle à quel agent, dans quel ordre",
+          "Les pièges à éviter : trop d'agents, mauvaise transmission du contexte, boucles infinies",
+          "Mise en pratique : chaque participant cartographie un de ses processus métier en architecture multi-agents"
+        ],
+        "title": "Module 2 - Concevoir son système multi-agents"
+      },
+      {
+        "items": [
+          "Rappel rapide des fondamentaux N8N",
+          "Les nodes IA dans N8N : comment chaque node est un agent avec son propre rôle et prompt",
+          "Passer le contexte d'un agent à l'autre : comment les agents se \"parlent\"",
+          "Gérer les conditions : si l'agent A répond X, l'agent B fait Y",
+          "Mise en pratique : construction d'un pipeline simple avec 2 agents enchaînés"
+        ],
+        "title": "Module 3 - Rappel N8N et prise en main des nodes IA "
+      },
+      {
+        "items": [
+          "Mise en pratique : Construction d'un système multi-agents"
+        ],
+        "title": "Module 4 - Construire un système multi-agents complet "
+      },
+      {
+        "items": [
+          "Comment tester et fiabiliser un système multi-agents",
+          "Que faire quand un agent produit un mauvais résultat : détecter, corriger, relancer",
+          "Savoir quand s'arrêter : ce qui est faisable seul vs ce qui nécessite un développeur"
+        ],
+        "title": "Module 5 - Bonnes pratiques et passage à l'échelle"
+      }
+    ],
+    "evaluation": [
+      "En fonction de la nature de la formation, le formateur évalue la progression pédagogique du participant tout au long de la formation au moyen de QCM, mises en situation, travaux pratiques…\n\nLa formation est conçue selon les principes suivants :\n\n- Répartition du temps d'apprentissage entre 40% de théorie et 60% de pratique\n- Illustration sur des cas concrets\n- Échanges réguliers avec le formateur et les participants\n- Évaluation et analyse par un formateur-consultant expert\n- Évaluation en amont\n\nLe positionnement à l'entrée en formation respecte les critères qualité Qualiopi. Dès son inscription définitive, l'apprenant reçoit un questionnaire d'auto-évaluation nous permettant d'apprécier son niveau estimé sur différents types de technologies, ses attentes et objectifs personnels quant à la formation à venir, dans les limites imposées par le format sélectionné."
+    ],
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-03-30T13:55:33.588745+00:00",
+    "updated_at": "2026-04-16T14:02:40.905+00:00",
+    "show_sessions": false,
+    "photo_url_1": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/933a3fce-d161-4a10-a5ea-c305d356ef17-photo1-1774878936736.jpg",
+    "photo_url_2": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/933a3fce-d161-4a10-a5ea-c305d356ef17-photo2-1774878937185.jpg",
+    "photo_url_3": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/933a3fce-d161-4a10-a5ea-c305d356ef17-photo3-1774878937387.jpg",
+    "photo_url_4": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/933a3fce-d161-4a10-a5ea-c305d356ef17-photo4-1774878938014.jpg",
+    "card_description": "Vous savez automatiser des workflows avec N8N mais que se passe-t-il quand une seule IA ne suffit plus ? Cette formation vous apprend à concevoir des systèmes où plusieurs agents collaborent, se délèguent des tâches et s'enchaînent automatiquement.",
+    "display_order": 10,
+    "certification_enabled": false,
+    "certification_text": "",
+    "registration_enabled": false,
+    "registration_text": "",
+    "price_enabled": true
+  },
+  {
+    "id": "c35051ce-995b-4fbf-b8cd-f9532b0580c3",
+    "slug": "rag-bases-de-connaissances-avec-mcp",
+    "title": "RAG & bases de connaissances avec MCP",
+    "description": "Vos LLMs ne connaissent pas vos données internes et c'est là que le RAG change tout. Cette formation technique de 4 jours vous donne les clés pour concevoir des architectures RAG robustes et les combiner avec le Model Context Protocol (MCP) pour connecter vos sources de données en temps réel. De l'ingestion à la mise en production, en passant par les embeddings et l'optimisation du retrieval, vous construisez un système IA véritablement ancré dans vos données.",
+    "category": [
+      "IA"
+    ],
+    "duration": "4 jours",
+    "level": "Expert",
+    "price": "3190 € HT",
+    "image_url": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/c35051ce-995b-4fbf-b8cd-f9532b0580c3-1775923674999.jpg",
+    "format": "Présentiel, Distanciel",
+    "objectives": [
+      "Maîtriser l'architecture complète d'un pipeline RAG : ingestion, chunking, embeddings, retrieval et génération",
+      "Choisir et configurer la bonne base vectorielle selon son contexte",
+      "Optimiser le retrieval avec des techniques avancées",
+      "Comprendre le Model Context Protocol et développer des serveurs MCP custom pour connecter ses sources de données",
+      "Combiner RAG et MCP dans un agent IA et le déployer en production avec observabilité, sécurité et gestion des coûts"
+    ],
+    "public_target": [
+      "Développeur",
+      "AI Engineer",
+      "Tech Lead ",
+      "Architecte SI",
+      "Consultant technique"
+    ],
+    "prerequisites": [
+      "Bonne maîtrise de Python ou TypeScript",
+      "Expérience avec les APIs REST",
+      "Notions de bases de données (SQL ou NoSQL)",
+      "Une première expérience d'intégration d'un LLM via API (OpenAI, Anthropic ou équivalent)"
+    ],
+    "program": [
+      {
+        "items": [
+          "Limites des LLMs sans contexte externe : fenêtre de contexte, hallucinations, données privées",
+          "Architecture RAG : pipeline complet de l'ingestion à la réponse",
+          "RAG naïf vs RAG avancé : quand et pourquoi aller plus loin",
+          "Tour d'horizon des patterns : RAG séquentiel, RAG parallèle, RAG hiérarchique"
+        ],
+        "title": "Module 1 - Fondamentaux et architecture d'un système RAG"
+      },
+      {
+        "items": [
+          "Stratégies de chunking : fixed-size, recursive, semantic, par structure de document",
+          "Gestion des formats complexes : PDF, HTML, tableaux, code, Markdown",
+          "Nettoyage, enrichissement et metadata tagging",
+          "Pipelines d'ingestion robustes : gestion des erreurs, mise à jour incrémentale",
+          "Atelier : construction d'un pipeline d'ingestion sur un corpus réel"
+        ],
+        "title": "Module 2 - Ingestion et traitement des données"
+      },
+      {
+        "items": [
+          "Modèles d'embedding : comparatif OpenAI, Cohere, modèles open-source (BGE, E5, Nomic)",
+          "Métriques de similarité : cosine, dot product, euclidean",
+          "Bases vectorielles : Supabase pgvector, Pinecone, Chroma, Weaviate…",
+          "Indexation efficace et gestion des volumes importants",
+          "Hybrid search : combinaison BM25 + vectoriel pour de meilleures performances"
+        ],
+        "title": "Module 3 - Embeddings et bases vectorielles"
+      },
+      {
+        "items": [
+          "Techniques de reranking : cross-encoders, Cohere Rerank",
+          "Query transformation : HyDE, multi-query, step-back prompting",
+          "Contextual retrieval : approche Anthropic pour améliorer la précision",
+          "Évaluation du retrieval : RAGAS, métriques de précision et recall",
+          "Atelier : optimisation d'un pipeline RAG existant avec mesure de l'amélioration"
+        ],
+        "title": "Module 4 - Retrieval avancé et optimisation"
+      },
+      {
+        "items": [
+          "Structurer le prompt système pour un RAG fiable",
+          "Gestion des sources contradictoires et citations",
+          "Stratégies anti-hallucination : grounding, refusal, confidence scoring",
+          "Streaming et gestion des longues réponses"
+        ],
+        "title": "Module 5 - Gestion du contexte et génération"
+      },
+      {
+        "items": [
+          "Pourquoi le MCP change la donne : du RAG statique aux données dynamiques",
+          "Architecture MCP : client, serveur, transport (stdio, SSE)",
+          "Différence fondamentale entre RAG batch et MCP temps réel",
+          "Écosystème MCP actuel : serveurs officiels et communauté"
+        ],
+        "title": "Module 6 - Model Context Protocol : architecture et enjeux"
+      },
+      {
+        "items": [
+          "Structure d'un serveur MCP : tools, resources, prompts",
+          "Implémentation en Python (mcp SDK) et TypeScript",
+          "Créer un serveur MCP custom sur une source de données interne (base SQL, API REST, filesystem)",
+          "Authentification, sécurisation et gestion des permissions",
+          "Atelier : chaque participant développe son propre serveur MCP sur un cas réel"
+        ],
+        "title": "Module 7 - Développer et déployer des serveurs MCP"
+      },
+      {
+        "items": [
+          "Architecture hybride : quand utiliser le RAG, quand utiliser MCP, quand combiner les deux",
+          "Orchestration avec Claude API : tool use, agents multi-étapes",
+          "Construire un agent capable de requêter ses propres données en temps réel et d'une base vectorielle",
+          "Gestion de la mémoire long terme : short-term context vs long-term vector store",
+          "Atelier : agent complet combinant RAG + MCP sur un cas métier technique"
+        ],
+        "title": "Module 8 - Combiner RAG et MCP dans un agent IA"
+      },
+      {
+        "items": [
+          "Logging, tracing et monitoring d'un pipeline RAG en production",
+          "Gestion des coûts : optimisation des appels LLM et des embeddings",
+          "Sécurité : contrôle d'accès aux données, prévention des prompt injections",
+          "Stratégies de mise à jour et versionning de la base vectorielle",
+          "Checklist de mise en production et questions/réponses"
+        ],
+        "title": "Module 9 - Production, observabilité et gouvernance"
+      }
+    ],
+    "evaluation": [
+      "En fonction de la nature de la formation, le formateur évalue la progression pédagogique du participant tout au long de la formation au moyen de QCM, mises en situation, travaux pratiques…\n\nLa formation est conçue selon les principes suivants :\n· Répartition du temps d’apprentissage entre 40% de théorie et 60% de pratique\n· Illustration sur des cas concrets\n· Échanges réguliers avec le formateur et les participants\n· Évaluation et analyse par un formateur-consultant expert\n\nÉvaluation en amont\nLe positionnement à l'entrée en formation respecte les critères qualité Qualiopi. Dès son inscription définitive, l'apprenant reçoit un questionnaire d’auto-évaluation nous permettant d’apprécier son niveau estimé sur différents types de technologies, ses attentes et objectifs personnels quant à la formation à venir, dans les limites imposées par le format sélectionné."
+    ],
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-04-11T16:07:56.356193+00:00",
+    "updated_at": "2026-04-16T14:03:37.31+00:00",
+    "show_sessions": false,
+    "photo_url_1": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/c35051ce-995b-4fbf-b8cd-f9532b0580c3-photo1-1775923737094.jpg",
+    "photo_url_2": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/c35051ce-995b-4fbf-b8cd-f9532b0580c3-photo2-1775923675617.jpg",
+    "photo_url_3": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/c35051ce-995b-4fbf-b8cd-f9532b0580c3-photo3-1775923737495.jpg",
+    "photo_url_4": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/c35051ce-995b-4fbf-b8cd-f9532b0580c3-photo4-1775923675902.jpg",
+    "card_description": "Cette formation technique de 4 jours vous donne les clés pour concevoir des architectures RAG robustes et les combiner avec le Model Context Protocol (MCP) pour connecter vos sources de données en temps réel.",
+    "display_order": 11,
+    "certification_enabled": false,
+    "certification_text": "",
+    "registration_enabled": false,
+    "registration_text": "",
+    "price_enabled": true
+  },
+  {
+    "id": "c56e0117-5b3d-4683-b7c8-0ecc601f618c",
+    "slug": "automatiser-vos-workflows-avec-n8n",
+    "title": "Automatiser vos workflows avec N8N",
+    "description": "Imaginez que vos tâches répétitives se fassent toutes seules pendant que vous vous concentrez sur ce qui compte vraiment. Cette formation de 2 jours vous apprend à construire des workflows automatisés en connectant vos outils du quotidien à l'intelligence artificielle, sans coder. De la synthèse automatique d'emails à la gestion de leads, en passant par l'onboarding collaborateur, vous repartez avec 3 automatisations opérationnelles immédiatement.",
+    "category": [
+      "IA"
+    ],
+    "duration": "2 jours",
+    "level": "Débutant",
+    "price": "1590 € HT",
+    "image_url": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/c56e0117-5b3d-4683-b7c8-0ecc601f618c-1774878337062.jpg",
+    "format": "Présentiel, Distanciel",
+    "objectives": [
+      "Comprendre la logique d'automatisation et les fondamentaux des LLMs pour identifier les bons cas d'usage",
+      "Maîtriser n8n : interface, workflows, déclencheurs et connexion aux outils métier",
+      "Intégrer Claude dans ses workflows pour analyser, résumer, classer et générer du contenu automatiquement",
+      "Documenter, maintenir et faire évoluer ses workflows"
+    ],
+    "public_target": [
+      "Commercial / Business Developer",
+      "RH / Office Manager",
+      "Manager",
+      "Consultant / Freelance",
+      "Collaborateur souhaitant automatiser ses tâches répétitives"
+    ],
+    "prerequisites": [
+      "Savoir utiliser un ordinateur et un navigateur",
+      "Utiliser au moins un outil numérique au quotidien (peu importe lequel)",
+      "Aucune compétence en code requise"
+    ],
+    "program": [
+      {
+        "items": [
+          "Ce qu'est vraiment l'IA et comment les modèles fonctionnent",
+          "Les grands outils du marché et comment s'y retrouver",
+          "Comprendre la logique d'automatisation : déclencheur → traitement → action",
+          "Présentation de l'écosystème n8n + Claude"
+        ],
+        "title": "Module 1 - Comprendre l'IA :  acculturation et fondamentaux"
+      },
+      {
+        "items": [
+          "Pourquoi la qualité du prompt change tout au résultat dans un workflow automatisé",
+          "Les structures de prompts efficaces pour n8n : contexte, rôle, tâche, format de sortie",
+          "Demander un format de sortie précis exploitable par n8n : JSON, liste, tableau",
+          "Construire une bibliothèque de prompts réutilisables pour son métier"
+        ],
+        "title": "Module 2 - Les prompts dans un contexte d'automatisation"
+      },
+      {
+        "items": [
+          "Interface, workflows, logique de base",
+          "Les déclencheurs universels : webhook, email, formulaire, agenda, fichier",
+          "Connecter ses outils métier via les nodes n8n ",
+          "Gestion des erreurs et bonnes pratiques"
+        ],
+        "title": "Module 3 - Maîtriser l'outil n8n "
+      },
+      {
+        "items": [
+          "Intégrer Claude dans n8n via le node HTTP Request ou le node IA natif",
+          "Cas pratiques approfondis",
+          "Gérer les erreurs LLM : réponse inattendue, timeout, format incorrect",
+          "Bonnes pratiques de prompts directement dans n8n : variables dynamiques, contexte injecté"
+        ],
+        "title": "Module 4 - Brancher l'IA sur vos workflows"
+      },
+      {
+        "items": [
+          "3 cas d'usage universels travaillés en atelier, que chaque participant adapte à son propre contexte ",
+          "Chaque participant construit les 3 workflows dans n8n et les teste en conditions réelles"
+        ],
+        "title": "Module 5 - Construire ses 3 automatisations"
+      },
+      {
+        "items": [
+          "Comment documenter ses workflows pour une équipe",
+          "Maintenir et faire évoluer ses automatisations dans le temps",
+          "Présentation du projet final : pitcher son \"stack automatisé\""
+        ],
+        "title": "Module 6 - Déployer et faire évoluer son système"
+      }
+    ],
+    "evaluation": [
+      "En fonction de la nature de la formation, le formateur évalue la progression pédagogique du participant tout au long de la formation au moyen de QCM, mises en situation, travaux pratiques…\n\nLa formation est conçue selon les principes suivants :\n\n- Répartition du temps d'apprentissage entre 40% de théorie et 60% de pratique\n- Illustration sur des cas concrets\n- Échanges réguliers avec le formateur et les participants\n- Évaluation et analyse par un formateur-consultant expert\n- Évaluation en amont\n\nLe positionnement à l'entrée en formation respecte les critères qualité Qualiopi. Dès son inscription définitive, l'apprenant reçoit un questionnaire d'auto-évaluation nous permettant d'apprécier son niveau estimé sur différents types de technologies, ses attentes et objectifs personnels quant à la formation à venir, dans les limites imposées par le format sélectionné."
+    ],
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-03-30T13:45:34.836714+00:00",
+    "updated_at": "2026-04-16T14:02:40.905+00:00",
+    "show_sessions": false,
+    "photo_url_1": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/c56e0117-5b3d-4683-b7c8-0ecc601f618c-photo1-1774878338695.jpg",
+    "photo_url_2": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/c56e0117-5b3d-4683-b7c8-0ecc601f618c-photo2-1774878339179.jpg",
+    "photo_url_3": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/c56e0117-5b3d-4683-b7c8-0ecc601f618c-photo3-1774878339382.jpg",
+    "photo_url_4": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/c56e0117-5b3d-4683-b7c8-0ecc601f618c-photo4-1774878339811.png",
+    "card_description": "Imaginez que vos tâches répétitives se fassent toutes seules pendant que vous vous concentrez sur ce qui compte vraiment. Cette formation de 2 jours vous apprend à construire des workflows automatisés en connectant vos outils du quotidien à l'intelligence artificielle, sans coder. ",
+    "display_order": 4,
+    "certification_enabled": false,
+    "certification_text": "",
+    "registration_enabled": false,
+    "registration_text": "",
+    "price_enabled": true
+  },
+  {
+    "id": "d580e688-f4ae-4bd7-b579-baa3310957ed",
+    "slug": "genai-pour-les-products-managers",
+    "title": "GenAI pour les Products Managers",
+    "description": "Le rôle de PM est en train de se réinventer. En 3 jours, cette formation vous transforme en PM augmenté : vous utilisez Claude pour préparer vos entretiens utilisateurs, générer vos user stories, créer votre assisant IA co-PM et prototyper votre produit avec Lovable. Vous repartez avec un workflow complet, des outils opérationnels et un prototype fonctionnel de votre prochain produit ",
+    "category": [
+      "IA",
+      "Product Management"
+    ],
+    "duration": "3 jours",
+    "level": "Débutant",
+    "price": "2390€ HT",
+    "image_url": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/d580e688-f4ae-4bd7-b579-baa3310957ed-1776015922077.jpg",
+    "format": "Présentiel, Distanciel",
+    "objectives": [
+      "Comprendre comment l'IA redéfinit le rôle de PM et intégrer un workflow IA-first dans sa pratique quotidienne",
+      "Accélérer la discovery et l'analyse de marché avec  : entretiens, synthèse de verbatims, veille concurrentielle",
+      "Générer des spécifications fonctionnelles augmentées : user stories, critères d'acceptance et détection d'incohérence",
+      "Créer et configurer son propre assistant IA co-PM, alimenté par le contexte de son projet",
+      "Prototyper, tester et valider son produit avec Lovable, en itérant sur les retours utilisateurs grâce à l'IA"
+    ],
+    "public_target": [
+      "Product manager",
+      "Chef de projet",
+      "Product owner"
+    ],
+    "prerequisites": [
+      "Avoir déjà travaillé en tant que PM, PO ou dans une fonction proche",
+      "Être à l'aise avec les outils digitaux du quotidien",
+      "Avoir déjà utilisé un outil d'IA générative, même ponctuellement (ChatGPT, Claude, Gemini…)",
+      "Aucune compétence technique requise"
+    ],
+    "program": [
+      {
+        "items": [
+          "Ce qui a fondamentalement changé en 2 ans : où en est vraiment l'IA générative",
+          "Les 3 niveaux d'impact : productivité individuelle, transformation des métiers, nouveaux modèles d'affaires",
+          "Tour d'horizon des outils LLM : ChatGPT, Claude, Gemini, Copilot",
+          "Distinguer l'usage de l'IA pour la création (texte/image) vs l'analyse (données/documents)",
+          "Les limites actuelles à connaître : hallucinations, fiabilité, données sensibles"
+        ],
+        "title": "Module 1 — L'IA en 2026 : état des lieux"
+      },
+      {
+        "items": [
+          "Comment l'IA redéfinit les attentes et les compétences clés du Product Manager en 2026",
+          "Identifier les tâches à déléguer à l'IA et celles où la sensibilité humaine reste indispensable",
+          "Panorama des outils indispensables pour construire un workflow PM \"IA-first\"",
+          "Construire sa propre stack IA : quels outils pour quels usages — discovery, specs, priorisation, communication",
+          "Les 3 erreurs classiques des PMs qui adoptent l'IA : sur-déléguer, sous-utiliser, mal prompter"
+        ],
+        "title": "Module 2 — Le PM augmenté : redéfinition du rôle"
+      },
+      {
+        "items": [
+          "Préparer ses guides d'entretiens utilisateurs structurés avec Claude",
+          "Analyser et synthétiser des heures de verbatims clients en quelques minutes",
+          "Cartographier les opportunités marché et identifier des angles différenciants face à la concurrence",
+          "Bonus : Construire son propre agent de veille concurrentielle automatisé avec Claude et Notion"
+        ],
+        "title": "Module 3 — Discovery et analyse de marché avec l'IA"
+      },
+      {
+        "items": [
+          "Générer des User Stories et des critères d'acceptance complets à partir d'un simple brief",
+          "Utiliser l'IA pour détecter les incohérences logiques et les cas limites (edge cases) avant le dev",
+          "Maintenir une base de specs cohérente, structurée et vivante dans Notion IA"
+        ],
+        "title": "Module 4 — Spécifications fonctionnelles haute précision"
+      },
+      {
+        "items": [
+          "Comprendre le concept d'assistant IA et son utilité spécifique pour la gestion de produit",
+          "Alimenter l'agent avec tout le contexte du projet : specs existantes, personas, roadmap et vision",
+          "Configurer son agent pour qu'il réponde aux questions produit et aide à la priorisation 24h/24"
+        ],
+        "title": "Module 5 — Créer son \"Co-PM\" : l'assistant IA spécialisé"
+      },
+      {
+        "items": [
+          "Transformer ses spécifications en une application web fonctionnelle en langage naturel",
+          "Itérer sur les fonctionnalités clés et le design en discutant simplement avec l'outil",
+          "Présenter un produit réellement cliquable aux parties prenantes pour valider l'intérêt métier"
+        ],
+        "title": "Module 6 — Prototyper son produit avec Lovable"
+      },
+      {
+        "items": [
+          "Générer des plans de test et des scénarios de recette à partir des specs",
+          "Analyser les retours des premiers tests utilisateurs pour identifier les frictions majeures",
+          "Synthétiser les résultats des tests en recommandations actionnables pour les prochains sprints"
+        ],
+        "title": "Module 7 — Tester et valider son produit avec l'IA"
+      },
+      {
+        "items": [
+          "Prioriser ses propres chantiers de transformation pour les 30 prochains jours",
+          "Préparer le pitch de sa roadmap \"IA-augmentée\" pour obtenir l'adhésion des décideurs",
+          "Exercice final : \"Ma Feuille de Route 30/60/90 jours\". Rédaction de son plan d'engagement personnel pour transformer sa pratique du Product Management."
+        ],
+        "title": "Module 8 — Plan d'action : déployer sa stratégie PM-IA"
+      }
+    ],
+    "evaluation": [
+      "En fonction de la nature de la formation, le formateur évalue la progression pédagogique du participant tout au long de la formation au moyen de QCM, mises en situation, travaux pratiques…\n\nLa formation est conçue selon les principes suivants :\n\n- Répartition du temps d'apprentissage entre 40% de théorie et 60% de pratique\n- Illustration sur des cas concrets\n- Échanges réguliers avec le formateur et les participants\n- Évaluation et analyse par un formateur-consultant expert\n- Évaluation en amont\n\nLe positionnement à l'entrée en formation respecte les critères qualité Qualiopi. Dès son inscription définitive, l'apprenant reçoit un questionnaire d'auto-évaluation nous permettant d'apprécier son niveau estimé sur différents types de technologies, ses attentes et objectifs personnels quant à la formation à venir, dans les limites imposées par le format sélectionné."
+    ],
+    "is_active": true,
+    "is_featured": false,
+    "created_at": "2026-04-12T17:42:29.852795+00:00",
+    "updated_at": "2026-04-16T14:02:40.905+00:00",
+    "show_sessions": false,
+    "photo_url_1": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/d580e688-f4ae-4bd7-b579-baa3310957ed-photo1-1776015750003.jpg",
+    "photo_url_2": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/d580e688-f4ae-4bd7-b579-baa3310957ed-photo2-1776015945994.jpg",
+    "photo_url_3": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/d580e688-f4ae-4bd7-b579-baa3310957ed-photo3-1776015750620.jpg",
+    "photo_url_4": "https://bpxefiitqefgvxvukbbe.supabase.co/storage/v1/object/public/training-images/d580e688-f4ae-4bd7-b579-baa3310957ed-photo4-1776015946303.jpg",
+    "card_description": "Le rôle de PM est en train de se réinventer. En 3 jours, cette formation vous transforme en PM augmenté : vous utilisez Claude pour préparer vos entretiens utilisateurs, générer vos user stories, créer votre assisant IA co-PM et prototyper votre produit avec Lovable.",
+    "display_order": 6,
+    "certification_enabled": false,
+    "certification_text": "",
+    "registration_enabled": false,
+    "registration_text": "",
+    "price_enabled": true
+  }
+]
