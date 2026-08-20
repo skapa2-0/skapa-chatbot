@@ -1,212 +1,122 @@
+"""Parcourt un site et récupère le HTML de ses pages internes.
+
+Crawl en largeur, limité au même domaine que l'URL de départ, avec un
+délai entre les requêtes pour ne pas surcharger le serveur cible.
+
+Deux modes de récupération :
+
+- `requests` (par défaut) : rapide, suffisant pour du HTML rendu côté serveur.
+- Playwright (`render=True`) : lance un vrai navigateur Chromium et attend
+  l'exécution du JavaScript. Indispensable pour les SPA (React/Vue/Angular)
+  dont le HTML servi ne contient qu'un `<div id="root"></div>` vide.
+
+Le choix se fait automatiquement (cf. `source_detector.needs_javascript`),
+ou se force avec `SCRAPER_RENDER_JS=always|never` dans le `.env`.
 """
-scraper/spider.py
-------------------
-Solution de repli (ou complément) si l'API Supabase n'est pas accessible
-directement. Utilise un vrai navigateur Chromium pour :
-  1. Découvrir toutes les URLs internes du site (crawl BFS depuis la home).
-  2. Ouvrir chaque page, attendre le chargement réseau complet.
-  3. Scroller automatiquement jusqu'en bas (déclenche le lazy loading).
-  4. Cliquer sur tous les accordéons / "voir plus" / "en savoir plus".
-  5. Extraire uniquement le contenu utile (pas nav/footer/cookies).
-  6. Sauvegarder un JSON par page dans data/pages/.
-
-Usage (depuis /opt/chatbot/backend) :
-    playwright install chromium   # une seule fois
-    python -m scraper.spider --base-url https://skapa-academy.com
-
-Ou directement depuis ce dossier :
-    python spider.py --base-url https://skapa-academy.com
-"""
-
-import argparse
-import asyncio
-import json
-import re
-from pathlib import Path
+import time
 from urllib.parse import urljoin, urlparse
 
-from playwright.async_api import async_playwright, Page
+import requests
+from bs4 import BeautifulSoup
 
-OUT_DIR = Path("data/pages")
-OUT_DIR.mkdir(parents=True, exist_ok=True)
+from app.config import Config
 
-# Sélecteurs de contenu à exclure de l'extraction (nav, footer, cookies, etc.)
-NOISE_SELECTORS = [
-    "nav", "footer", "header",
-    "[class*='cookie']", "[id*='cookie']",
-    "[class*='navbar']", "[class*='footer']",
-    "script", "style", "noscript", "svg",
-]
-
-# Textes de boutons déclenchant du contenu caché (accordéons, "voir plus", etc.)
-EXPAND_TEXT_PATTERNS = [
-    "voir plus", "en savoir plus", "afficher", "détails", "lire la suite",
-    "voir le programme", "voir la formation", "développer", "plus d'infos",
-]
+# Extensions de fichiers binaires/média : inutile de les crawler comme des pages.
+_SKIPPED_EXTENSIONS = (
+    ".jpg", ".jpeg", ".png", ".gif", ".svg", ".webp", ".ico",
+    ".css", ".js", ".zip", ".mp4", ".mp3", ".woff", ".woff2", ".ttf",
+)
 
 
-async def autoscroll(page: Page, step: int = 600, pause_ms: int = 250, max_steps: int = 60):
-    """Scrolle progressivement jusqu'en bas pour déclencher le lazy loading."""
-    prev_height = 0
-    for _ in range(max_steps):
-        height = await page.evaluate("document.body.scrollHeight")
-        if height == prev_height:
-            break
-        prev_height = height
-        await page.mouse.wheel(0, step)
-        await page.wait_for_timeout(pause_ms)
-    await page.wait_for_timeout(500)
+def _headers() -> dict:
+    return {"User-Agent": Config.SCRAPER_USER_AGENT}
 
 
-async def expand_hidden_content(page: Page):
-    """Ouvre accordéons et boutons 'voir plus' détectés par texte ou aria-expanded.
-
-    Important : on ne prend PAS un snapshot des éléments puis on boucle par index,
-    car cliquer sur un accordéon fait passer son aria-expanded à 'true', ce qui le
-    retire du sélecteur [aria-expanded='false'] et DÉCALE les index suivants — un
-    accordéon sur deux serait alors sauté. On refait donc la requête à chaque passe
-    et on s'arrête quand plus aucun élément fermé n'est trouvé (plusieurs passes
-    gèrent aussi les accordéons imbriqués qui n'apparaissent qu'une fois le parent ouvert).
-    """
-    for _ in range(15):
-        handles = await page.query_selector_all("[aria-expanded='false']")
-        if not handles:
-            break
-        clicked_any = False
-        for handle in handles:
-            try:
-                if await handle.is_visible():
-                    await handle.click(timeout=2000)
-                    clicked_any = True
-                    await page.wait_for_timeout(150)
-            except Exception:
-                pass
-        if not clicked_any:
-            break
-
-    # 2. Boutons/liens contenant un texte typique de contenu caché.
-    # element_handles() fige la liste (contrairement à .nth() sur un Locator
-    # dynamique), donc pas de décalage d'index même si le DOM change entre les clics.
-    for pattern in EXPAND_TEXT_PATTERNS:
-        try:
-            buttons = page.get_by_text(re.compile(pattern, re.IGNORECASE))
-            handles = await buttons.element_handles()
-            for handle in handles[:20]:
-                try:
-                    if await handle.is_visible():
-                        await handle.click(timeout=1500)
-                        await page.wait_for_timeout(200)
-                except Exception:
-                    pass
-        except Exception:
-            pass
+def _same_domain(base_url: str, url: str) -> bool:
+    return urlparse(base_url).netloc == urlparse(url).netloc
 
 
-async def extract_clean_text(page: Page) -> str:
-    """Extrait le texte visible en excluant nav/footer/scripts."""
-    text = await page.evaluate(
-        """(noiseSelectors) => {
-            const clone = document.body.cloneNode(true);
-            noiseSelectors.forEach(sel => {
-                clone.querySelectorAll(sel).forEach(el => el.remove());
-            });
-            return clone.innerText;
-        }""",
-        NOISE_SELECTORS,
-    )
-    # Nettoyage : lignes vides multiples, espaces
-    lines = [l.strip() for l in text.splitlines()]
-    lines = [l for l in lines if l]
-    return "\n".join(lines)
+def _is_crawlable(url: str) -> bool:
+    if not url.startswith(("http://", "https://")):
+        return False
+    return not urlparse(url).path.lower().endswith(_SKIPPED_EXTENSIONS)
 
 
-async def discover_links(page: Page, base_url: str) -> set[str]:
-    hrefs = await page.eval_on_selector_all(
-        "a[href]", "els => els.map(e => e.getAttribute('href'))"
-    )
-    domain = urlparse(base_url).netloc
-    found = set()
-    for h in hrefs:
-        if not h or h.startswith("#") or h.startswith("mailto:") or h.startswith("tel:"):
-            continue
-        full = urljoin(base_url, h)
-        parsed = urlparse(full)
-        if parsed.netloc == domain:
-            clean = parsed._replace(query="", fragment="").geturl()
-            found.add(clean.rstrip("/"))
-    return found
+def fetch_one(url: str, render: bool = False) -> str | None:
+    """Récupère le HTML d'une seule page (avec ou sans exécution du JavaScript)."""
+    if render:
+        return render_page(url)
 
-
-async def scrape_page(context, url: str) -> dict:
-    page = await context.new_page()
     try:
-        await page.goto(url, wait_until="networkidle", timeout=45000)
-    except Exception:
-        await page.goto(url, wait_until="domcontentloaded", timeout=45000)
+        response = requests.get(url, headers=_headers(), timeout=Config.INGEST_TIMEOUT)
+        response.raise_for_status()
+    except requests.RequestException:
+        return None
 
-    await autoscroll(page)
-    await expand_hidden_content(page)
-    await autoscroll(page)  # re-scroll au cas où l'expansion a ajouté du contenu
+    # Une page non-HTML (PDF, image...) atteinte par un lien : on l'ignore ici.
+    if "html" not in response.headers.get("Content-Type", "text/html").lower():
+        return None
 
-    title = await page.title()
-    content = await extract_clean_text(page)
-    links = await discover_links(page, url)
-
-    await page.close()
-    return {"url": url, "title": title, "content": content, "links": list(links)}
+    return response.text
 
 
-async def crawl(base_url: str, max_pages: int = 200):
-    visited: set[str] = set()
-    queue = [base_url.rstrip("/")]
-    results = []
+def render_page(url: str) -> str | None:
+    """Rend la page dans Chromium et retourne le DOM après exécution du JavaScript."""
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        print("Rendu JS impossible : `pip install playwright && playwright install chromium`.")
+        return None
 
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        context = await browser.new_context(
-            user_agent=(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"
-            )
-        )
-
-        while queue and len(visited) < max_pages:
-            url = queue.pop(0)
-            if url in visited:
-                continue
-            visited.add(url)
-            print(f"→ Scraping: {url}")
-
+    try:
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch()
+            page = browser.new_page(user_agent=Config.SCRAPER_USER_AGENT)
             try:
-                data = await scrape_page(context, url)
-            except Exception as e:
-                print(f"  ⚠️  Erreur sur {url}: {e}")
-                continue
-
-            results.append(data)
-
-            slug = re.sub(r"[^a-zA-Z0-9]+", "_", urlparse(url).path).strip("_") or "home"
-            out_path = OUT_DIR / f"{slug}.json"
-            out_path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-
-            for link in data["links"]:
-                if link not in visited and link not in queue:
-                    queue.append(link)
-
-        await browser.close()
-
-    print(f"\n✅ {len(results)} pages scrapées → {OUT_DIR}/")
-    return results
+                page.goto(url, timeout=Config.SCRAPER_RENDER_TIMEOUT_MS, wait_until="domcontentloaded")
+                # Laisse le temps aux appels XHR/fetch de peupler le DOM.
+                page.wait_for_load_state("networkidle", timeout=Config.SCRAPER_RENDER_TIMEOUT_MS)
+            except Exception:
+                pass  # timeout réseau : on prend le DOM en l'état, souvent déjà utilisable
+            html = page.content()
+            browser.close()
+            return html
+    except Exception as exc:
+        print(f"Rendu JS échoué sur {url} : {exc}")
+        return None
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--base-url", default="https://skapa-academy.com")
-    parser.add_argument("--max-pages", type=int, default=200)
-    args = parser.parse_args()
+def fetch_pages(
+    start_url: str, max_pages: int = 30, delay: float = 0.5, render: bool = False
+) -> list[tuple[str, str]]:
+    """Retourne une liste de tuples (url, html) pour les pages visitées.
 
-    asyncio.run(crawl(args.base_url, args.max_pages))
+    `render=True` fait passer chaque page par Chromium : bien plus lent, donc
+    réservé aux sites qui ne renvoient rien d'exploitable sans JavaScript.
+    """
+    to_visit = [start_url]
+    visited: set[str] = set()
+    pages: list[tuple[str, str]] = []
 
+    while to_visit and len(visited) < max_pages:
+        url = to_visit.pop(0)
+        if url in visited:
+            continue
+        visited.add(url)
 
-if __name__ == "__main__":
-    main()
+        html = fetch_one(url, render=render)
+        if not html:
+            continue
+
+        pages.append((url, html))
+
+        soup = BeautifulSoup(html, "html.parser")
+        for link in soup.find_all("a", href=True):
+            full_url = urljoin(url, link["href"]).split("#")[0]
+            if _is_crawlable(full_url) and _same_domain(start_url, full_url) and full_url not in visited:
+                to_visit.append(full_url)
+
+        if not render:
+            time.sleep(delay)  # Playwright est déjà lent, pas besoin d'en rajouter
+
+    return pages

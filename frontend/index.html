@@ -1,40 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
-    <title>Skapa Academy</title>
-    <meta name="description" content="Formations pratiques en Design, Product et Intelligence Artificielle. Des programmes concrets pour développer les compétences de vos équipes et gagner en perfor">
-    <meta name="author" content="Lovable" />
-
-    <!-- TODO: Update og:title to match your application name -->
-    
-    
-    <meta property="og:type" content="website" />
-    
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@Lovable" />
-    
-    <meta property="og:title" content="Skapa Academy">
-  <meta name="twitter:title" content="Skapa Academy">
-  <meta property="og:description" content="Formations pratiques en Design, Product et Intelligence Artificielle. Des programmes concrets pour développer les compétences de vos équipes et gagner en perfor">
-  <meta name="twitter:description" content="Formations pratiques en Design, Product et Intelligence Artificielle. Des programmes concrets pour développer les compétences de vos équipes et gagner en perfor">
-  <script type="module" crossorigin src="/assets/index-CISXwe4G.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-D1Lkk6Ei.css">
-<script defer src="/~flock.js" data-proxy-url="/~api/analytics"></script><meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d1966b81-6707-4180-8656-99cabc174ea1/id-preview-795ecd06--5d7e0956-5f2a-42da-84e9-0f9bbc1aa6f1.lovable.app-1778251881998.png"><meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d1966b81-6707-4180-8656-99cabc174ea1/id-preview-795ecd06--5d7e0956-5f2a-42da-84e9-0f9bbc1aa6f1.lovable.app-1778251881998.png"></head>
-
+    <title>Démo widget Skapa Chatbot</title>
+  </head>
   <body>
-    <div id="root"></div>
+    <h1 style="font-family: sans-serif">Site de démonstration</h1>
+    <p style="font-family: sans-serif">Le widget de chat apparaît en bas à droite.</p>
+    <script type="module" src="/src/main.jsx"></script>
     <script>
-      window.ChatCoachConfig = {
-        primaryColor: '#4E56EC',
-        title: 'Your Academy Coach',
-        subtitle: 'Pour définir votre parcours idéal de monter en compétences.',
-        apiUrl: 'https://chatcoachformation.skapa.design'
-      };
+      // En mode dev, main.jsx s'auto-monte avec les valeurs par défaut.
+      // Pour tester manuellement : window.SkapaChatbot.init({ apiUrl: "http://localhost:5000/api" })
     </script>
-    <script src="https://chatcoachformation.skapa.design/widget.js"></script>
   </body>
 </html>
