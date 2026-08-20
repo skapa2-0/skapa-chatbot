@@ -1,0 +1,144 @@
+[
+  {
+    "id": "2e66a3eb-547e-4c71-91a4-339924f9c623",
+    "page_key": "formation-sur-mesure",
+    "page_name": "Formation sur mesure",
+    "is_active": true,
+    "sections": [
+      {
+        "key": "hero",
+        "name": "Hero",
+        "is_active": true
+      },
+      {
+        "key": "avantages",
+        "name": "Avantages",
+        "is_active": true
+      },
+      {
+        "key": "demarche",
+        "name": "Notre démarche",
+        "is_active": true
+      },
+      {
+        "key": "use_cases",
+        "name": "Cas d'usage",
+        "is_active": true
+      },
+      {
+        "key": "cta",
+        "name": "CTA",
+        "is_active": true
+      }
+    ],
+    "display_order": 3,
+    "updated_at": "2026-04-01T09:19:56.946604+00:00"
+  },
+  {
+    "id": "5372cafe-3246-4e02-bfab-38e361f679dd",
+    "page_key": "faq",
+    "page_name": "FAQ",
+    "is_active": true,
+    "sections": [],
+    "display_order": 4,
+    "updated_at": "2026-04-01T09:19:56.946604+00:00"
+  },
+  {
+    "id": "72967ecc-cf0c-4a8e-9501-2fcf6bb71de7",
+    "page_key": "home",
+    "page_name": "Accueil",
+    "is_active": true,
+    "sections": [
+      {
+        "key": "hero",
+        "name": "Hero",
+        "is_active": true
+      },
+      {
+        "key": "why_skapa",
+        "name": "Pourquoi Skapa",
+        "is_active": true
+      },
+      {
+        "key": "training_domains",
+        "name": "Domaines de formation",
+        "is_active": true
+      },
+      {
+        "key": "testimonials",
+        "name": "Témoignages",
+        "is_active": true
+      },
+      {
+        "key": "contact",
+        "name": "Formulaire de contact",
+        "is_active": true
+      },
+      {
+        "key": "qualiopi",
+        "name": "Qualiopi",
+        "is_active": true
+      }
+    ],
+    "display_order": 0,
+    "updated_at": "2026-04-01T09:19:56.946604+00:00"
+  },
+  {
+    "id": "80ffba28-87dc-44ca-8808-7c7cabe349f9",
+    "page_key": "coach",
+    "page_name": "Coach de formation",
+    "is_active": false,
+    "sections": [],
+    "display_order": -1,
+    "updated_at": "2026-04-10T14:46:03.451+00:00"
+  },
+  {
+    "id": "9e15c61f-28a6-4d2f-928a-5f003ae506df",
+    "page_key": "formation-ia",
+    "page_name": "Formation IA",
+    "is_active": true,
+    "sections": [
+      {
+        "key": "hero",
+        "name": "Hero",
+        "is_active": true
+      },
+      {
+        "key": "vision",
+        "name": "Notre vision",
+        "is_active": true
+      },
+      {
+        "key": "pourquoi",
+        "name": "Pourquoi se former",
+        "is_active": true
+      },
+      {
+        "key": "pour_qui",
+        "name": "Pour qui",
+        "is_active": true
+      },
+      {
+        "key": "formations_ia",
+        "name": "Nos formations IA",
+        "is_active": true
+      },
+      {
+        "key": "cta",
+        "name": "CTA",
+        "is_active": true
+      }
+    ],
+    "display_order": 2,
+    "updated_at": "2026-04-01T09:19:56.946604+00:00"
+  },
+  {
+    "id": "9f791362-7a0b-4365-84c2-aea8f0b54538",
+    "page_key": "catalogue",
+    "page_name": "Catalogue",
+    "is_active": true,
+    "sections": [],
+    "display_order": 1,
+    "updated_at": "2026-04-01T09:19:56.946604+00:00"
+  }
+]
