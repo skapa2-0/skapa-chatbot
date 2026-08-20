@@ -1,6 +1,6 @@
 # Skapa Chatbot
 
-Chatbot embarquable sur n'importe quel site. On lui donne une cible — une
+Chatbot embarquable en systeme RAG sur n'importe quel site. On lui donne une cible — une
 URL, une API, un fichier, une table — **il détecte tout seul de quel type de
 plateforme il s'agit**, en extrait le contenu, l'indexe dans une vraie base
 vectorielle, puis répond aux questions des visiteurs par RAG
