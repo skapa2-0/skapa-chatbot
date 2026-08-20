@@ -58,5 +58,8 @@ class Config:
     CHUNK_SIZE_TOKENS = int(os.getenv("CHUNK_SIZE_TOKENS", "300"))
     CHUNK_OVERLAP_TOKENS = int(os.getenv("CHUNK_OVERLAP_TOKENS", "40"))
 
-    # Origines autorisées à interroger l'API depuis le widget (ex: sites clients)
-    ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*")
+    # Origines autorisées à interroger l'API depuis le widget (ex: sites clients).
+    # Découpé sur les virgules : flask-cors traite une chaîne comme UNE seule
+    # origine, donc "https://a.com,https://b.com" ne matcherait jamais rien.
+    _ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").strip()
+    ALLOWED_ORIGINS = "*" if _ORIGINS == "*" else [o.strip() for o in _ORIGINS.split(",") if o.strip()]
