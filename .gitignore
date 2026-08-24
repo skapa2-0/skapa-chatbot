@@ -106,3 +106,6 @@ desktop.ini
 .ruff_cache/
 .pyre/
 .pytype/
+
+#--chromadb---
+chromadb/
