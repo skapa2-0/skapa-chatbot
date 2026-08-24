@@ -1,16 +1,13 @@
-# Scraper Skapa Chatbot
+# Scapa Academy Scraper
 
-Module de scraping générique : il peut cibler **n'importe quel site ou
-plateforme** (pas seulement Scapa Academy) et alimenter la base utilisée
-par le chatbot RAG.
+Module de scraping utilisé pour extraire les données du site **Scapa Academy** (formations, catégories, descriptions) et alimenter la base PostgreSQL utilisée par le chatbot RAG.
 
 ## Objectif
 
-Ce scraper récupère le contenu du site cible (défini via
-`SCRAPER_TARGET_URL` ou passé à l'API) afin de :
+Ce scraper récupère les données réelles et à jour du catalogue Scapa Academy afin de :
 
-- Peupler la table `documents` (contenu texte + URL source)
-- Servir de base à la recherche par similarité utilisée par le chatbot
+- Peupler la table `formations` en base PostgreSQL
+- Générer les embeddings utilisés par le chatbot pour répondre aux questions des utilisateurs
 - Garder les données synchronisées via un rafraîchissement périodique
 
 ## Stack
@@ -27,8 +24,10 @@ Ce scraper récupère le contenu du site cible (défini via
 scraper/
 ├── __init__.py
 ├── spider.py       # navigation et récupération des pages HTML
-├── parser.py       # extraction et nettoyage des données
-└── scheduler.py    # rafraîchissement périodique
+├── parser.py        # extraction et nettoyage des données
+├── scheduler.py      # rafraîchissement périodique
+└── tests/
+    └── test_scraper.py
 ```
 
 ## Prérequis
@@ -51,15 +50,8 @@ SCRAPER_USER_AGENT=ScapaChatbotBot/1.0
 
 ### Lancer un scraping manuel
 
-Via l'endpoint admin (voir plus bas), ou en Python :
-
-```python
-from scraper.spider import fetch_pages
-from scraper.parser import parse_page
-
-pages = fetch_pages("https://exemple.com")
-for url, html in pages:
-    print(parse_page(url, html))
+```bash
+python -m scraper.spider --once
 ```
 
 ### Lancer le scraping planifié
@@ -77,10 +69,10 @@ Authorization: Bearer <admin_token>
 
 ## Fonctionnement
 
-1. **`spider.py`** parcourt les pages du site cible (même domaine que l'URL de départ).
-2. **`parser.py`** extrait le titre et le texte utile de chaque page, en nettoyant le HTML parasite (scripts, nav, footer...).
-3. Les données sont écrites ou mises à jour (`upsert`) dans la table `documents` via SQLAlchemy, en évitant les doublons grâce à un `external_id` (empreinte de l'URL).
-4. Le chatbot (`app/api_agent.py`) cherche ensuite, à chaque question, les documents les plus proches par similarité de mots-clés, puis les envoie comme contexte à Claude pour générer la réponse.
+1. **`spider.py`** parcourt les pages du catalogue Scapa Academy (liste de formations + pages de détail).
+2. **`parser.py`** extrait les champs utiles (titre, description, catégorie, durée, niveau, prix, URL source) et nettoie le HTML/texte parasite.
+3. Les données sont écrites ou mises à jour (`upsert`) dans la table `formations` via SQLAlchemy, en évitant les doublons grâce à un `external_id` stable.
+4. Un job séparé (`embedding_service`) génère ensuite les embeddings sur les nouvelles/mises à jour de formations, stockés dans `formation_embeddings` (pgvector).
 
 ## Bonnes pratiques suivies
 

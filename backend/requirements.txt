@@ -6,8 +6,6 @@ Flask-Cors==4.0.1
 gunicorn==22.0.0
 
 # --- Base de données ---
-# SQLite fonctionne par défaut (aucune installation requise, cf DATABASE_URL).
-# psycopg2/pgvector servent uniquement si vous passez sur PostgreSQL en production.
 SQLAlchemy==2.0.31
 Flask-SQLAlchemy==3.1.1
 psycopg2-binary==2.9.9
@@ -17,19 +15,10 @@ alembic==1.13.2
 # --- Config / env ---
 python-dotenv==1.0.1
 
-# --- Scraping / extraction multi-formats ---
+# --- Scraping ---
 beautifulsoup4==4.12.3
 requests==2.32.3
-# Playwright : rendu JavaScript des sites en SPA (React/Vue/Angular).
-# Après l'install : `playwright install chromium`
 playwright==1.45.0
-# pypdf : extraction du texte des sources PDF
-pypdf==4.3.1
-
-# --- RAG : chunking, base vectorielle, tokenizer ---
-langchain-text-splitters==1.1.2
-chromadb==1.5.9
-tiktoken==0.14.0
 
 # --- Planification ---
 APScheduler==3.10.4
