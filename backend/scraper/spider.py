@@ -121,7 +121,7 @@ def crawl_with_playwright(start_url, max_pages=MAX_PAGES, max_depth=MAX_DEPTH):
                 continue
 
             try:
-                page.goto(url, timeout=15000, wait_until="networkidle")
+                page.goto(url, timeout=25000, wait_until="networkidle")
             except Exception as exc:
                 print(f"[spider-js] echec {url}: {exc}")
                 failed += 1
