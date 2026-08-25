@@ -29,6 +29,9 @@ des visiteurs en s'appuyant uniquement sur ces informations (RAG).
   `all-MiniLM-L6-v2`), pas besoin de clé API pour ça.
 - Seule la génération de la réponse finale passe par **Claude** (clé
   `ANTHROPIC_API_KEY` obligatoire pour `/chat`).
+- Une petite base **SQLite** (`METADATA_DB`, indépendante de Chroma) trace
+  chaque page scrapée (url, titre, date, nombre de chunks). Elle sert de
+  journal/traçabilité et est interrogeable via `/api/documents`.
 
 ## Structure du projet
 
@@ -36,8 +39,9 @@ des visiteurs en s'appuyant uniquement sur ces informations (RAG).
 skapa-chatbot/
 ├── backend/
 │   ├── app/
-│   │   ├── api_agent.py      # API Flask : /, /chat, /api/scrape/run
-│   │   └── chroma_client.py  # accès partagé à la base Chroma
+│   │   ├── api_agent.py      # API Flask : /, /chat, /api/documents, /api/scrape/run
+│   │   ├── chroma_client.py  # accès partagé à la base Chroma
+│   │   └── metadata.py       # base SQLite de traçabilité (pages scrapées)
 │   ├── scraper/
 │   │   ├── spider.py         # parcourt le site (requests+BS4, ou Playwright)
 │   │   ├── parser.py         # nettoie le HTML + découpe en chunks

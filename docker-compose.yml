@@ -24,6 +24,7 @@ services:
       # Le dossier Chroma DOIT vivre dans /data, le seul dossier persistant
       # du conteneur. Ailleurs, l'index disparaîtrait à chaque rebuild.
       CHROMA_DIR: /data/chroma_db
+      METADATA_DB: /data/metadata.db
     volumes:
       - skapa-data:/data
 

@@ -24,6 +24,7 @@ from anthropic import Anthropic
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 from app.chroma_client import get_collection  # noqa: E402
+from app.metadata import get_recent_pages  # noqa: E402
 
 load_dotenv()
 
@@ -99,6 +100,19 @@ def chat():
     )
 
     return jsonify({"reply": reply_text, "sources_used": len(documents)})
+
+
+@app.route("/api/documents", methods=["GET"])
+def list_documents():
+    """
+    Expose le jeu de données (métadonnées des pages indexées) pour
+    qu'un autre composant puisse l'exploiter directement, sans passer
+    par le chatbot. Requête SQL d'extraction sur la base SQLite de
+    métadonnées (voir app/metadata.py).
+    """
+    limit = request.args.get("limit", default=50, type=int)
+    pages = get_recent_pages(limit=limit)
+    return jsonify({"count": len(pages), "documents": pages})
 
 
 @app.route("/api/scrape/run", methods=["POST"])
