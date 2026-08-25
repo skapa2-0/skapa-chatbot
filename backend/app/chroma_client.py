@@ -13,7 +13,7 @@ import os
 import chromadb
 
 CHROMA_DIR = os.environ.get("CHROMA_DIR", "./chroma_db")
-COLLECTION_NAME = os.environ.get("CHROMA_COLLECTION", "skapa_knowledge")
+COLLECTION_NAME = os.environ.get("CHROMA_COLLECTION", "web_knowledge")
 
 _client = None
 _collection = None
