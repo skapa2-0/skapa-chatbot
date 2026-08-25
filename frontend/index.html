@@ -1,16 +1,19 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Démo widget Skapa Chatbot</title>
-  </head>
-  <body>
-    <h1 style="font-family: sans-serif">Site de démonstration</h1>
-    <p style="font-family: sans-serif">Le widget de chat apparaît en bas à droite.</p>
-    <script type="module" src="/src/main.jsx"></script>
-    <script>
-      // En mode dev, main.jsx s'auto-monte avec les valeurs par défaut.
-      // Pour tester manuellement : window.SkapaChatbot.init({ apiUrl: "http://localhost:5000/api" })
-    </script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <title>Démo widget Skapa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+  <h1>Page de démo</h1>
+  <p>Le widget de chat apparaît en bas à droite. Ceci simule n'importe quel site où tu colles le script.</p>
+
+  <script
+    src="./skapa-widget.js"
+    data-api-url="http://localhost:8000/chat"
+    data-title="Assistant Skapa"
+    data-color="#1f6feb"
+  ></script>
+</body>
 </html>

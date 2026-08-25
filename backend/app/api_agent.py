@@ -1,52 +1,124 @@
-"""Agent RAG (Retrieval-Augmented Generation).
-
-1) `vectorstore.search` retrouve, via ChromaDB, les chunks les plus proches
-   sémantiquement de la question (recherche vectorielle, pas juste des
-   mots-clés en commun), éventuellement restreints à un `site_id`.
-2) Ces chunks servent de contexte à Claude, qui rédige la réponse finale.
-
-Le pipeline est indépendant de la plateforme d'origine des données : que le
-contenu vienne d'un crawl HTML, d'une API JSON, de Shopify ou d'un PDF, il
-est arrivé dans Chroma sous la même forme.
 """
+API du chatbot Skapa.
+
+Deux routes utiles :
+  GET  /                 -> health check
+  POST /chat              -> pose une question, reçoit une réponse basée
+                             sur les infos scrapées (RAG simple)
+  POST /api/scrape/run    -> relance le scraping manuellement (protégé)
+
+Tout est volontairement simple : pas de framework en plus de Flask,
+pas de queue, pas de worker séparé.
+"""
+
+import os
+import sys
+
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from dotenv import load_dotenv
 from anthropic import Anthropic
 
-from .config import Config
-from .vectorstore import search
+# Permet de faire "from scraper.xxx import yyy" même quand ce fichier
+# est lancé depuis backend/app/ (utile en local / gunicorn).
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-_client = Anthropic(api_key=Config.ANTHROPIC_API_KEY) if Config.ANTHROPIC_API_KEY else None
+from app.chroma_client import get_collection  # noqa: E402
 
-_SYSTEM_PROMPT = (
-    "Tu es l'assistant virtuel intégré à un site web. Réponds aux questions des "
-    "visiteurs UNIQUEMENT à partir du contexte fourni ci-dessous. Si la réponse "
-    "n'y figure pas, dis-le clairement et invite l'utilisateur à contacter le site. "
-    "Reste concis, clair et amical."
-)
+load_dotenv()
+
+app = Flask(__name__)
+
+# ALLOWED_ORIGINS : un seul domaine (flask-cors ne gère pas une liste
+# séparée par des virgules). Mets "*" en dev, ton domaine en prod.
+ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "*")
+CORS(app, resources={r"/*": {"origins": ALLOWED_ORIGINS}})
+
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
+CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6")
+ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN")
+
+claude = Anthropic(api_key=ANTHROPIC_API_KEY) if ANTHROPIC_API_KEY else None
 
 
-def answer(question: str, site_id: str | None = None) -> dict:
-    """Pipeline complet : retrieve (Chroma) puis generate (Claude). Retourne {answer, sources}."""
-    hits = search(question, top_k=Config.TOP_K, site_id=site_id)
-
-    if not hits:
-        return {
-            "answer": "Je n'ai pas trouvé d'information à ce sujet dans les données indexées pour l'instant.",
-            "sources": [],
+@app.route("/", methods=["GET"])
+def health():
+    collection = get_collection()
+    return jsonify(
+        {
+            "status": "ok",
+            "message": "Chatbot API is running",
+            "chunks_in_db": collection.count(),
         }
-
-    context = "\n\n---\n\n".join(f"Source : {hit['source_url']}\n{hit['text']}" for hit in hits)
-    sources = sorted({hit["source_url"] for hit in hits})
-
-    if not _client:
-        # Pas de clé API configurée : on renvoie le meilleur extrait plutôt que de planter.
-        return {"answer": hits[0]["text"], "sources": sources}
-
-    message = _client.messages.create(
-        model=Config.ANTHROPIC_MODEL,
-        max_tokens=500,
-        system=_SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": f"Contexte :\n{context}\n\nQuestion : {question}"}],
     )
-    text = "".join(block.text for block in message.content if block.type == "text")
 
-    return {"answer": text, "sources": sources}
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.get_json(silent=True) or {}
+    user_message = data.get("message")
+
+    if not user_message:
+        return jsonify({"error": "Missing 'message' field"}), 400
+
+    if claude is None:
+        return jsonify({"error": "ANTHROPIC_API_KEY is not configured on the server"}), 500
+
+    collection = get_collection()
+
+    # 1. On cherche les passages les plus proches de la question dans Chroma.
+    results = collection.query(query_texts=[user_message], n_results=5)
+    documents = results.get("documents", [[]])[0]
+    metadatas = results.get("metadatas", [[]])[0]
+
+    if documents:
+        context_blocks = []
+        for doc, meta in zip(documents, metadatas):
+            source = meta.get("url", "source inconnue") if meta else "source inconnue"
+            context_blocks.append(f"[Source: {source}]\n{doc}")
+        context = "\n\n---\n\n".join(context_blocks)
+    else:
+        context = "(Aucune information trouvée dans la base pour l'instant.)"
+
+    system_prompt = (
+        "Tu es l'assistant du site. Réponds UNIQUEMENT à partir du "
+        "contexte fourni ci-dessous. Si l'information n'y est pas, "
+        "dis clairement que tu ne sais pas, ne l'invente pas.\n\n"
+        f"CONTEXTE:\n{context}"
+    )
+
+    response = claude.messages.create(
+        model=CLAUDE_MODEL,
+        max_tokens=1000,
+        system=system_prompt,
+        messages=[{"role": "user", "content": user_message}],
+    )
+
+    reply_text = "".join(
+        block.text for block in response.content if block.type == "text"
+    )
+
+    return jsonify({"reply": reply_text, "sources_used": len(documents)})
+
+
+@app.route("/api/scrape/run", methods=["POST"])
+def run_scrape():
+    """Relance le scraping + l'indexation à la demande (protégé par token)."""
+    if not ADMIN_TOKEN:
+        return jsonify({"error": "ADMIN_TOKEN is not configured on the server"}), 500
+
+    auth_header = request.headers.get("Authorization", "")
+    if auth_header != f"Bearer {ADMIN_TOKEN}":
+        return jsonify({"error": "Unauthorized"}), 401
+
+    # Import différé pour ne pas charger playwright/bs4 au démarrage de l'API
+    # si on ne s'en sert pas tout de suite.
+    from scraper.pipeline import run_pipeline
+
+    result = run_pipeline()
+    return jsonify(result)
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host="0.0.0.0", port=port, debug=True)

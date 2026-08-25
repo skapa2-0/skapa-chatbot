@@ -1,38 +1,40 @@
-"""Rafraîchissement périodique des données (APScheduler).
-
-Réutilise l'ingestion universelle : la cible peut donc être un site HTML,
-une API JSON, un sitemap, WordPress, Shopify, un CSV... sans changer ce
-fichier. `SCRAPER_TARGET_URL` vide et `SUPABASE_*` renseigné -> la synchro
-Supabase est prise automatiquement.
 """
-from apscheduler.schedulers.background import BackgroundScheduler
+Rafraîchissement périodique : relance le pipeline de scraping toutes les
+SCRAPER_INTERVAL_HOURS heures.
 
-from app import create_app
-from app.config import Config
-from app.universal_ingest import ingest
+A lancer comme un PROCESSUS SÉPARÉ de l'API (pas dans le même process
+gunicorn), par exemple :
+
+    python -m scraper.scheduler
+
+Important : ce process ne doit pas tourner en même temps qu'un autre
+process qui écrit dans le même dossier Chroma en mode persistant
+(Chroma ne supporte pas deux écrivains simultanés sur le même dossier).
+En prod, préfère un cron qui appelle /api/scrape/run (voir docker-compose.yml).
+"""
+
+import os
+import time
+
+from apscheduler.schedulers.blocking import BlockingScheduler
+
+from scraper.pipeline import run_pipeline
+
+INTERVAL_HOURS = float(os.environ.get("SCRAPER_INTERVAL_HOURS", 24))
 
 
-def run_scrape_job() -> None:
-    app = create_app()
-    with app.app_context():
-        report = ingest(Config.SCRAPER_TARGET_URL)
+def main():
+    scheduler = BlockingScheduler()
+    scheduler.add_job(run_pipeline, "interval", hours=INTERVAL_HOURS, next_run_time=None)
 
-        if not report["ok"]:
-            print(f"Ingestion ignorée : {report['reason']}")
-            return
+    print(f"[scheduler] scraping toutes les {INTERVAL_HOURS}h. Premier run maintenant...")
+    run_pipeline()  # premier run immédiat
 
-        print(
-            f"Ingestion terminée ({report['source_type']}) : "
-            f"{report['documents']} documents, {report['created']} créés, {report['updated']} mis à jour."
-        )
-
-
-def start_scheduler() -> BackgroundScheduler:
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(run_scrape_job, "interval", hours=Config.SCRAPER_INTERVAL_HOURS)
-    scheduler.start()
-    return scheduler
+    try:
+        scheduler.start()
+    except (KeyboardInterrupt, SystemExit):
+        pass
 
 
 if __name__ == "__main__":
-    run_scrape_job()
+    main()

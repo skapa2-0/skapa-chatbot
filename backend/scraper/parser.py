@@ -1,69 +1,73 @@
-"""Extrait et nettoie le contenu textuel utile d'une page HTML.
-
-En plus du texte visible, on récupère les données structurées JSON-LD
-(`<script type="application/ld+json">`) que la plupart des plateformes
-(WordPress, Shopify, PrestaShop, sites e-commerce...) publient pour le SEO :
-elles contiennent souvent l'information la plus exploitable de la page
-(prix, dates, horaires, auteur, notes) sous une forme déjà propre.
 """
-import json
+Parser ultra simple :
+  1. clean_html()  -> retire script/style/nav/footer, ne garde que le texte
+  2. chunk_text()  -> découpe le texte en petits blocs pour l'embedding
+"""
+
+import os
 
 from bs4 import BeautifulSoup
 
-from app.config import Config
-
-# Balises de mise en page, sans contenu informatif pour le chatbot.
-_NOISE_TAGS = ["script", "style", "nav", "footer", "header", "noscript", "svg", "form", "aside"]
+CHUNK_SIZE = int(os.environ.get("SCRAPER_CHUNK_SIZE", 800))       # caracteres
+CHUNK_OVERLAP = int(os.environ.get("SCRAPER_CHUNK_OVERLAP", 100))  # caracteres
 
 
-def html_to_text(html: str) -> str:
-    """HTML -> texte lisible, espaces normalisés. Tolère un fragment ou une page entière."""
-    if not html:
-        return ""
-
-    soup = BeautifulSoup(html, "html.parser")
-    for tag in soup(_NOISE_TAGS):
-        tag.decompose()
-
-    return " ".join(soup.get_text(separator=" ").split())
-
-
-def extract_jsonld(soup: BeautifulSoup) -> str:
-    """Aplatit les blocs JSON-LD de la page en lignes "clé: valeur"."""
-    from app.extractors import flatten
-
-    lines: list[str] = []
-    for block in soup.find_all("script", attrs={"type": "application/ld+json"}):
-        raw = block.string or block.get_text() or ""
-        try:
-            payload = json.loads(raw)
-        except (json.JSONDecodeError, TypeError):
-            continue
-        lines.extend(flatten(payload))
-
-    return "\n".join(lines)
-
-
-def parse_page(url: str, html: str, site_id: str | None = None, source_type: str = "html") -> dict | None:
-    """Retourne un document prêt à être indexé, ou None si la page n'a rien d'utile."""
-    from app.extractors import make_doc
-
-    site_id = site_id or Config.DEFAULT_SITE_ID
+def clean_html(html):
+    """Transforme une page HTML brute en texte propre et lisible."""
     soup = BeautifulSoup(html, "html.parser")
 
-    # Le JSON-LD est lu avant le nettoyage, puisqu'il vit dans une balise <script>.
-    structured = extract_jsonld(soup)
-
-    for tag in soup(_NOISE_TAGS):
+    for tag in soup(["script", "style", "nav", "footer", "header", "noscript"]):
         tag.decompose()
 
-    title = soup.title.string.strip() if soup.title and soup.title.string else url
-    if soup.h1 and soup.h1.get_text(strip=True):
-        title = title or soup.h1.get_text(strip=True)
+    title = soup.title.string.strip() if soup.title and soup.title.string else ""
 
-    text = " ".join(soup.get_text(separator=" ").split())
-    content = f"{title}\n{text}"
-    if structured:
-        content = f"{content}\n\nDonnées structurées :\n{structured}"
+    text = soup.get_text(separator="\n")
+    lines = [line.strip() for line in text.splitlines()]
+    clean_lines = [line for line in lines if line]  # retire les lignes vides
+    text = "\n".join(clean_lines)
 
-    return make_doc(site_id, source_type, url, title, content, seed=url)
+    return title, text
+
+
+def chunk_text(text, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
+    """Découpe un texte long en morceaux qui se chevauchent un peu,
+    pour ne pas couper une idée en plein milieu."""
+    if not text:
+        return []
+
+    chunks = []
+    start = 0
+    while start < len(text):
+        end = start + chunk_size
+        chunks.append(text[start:end])
+        start = end - overlap  # on recule un peu pour garder du contexte
+
+    return chunks
+
+
+def parse_page(url, html):
+    """Prend une page scrapée et retourne une liste de chunks prêts à indexer."""
+    title, text = clean_html(html)
+    chunks = chunk_text(text)
+
+    return [
+        {
+            "id": f"{url}#{i}",
+            "text": chunk,
+            "metadata": {"url": url, "title": title, "chunk_index": i},
+        }
+        for i, chunk in enumerate(chunks)
+    ]
+
+
+if __name__ == "__main__":
+    # Test rapide : python -m scraper.parser
+    import requests
+
+    target = os.environ.get("SCRAPER_TARGET_URL", "https://skapa-academy.com")
+    response = requests.get(target, timeout=15)
+    result = parse_page(target, response.text)
+    print(f"{len(result)} chunks generes depuis {target}")
+    if result:
+        print("--- premier chunk ---")
+        print(result[0]["text"][:300])

@@ -1,31 +1,25 @@
-#!/usr/bin/env bash
-# Lance le backend Flask et build le widget React.
+#!/bin/bash
+# Lancement en local, sans Docker.
+# Usage : ./start.sh
+
 set -e
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/backend"
 
-echo "==> Backend"
-cd backend
-if [ ! -d venv ]; then
+if [ ! -d "venv" ]; then
+  echo "Creation de l'environnement virtuel..."
   python3 -m venv venv
 fi
+
 source venv/bin/activate
-pip install -r requirements.txt --quiet
-[ -f .env ] || cp .env.example .env
-export FLASK_APP=run.py
-python run.py &
-BACKEND_PID=$!
-cd ..
 
-echo "==> Widget (frontend)"
-cd frontend
-npm install --silent
-npm run build
-cd ..
+echo "Installation des dependances..."
+pip install -q -r requirements.txt
 
-echo ""
-echo "Backend en cours d'exécution sur http://localhost:5000 (PID $BACKEND_PID)"
-echo "Widget buildé : frontend/dist/skapa-widget.js"
-echo "Ctrl+C pour arrêter."
+if [ ! -f ".env" ]; then
+  echo "Aucun .env trouve, copie de .env.example -> pense a le remplir !"
+  cp ../.env.example .env
+fi
 
-wait $BACKEND_PID
+echo "Demarrage de l'API sur http://localhost:8000"
+python -m app.api_agent

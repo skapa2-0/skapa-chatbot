@@ -1,0 +1,61 @@
+# Stack complète : l'API Flask (RAG + Chroma) + le widget servi en statique.
+#
+#   docker compose up -d --build     # construire et démarrer
+#   docker compose logs -f api       # suivre les logs de l'API
+#   docker compose down              # arrêter (le volume skapa-data survit)
+#   docker compose down -v           # ATTENTION : supprime aussi l'index Chroma
+#
+# Une fois démarré :
+#   API     -> http://localhost:8000/
+#   Widget  -> http://localhost:8080/skapa-widget.js
+
+services:
+  api:
+    build: ./backend
+    image: skapa-chatbot-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      # Clés et réglages (ANTHROPIC_API_KEY, ADMIN_TOKEN, ALLOWED_ORIGINS...).
+      # Ce fichier n'est jamais copié dans l'image, il est lu au démarrage.
+      - ./backend/.env
+    environment:
+      # Le dossier Chroma DOIT vivre dans /data, le seul dossier persistant
+      # du conteneur. Ailleurs, l'index disparaîtrait à chaque rebuild.
+      CHROMA_DIR: /data/chroma_db
+    volumes:
+      - skapa-data:/data
+
+  widget:
+    build: ./frontend
+    image: skapa-chatbot-widget
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+
+  # ---------------------------------------------------------------------
+  # Rafraîchissement périodique des sources (scraper/scheduler.py).
+  #
+  # Volontairement désactivé par défaut : ce service ouvrirait un second
+  # processus sur le même dossier Chroma que l'API, ce que le mode
+  # persistant ne supporte pas. Pour de l'ingestion planifiée, préférer
+  # un cron sur l'hôte qui appelle l'API (l'écriture reste dans le
+  # processus de l'API) :
+  #
+  #   0 3 * * *  curl -fsS -X POST http://localhost:8000/api/scrape/run \
+  #                -H "Authorization: Bearer $ADMIN_TOKEN"
+  #
+  # scheduler:
+  #   build: ./backend
+  #   command: ["python", "-m", "scraper.scheduler"]
+  #   env_file: [./backend/.env]
+  #   environment:
+  #     CHROMA_DIR: /data/chroma_db
+  #   volumes:
+  #     - skapa-data:/data
+  # ---------------------------------------------------------------------
+
+volumes:
+  # À sauvegarder : contient l'index vectoriel (toute la base de connaissances).
+  skapa-data:
