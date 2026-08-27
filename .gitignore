@@ -1,0 +1,10 @@
+
+# Environnements virtuels
+venv/
+.venv/
+backend/venv/
+
+# Bases de données locales
+backend/chroma_db/
+backend/metadata.db
+*.db
