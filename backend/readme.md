@@ -161,3 +161,16 @@ Voir `.env.example` pour la liste complète et les valeurs par défaut.
   nécessaire pour les sites qui chargent leur contenu en JavaScript.
 - Pas de gestion de l'historique de conversation pour l'instant : chaque
   message envoyé à `/chat` est traité indépendamment.
+
+## Installation locale — Python
+
+Le lancement local utilise **Python 3.12** (Python 3.13 est accepte en fallback). Python 3.14 n'est pas utilise avec les versions de dependances actuellement pinnees, notamment `greenlet` et `pydantic-core`.
+
+Sur macOS avec Homebrew :
+
+```bash
+brew install python@3.12
+./start.sh
+```
+
+Si un ancien `backend/venv` a ete cree avec Python 3.14, `start.sh` le detecte et le recree automatiquement.
