@@ -33,7 +33,7 @@ ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "*")
 CORS(app, resources={r"/*": {"origins": ALLOWED_ORIGINS}})
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
-CLAUDE_MODEL      = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6")
+CLAUDE_MODEL      = os.environ.get("CLAUDE_MODEL", "claude-haiku-4-5")
 ADMIN_TOKEN       = os.environ.get("ADMIN_TOKEN")
 
 claude = Anthropic(api_key=ANTHROPIC_API_KEY) if ANTHROPIC_API_KEY else None
@@ -347,9 +347,23 @@ def chat():
         context = "(Aucune information trouvée dans la base pour l'instant.)"
 
     system_prompt = (
-        "Tu es un assistant. Réponds UNIQUEMENT à partir du contexte fourni. "
-        "Si l'information n'y est pas, dis clairement que tu ne sais pas.\n\n"
-        f"CONTEXTE:\n{context}"
+        "Tu es l'Assistant Skapa, le chatbot officiel de Skapa Academy.\n\n"
+        "Skapa Academy est un organisme de formation français certifié Qualiopi, "
+        "spécialisé en Design, Product Management et Intelligence Artificielle.\n\n"
+        "Tu réponds aux questions des visiteurs concernant :\n"
+        "- Les formations disponibles (Design, Product Management, IA)\n"
+        "- Les tarifs des formations\n"
+        "- Le financement via OPCO et autres dispositifs\n"
+        "- La certification Qualiopi\n"
+        "- Les modalités d'inscription\n\n"
+        "Règles absolues :\n"
+        "- Réponds TOUJOURS en français, de façon courte et professionnelle\n"
+        "- Utilise uniquement les informations du contexte fourni ci-dessous\n"
+        "- Si la réponse n'est pas dans le contexte, indique que tu ne disposes pas "
+        "de cette information et invite le visiteur à contacter Skapa Academy directement\n"
+        "- Si la question ne concerne pas Skapa Academy, refuse poliment et recentre "
+        "la conversation sur les sujets Skapa Academy\n\n"
+        f"CONTEXTE :\n{context}"
     )
 
     response = claude.messages.create(
