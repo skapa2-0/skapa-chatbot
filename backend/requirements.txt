@@ -6,7 +6,6 @@
 # --- Framework ---
 Flask==3.0.3
 Flask-Cors==4.0.1
-flask-swagger-ui==5.32.14
 
 # --- Serveur WSGI (prod) ---
 gunicorn==22.0.0

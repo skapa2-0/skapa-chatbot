@@ -16,7 +16,6 @@ from urllib.parse import urlparse
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from flask_swagger_ui import get_swaggerui_blueprint
 from dotenv import load_dotenv
 from anthropic import Anthropic
 
@@ -38,13 +37,6 @@ ADMIN_TOKEN       = os.environ.get("ADMIN_TOKEN")
 
 claude = Anthropic(api_key=ANTHROPIC_API_KEY) if ANTHROPIC_API_KEY else None
 
-# --- Swagger UI ---
-_swaggerui = get_swaggerui_blueprint(
-    "/docs",
-    "/openapi.json",
-    config={"app_name": "Chatbot API"},
-)
-app.register_blueprint(_swaggerui, url_prefix="/docs")
 
 
 @app.route("/openapi.json", methods=["GET"])
