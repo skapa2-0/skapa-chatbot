@@ -302,14 +302,16 @@ def openapi_spec():
 
 @app.route("/", methods=["GET"])
 def health():
-    collection = get_collection()
-    return jsonify(
-        {
-            "status": "ok",
-            "message": "Chatbot API is running",
-            "chunks_in_db": collection.count(),
-        }
-    )
+    return jsonify({"status": "ok", "message": "Chatbot API is running"})
+
+
+@app.route("/health/db", methods=["GET"])
+def health_db():
+    try:
+        chunks = get_collection().count()
+        return jsonify({"status": "ok", "chunks_in_db": chunks})
+    except Exception as e:
+        return jsonify({"status": "error", "detail": str(e)}), 500
 
 
 @app.route("/chat", methods=["POST"])
