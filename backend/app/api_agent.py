@@ -100,6 +100,15 @@ def openapi_spec():
                                             "description": "Restreindre la recherche à ce domaine (optionnel)",
                                             "example": "https://skapa-academy.com",
                                         },
+                                        "platform_name": {
+                                            "type": "string",
+                                            "description": (
+                                                "Nom lisible de la plateforme (optionnel). "
+                                                "S'il est absent, le nom est déduit automatiquement "
+                                                "depuis le domaine de site_url."
+                                            ),
+                                            "example": "Simplon",
+                                        },
                                     },
                                 },
                                 "examples": {
@@ -110,6 +119,13 @@ def openapi_spec():
                                         "value": {
                                             "message": "Quelles sont les formations ?",
                                             "site_url": "https://skapa-academy.com",
+                                        }
+                                    },
+                                    "marque blanche (nom explicite)": {
+                                        "value": {
+                                            "message": "Quelles sont les formations ?",
+                                            "site_url": "https://www.simplon.co",
+                                            "platform_name": "Simplon",
                                         }
                                     },
                                 },
@@ -125,6 +141,7 @@ def openapi_spec():
                                         "reply": "Voici les formations disponibles...",
                                         "sources_used": 3,
                                         "site_filter": "skapa-academy.com",
+                                        "platform_name": "Skapa Academy",
                                     }
                                 }
                             },
@@ -336,6 +353,15 @@ def health_db():
         return jsonify({"status": "error", "detail": str(e)}), 500
 
 
+def _default_platform_name(domain: str | None) -> str:
+    if not domain:
+        return "ce site"
+    name = domain.removeprefix("www.")
+    name = name.split(".")[0]
+    name = name.replace("-", " ").replace("_", " ")
+    return name.title()
+
+
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json(silent=True) or {}
@@ -352,6 +378,7 @@ def chat():
     # Filtrage par domaine si site_url fourni
     site_url = data.get("site_url")
     source_domain = urlparse(site_url).netloc if site_url else None
+    platform_name = data.get("platform_name") or _default_platform_name(source_domain)
 
     query_kwargs = {"query_texts": [user_message], "n_results": 5}
     if source_domain:
@@ -370,23 +397,17 @@ def chat():
     else:
         context = "(Aucune information trouvée dans la base pour l'instant.)"
 
+    domain_hint = f" ({source_domain})" if source_domain else ""
     system_prompt = (
-        "Tu es l'Assistant Skapa, le chatbot officiel de Skapa Academy.\n\n"
-        "Skapa Academy est un organisme de formation français certifié Qualiopi, "
-        "spécialisé en Design, Product Management et Intelligence Artificielle.\n\n"
-        "Tu réponds aux questions des visiteurs concernant :\n"
-        "- Les formations disponibles (Design, Product Management, IA)\n"
-        "- Les tarifs des formations\n"
-        "- Le financement via OPCO et autres dispositifs\n"
-        "- La certification Qualiopi\n"
-        "- Les modalités d'inscription\n\n"
+        f"Tu es l'assistant virtuel officiel du site {platform_name}{domain_hint}.\n\n"
         "Règles absolues :\n"
         "- Réponds TOUJOURS en français, de façon courte et professionnelle\n"
-        "- Utilise uniquement les informations du contexte fourni ci-dessous\n"
-        "- Si la réponse n'est pas dans le contexte, indique que tu ne disposes pas "
-        "de cette information et invite le visiteur à contacter Skapa Academy directement\n"
-        "- Si la question ne concerne pas Skapa Academy, refuse poliment et recentre "
-        "la conversation sur les sujets Skapa Academy\n\n"
+        "- Utilise UNIQUEMENT les informations du contexte fourni ci-dessous\n"
+        f"- Si la réponse n'est pas dans le contexte, indique que tu ne disposes pas "
+        f"de cette information et invite le visiteur à contacter {platform_name} directement\n"
+        f"- Si la question ne concerne visiblement pas {platform_name}, recentre poliment "
+        f"la conversation sur les sujets du site {platform_name}\n"
+        f"- Ne mentionne jamais une autre marque que {platform_name}\n\n"
         f"CONTEXTE :\n{context}"
     )
 
@@ -405,6 +426,7 @@ def chat():
         "reply": reply_text,
         "sources_used": len(documents),
         "site_filter": source_domain or "all",
+        "platform_name": platform_name,
     })
 
 
