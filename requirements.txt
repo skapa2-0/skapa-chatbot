@@ -31,3 +31,5 @@ pytest-flask==1.3.0
 
 # --- Securite / audit (dev uniquement, a lancer en CI) ---
 pip-audit==2.7.3
+
+request==2.32.3
