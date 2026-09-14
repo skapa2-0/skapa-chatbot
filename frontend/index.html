@@ -1,19 +1,41 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <title>Démo widget Skapa</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-</head>
-<body>
-  <h1>Page de démo</h1>
-  <p>Le widget de chat apparaît en bas à droite. Ceci simule n'importe quel site où tu colles le script.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assistant Skapa</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="chat-widget">
+      <div id="chatPanel" class="chat-panel">
+        <div class="chat-header">
+          <div class="chat-header__title">
+            <span>Assistant Skapa</span>
+            <span class="status-dot" aria-label="En ligne"></span>
+          </div>
+          <button id="closeBtn" class="chat-header__close" type="button" aria-label="Fermer">×</button>
+        </div>
 
-  <script
-    src="./skapa-widget.js"
-    data-api-url="http://localhost:8000/chat"
-    data-title="Assistant Skapa"
-    data-color="#1f6feb"
-  ></script>
-</body>
+        <div class="chat-body">
+          <div id="messages" class="messages"></div>
+
+          <div id="chips" class="chip-row" aria-label="Suggestions"></div>
+
+          <form id="chatForm" class="chat-input" novalidate>
+            <input id="messageInput" class="chat-input__field" type="text" placeholder="Pose ta question..." autocomplete="off" />
+            <button type="submit" class="chat-input__button">Envoyer</button>
+          </form>
+        </div>
+      </div>
+
+      <button id="chatToggle" class="chat-toggle" type="button" aria-label="Ouvrir le chat">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 18.5V7.2A2.2 2.2 0 0 1 8.2 5h7.6A2.2 2.2 0 0 1 18 7.2v5.6A2.2 2.2 0 0 1 15.8 15H9.7L6 18.5Z"></path>
+        </svg>
+      </button>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
 </html>
