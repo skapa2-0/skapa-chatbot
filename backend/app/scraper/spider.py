@@ -33,12 +33,11 @@ BROWSER_UA = (
 USER_AGENT = config.env("SCRAPER_USER_AGENT", BROWSER_UA)
 MAX_PAGES = config.env_int("SCRAPER_MAX_PAGES", 100)
 MAX_DEPTH = config.env_int("SCRAPER_MAX_DEPTH", 5)
-DELAY_SECONDS = config.env_float("SCRAPER_DELAY_SECONDS", 0.0)   # 0 = pas de pause (poli mais lent)
-REQUEST_TIMEOUT = config.env_float("SCRAPER_REQUEST_TIMEOUT", 10)  # réduit de 20s -> 10s
-PLAYWRIGHT_TIMEOUT = config.env_int("SCRAPER_PLAYWRIGHT_TIMEOUT", 15000)  # réduit de 30s -> 15s
-RESPECT_ROBOTS = config.env_bool("SCRAPER_RESPECT_ROBOTS", False)  # robots.txt = 1 requête de plus
+DELAY_SECONDS = config.env_float("SCRAPER_DELAY_SECONDS", 0.3)
+REQUEST_TIMEOUT = config.env_float("SCRAPER_REQUEST_TIMEOUT", 20)
+PLAYWRIGHT_TIMEOUT = config.env_int("SCRAPER_PLAYWRIGHT_TIMEOUT", 30000)
+RESPECT_ROBOTS = config.env_bool("SCRAPER_RESPECT_ROBOTS", True)
 USE_SITEMAP = config.env_bool("SCRAPER_USE_SITEMAP", True)
-MAX_WORKERS = config.env_int("SCRAPER_WORKERS", 5)  # pages téléchargées en parallèle
 
 SKIP_EXTENSIONS = (
     ".pdf", ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".ico", ".bmp",
@@ -67,7 +66,7 @@ def normalize_url(url):
         path = path.rstrip("/")
     query = urlencode(sorted(
         (k, v) for k, v in parse_qsl(parsed.query, keep_blank_values=True)
-        if not k.lower().startswith(TRACKING_PARAMS)
+        if not any(k.lower().startswith(p) for p in TRACKING_PARAMS)
     ))
     return urlunparse((parsed.scheme.lower(), parsed.netloc.lower(), path, "", query, ""))
 
@@ -105,6 +104,7 @@ def extract_links(html, base_url):
 class Robots:
     def __init__(self, start_url):
         self.parser = None
+        self.sitemaps = []  # instance attribute, not shared class-level mutable default
         if not RESPECT_ROBOTS:
             return
         p = urlparse(start_url)
@@ -116,17 +116,13 @@ class Robots:
                 rp.parse(resp.text.splitlines())
                 self.parser = rp
                 self.sitemaps = rp.site_maps() or []
-                return
         except requests.RequestException:
             pass
-        self.sitemaps = []
 
     def allowed(self, url):
         if self.parser is None:
             return True
         return self.parser.can_fetch(USER_AGENT, url)
-
-    sitemaps = []
 
 
 def discover_sitemap_urls(start_url, extra_sitemaps=(), limit=2000):
@@ -185,22 +181,16 @@ def _seed_queue(start_url, robots):
 
 def crawl(start_url, max_pages=MAX_PAGES, max_depth=MAX_DEPTH, progress=None):
     """
-    BFS concurrent (requests + BeautifulSoup, MAX_WORKERS threads).
-    Retourne (pages, pages_failed, urls_found_count).
+    BFS (requests + BeautifulSoup).
+    Retourne (pages, pages_failed, urls_found_count)
+    pages = [{"url", "html", "depth"}]
     """
-    import threading
-    from concurrent.futures import ThreadPoolExecutor, as_completed
-
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT,
                             "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8"})
-    # Adapte le pool de connexions TCP au nombre de workers
-    adapter = requests.adapters.HTTPAdapter(pool_connections=MAX_WORKERS,
-                                            pool_maxsize=MAX_WORKERS * 2)
-    session.mount("http://", adapter)
-    session.mount("https://", adapter)
 
     start_url = normalize_url(start_url)
+    # Résout la redirection initiale (http->https, domaine nu -> www…)
     try:
         start_url = normalize_url(_fetch(session, start_url).url)
     except requests.RequestException:
@@ -208,94 +198,51 @@ def crawl(start_url, max_pages=MAX_PAGES, max_depth=MAX_DEPTH, progress=None):
 
     robots = Robots(start_url)
     queue, sitemap_urls = _seed_queue(start_url, robots)
-
-    # État partagé entre threads (protégé par un verrou)
-    lock = threading.Lock()
-    visited = set()
-    pages = []
-    failed_count = [0]
+    visited, pages, failed = set(), [], 0
     all_urls_found = set(sitemap_urls)
 
-    def fetch_one(url, depth):
-        """Télécharge une URL et retourne (final_url, html, depth) ou None."""
+    while queue and len(pages) < max_pages:
+        url, depth = queue.popleft()
+        if url in visited or depth > max_depth:
+            continue
+        visited.add(url)
+        if not robots.allowed(url):
+            continue
+
         try:
             response = _fetch(session, url)
         except requests.RequestException as exc:
             print(f"[spider] echec {url}: {exc}")
-            return None, None, depth, True  # (url, html, depth, is_error)
+            failed += 1
+            continue
+
         final_url = normalize_url(response.url)
         if not same_domain(start_url, final_url):
-            return None, None, depth, False
+            continue  # redirection vers un autre site
+        if final_url != url:
+            if final_url in visited:
+                continue
+            visited.add(final_url)
         if "html" not in response.headers.get("Content-Type", "text/html"):
-            return None, None, depth, False
-        return final_url, response.text, depth, False
+            continue
 
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        futures = {}
+        html = response.text
+        pages.append({"url": final_url, "html": html, "depth": depth})
+        print(f"[spider] depth={depth} ok: {final_url}")
+        if progress:
+            progress(len(pages), final_url)
 
-        def submit_pending():
-            """Envoie en parallèle autant d'URLs que possible depuis la queue."""
-            while queue and (len(pages) + len(futures)) < max_pages:
-                url, depth = queue.popleft()
-                with lock:
-                    if url in visited or depth > max_depth:
-                        continue
-                    if not robots.allowed(url):
-                        continue
-                    visited.add(url)
-                fut = executor.submit(fetch_one, url, depth)
-                futures[fut] = (url, depth)
+        if depth < max_depth:
+            new_links = extract_links(html, final_url)
+            all_urls_found.update(new_links)
+            for link in new_links:
+                if link not in visited:
+                    queue.append((link, depth + 1))
 
-        submit_pending()
+        time.sleep(DELAY_SECONDS)
 
-        while futures:
-            done_futs = list(as_completed(futures, timeout=REQUEST_TIMEOUT + 2))
-            for fut in done_futs:
-                orig_url, depth = futures.pop(fut)
-                try:
-                    final_url, html, depth, is_err = fut.result()
-                except Exception as exc:
-                    print(f"[spider] exception {orig_url}: {exc}")
-                    failed_count[0] += 1
-                    submit_pending()
-                    continue
-
-                if is_err:
-                    failed_count[0] += 1
-                    submit_pending()
-                    continue
-
-                if final_url is None:
-                    submit_pending()
-                    continue
-
-                with lock:
-                    if final_url in visited and final_url != orig_url:
-                        submit_pending()
-                        continue
-                    visited.add(final_url)
-
-                pages.append({"url": final_url, "html": html, "depth": depth})
-                print(f"[spider] depth={depth} ok ({len(pages)}/{max_pages}): {final_url}")
-                if progress:
-                    progress(len(pages), final_url)
-
-                if depth < max_depth:
-                    new_links = extract_links(html, final_url)
-                    with lock:
-                        all_urls_found.update(new_links)
-                        for link in new_links:
-                            if link not in visited:
-                                queue.append((link, depth + 1))
-
-                if DELAY_SECONDS > 0:
-                    time.sleep(DELAY_SECONDS)
-
-                submit_pending()
-
-    print(f"[spider] {len(pages)} pages, {failed_count[0]} echecs, "
-          f"{len(all_urls_found)} URLs trouvees")
-    return pages, failed_count[0], len(all_urls_found)
+    print(f"[spider] {len(pages)} pages, {failed} echecs, {len(all_urls_found)} URLs trouvees")
+    return pages, failed, len(all_urls_found)
 
 
 def _launch_chromium(p):

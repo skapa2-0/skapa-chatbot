@@ -36,11 +36,12 @@ except ImportError:  # dépendance optionnelle
 
 
 def _title(soup):
+    # og:title est préféré : il est souvent plus lisible que le <title> (sans le nom de site répété)
     og = soup.find("meta", attrs={"property": "og:title"})
+    if og and og.get("content", "").strip():
+        return og["content"].strip()
     if soup.title and soup.title.get_text(strip=True):
         return soup.title.get_text(strip=True)
-    if og and og.get("content"):
-        return og["content"].strip()
     h1 = soup.find("h1")
     return h1.get_text(" ", strip=True) if h1 else ""
 

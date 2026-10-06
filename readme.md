@@ -1,157 +1,152 @@
-Skapa Chatbot
+# Skapa Chatbot
 
-Chatbot intégrable sur n'importe quel site ou plateforme web. Il scrape le site cible, découpe le contenu en morceaux ("chunks"), les stocke dans une base vectorielle Chroma DB (locale, embarquée), et répond aux questions des visiteurs en s'appuyant uniquement sur ces informations (RAG).
-Architecture
+Chatbot intégrable sur n'importe quel site. On saisit l'adresse d'un site, le
+backend le **scrape**, découpe le contenu en **chunks**, les stocke dans
+**ChromaDB**, et la bulle de chat répond aux questions **uniquement à partir
+du contenu de ce site** (RAG).
 
-┌─────────────┐   scrape    ┌──────────────┐   embeddings   ┌───────────┐
-│   Site à     │ ─────────▶ │ scraper/     │ ──────────────▶│ Chroma DB │
-│   indexer    │            │ spider+parser│                │ (fichiers)│
-└─────────────┘            └──────────────┘                 └─────┬─────┘
-                                                                    │
-┌─────────────┐   question  ┌──────────────┐   recherche          │
-│ Widget JS    │ ─────────▶ │ Flask API    │◀─────────────────────┘
-│ (sur ton     │◀───────────│ /chat        │──▶ Claude (Anthropic)
-│  site)       │  réponse   └──────────────┘
-└─────────────┘
+## Architecture
 
-    Chroma DB tourne en mode "embarqué" (PersistentClient) : pas de serveur à gérer, tout vit dans un dossier (CHROMA_DIR). Chaque collection.upsert(...) écrit directement dedans — c'est ce qui donne le comportement "la base se met à jour automatiquement dès qu'il y a une nouvelle info".
-    Les embeddings sont générés localement par Chroma (modèle all-MiniLM-L6-v2), pas besoin de clé API pour ça.
-    Seule la génération de la réponse finale passe par Claude (clé ANTHROPIC_API_KEY obligatoire pour /chat).
+```
+ Page de démo / widget                      Backend Flask (backend/)
+┌──────────────────────┐  POST /api/scrape/run  ┌──────────────────────────────────────┐
+│ « Analyser et adapter » ───────────────────▶ │ tâche de fond :                      │
+│   (suit la progression)◀── /api/scrape/status │  spider  -> requests / Playwright    │
+│                      │                        │  parser  -> trafilatura + chunks     │
+│ Bulle de chat        │  POST /chat            │  ingest  -> ChromaDB (par domaine)   │
+│   site_url + history ───────────────────────▶ │ recherche Chroma (filtre domaine)    │
+│                      │◀── réponse + sources ──│  -> LLM : Ollama (ou Claude)         │
+└──────────────────────┘                        └──────────────────────────────────────┘
+```
 
-Structure du projet
+- **Scraping** : `requests` pour les sites statiques ; **Playwright** (Chromium)
+  automatiquement pour les sites React/Vue/Next rendus en JavaScript. Suit les
+  redirections (`site.fr` → `www.site.fr`), lit `sitemap.xml`, respecte
+  `robots.txt`, ignore PDF/images et paramètres de tracking.
+- **Extraction** : **trafilatura** (meilleur extracteur open source de contenu
+  principal) + nettoyage BeautifulSoup (menus, bandeaux cookies, tableaux mis à
+  plat « cellule | cellule »). Les coordonnées du pied de page (téléphone,
+  email, adresse) sont indexées à part, une seule fois par site.
+- **Chunking** : découpe récursive (paragraphes → lignes → phrases → mots),
+  1000 caractères avec 150 de chevauchement, titre de la page en tête de chaque
+  chunk.
+- **ChromaDB** embarqué (`PersistentClient`, dossier `backend/chroma_db`).
+  Re-scraper un site **remplace** ses anciens chunks (pas de contenu périmé).
+- **Embeddings** : modèle multilingue **bge-m3** via Ollama s'il est installé
+  (bien meilleur en français), sinon modèle par défaut de Chroma.
+- **LLM** : Ollama en local (`llama3.2` par défaut) ou Claude via l'API
+  Anthropic (`LLM_PROVIDER=anthropic`, utile en production).
 
-skapa-chatbot/
-├── backend/
-│   ├── app/
-│   │   ├── api_agent.py      # API Flask : /, /chat, /api/scrape/run
-│   │   └── chroma_client.py  # accès partagé à la base Chroma
-│   ├── scraper/
-│   │   ├── spider.py         # parcourt le site (requests+BS4, ou Playwright)
-│   │   ├── parser.py         # nettoie le HTML + découpe en chunks
-│   │   ├── ingest.py         # écrit les chunks dans Chroma
-│   │   ├── pipeline.py       # enchaîne spider -> parser -> ingest
-│   │   ├── scheduler.py      # relance le pipeline périodiquement
-│   │   └── tests/
-│   ├── Dockerfile
-│   └── requirements.txt
-├── frontend/
-│   ├── skapa-widget.js       # widget de chat à coller sur ton site
-│   ├── index.html            # page de démo pour tester le widget
-│   └── Dockerfile
-├── .env.example
-├── docker-compose.yml
-├── Procfile / railway.json   # déploiement Railway
-└── start.sh                  # lancement local sans Docker
+## Démarrage rapide (local)
 
-Démarrage rapide (local, sans Docker)
+Prérequis : Python 3.12 (ou 3.13) et [Ollama](https://ollama.com).
 
-cp .env.example .env
-# remplis ANTHROPIC_API_KEY et ADMIN_TOKEN dans .env
+```bash
+# 1. Modèles Ollama
+ollama pull llama3.2      # génération des réponses
+ollama pull bge-m3        # embeddings multilingues (recommandé)
+ollama serve              # si Ollama ne tourne pas déjà
 
+# 2. Configuration
+cp .env.example backend/.env
+# -> choisir un ADMIN_TOKEN
+
+# 3. API (http://localhost:8000)
 ./start.sh
 
-L'API tourne sur http://localhost:8000.
+# 4. Page de démo (autre terminal) -> http://localhost:8080
+cd frontend && python3 -m http.server 8080
+```
 
-Dans un autre terminal, ouvre frontend/index.html dans un navigateur (ou python -m http.server 8080 dans le dossier frontend/) pour voir le widget.
-Démarrage avec Docker
+Sur la page : saisir l'adresse du site → **Analyser et adapter** (le token
+admin est demandé une fois) → la bulle s'ouvre et répond sur ce site.
+Le site analysé est mémorisé dans le navigateur.
 
-cp .env.example backend/.env
-# remplis backend/.env
+> En local uniquement, `SCRAPE_PUBLIC=true` dans `backend/.env` supprime la
+> demande de token.
 
+## Avec Docker
+
+```bash
+cp .env.example backend/.env    # puis le remplir
 docker compose up -d --build
+```
 
-    API : http://localhost:8000
-    Widget : http://localhost:8080/skapa-widget.js
+API : `http://localhost:8000` — démo : `http://localhost:8080`. Le conteneur
+joint l'Ollama de la machine hôte via `host.docker.internal`.
 
-Lancer le scraping
+## Lancer un scraping sans l'interface
 
-Manuellement, en local :
+```bash
+# en ligne de commande
+cd backend && python -m scraper.pipeline https://mon-site.fr
 
-cd backend
-python -m scraper.pipeline
-
-Via l'API (endpoint protégé) :
-
+# via l'API (asynchrone : renvoie un job_id)
 curl -X POST http://localhost:8000/api/scrape/run \
-  -H "Authorization: Bearer TON_ADMIN_TOKEN"
+  -H "Authorization: Bearer TON_ADMIN_TOKEN" -H "Content-Type: application/json" \
+  -d '{"url": "https://mon-site.fr"}'
+curl http://localhost:8000/api/scrape/status/<job_id>
 
-Automatiquement, en tâche de fond :
+# via l'API en attendant la fin (cron, scripts)
+curl -X POST http://localhost:8000/api/scrape/run \
+  -H "Authorization: Bearer TON_ADMIN_TOKEN" -H "Content-Type: application/json" \
+  -d '{"url": "https://mon-site.fr", "wait": true}'
+```
 
-cd backend
-python -m scraper.scheduler
+Rafraîchissement automatique : un cron qui appelle l'endpoint ci-dessus
+(recommandé), ou `python -m scraper.scheduler` (jamais en même temps que l'API
+sur le même dossier Chroma).
 
-Relance le pipeline toutes les SCRAPER_INTERVAL_HOURS heures (24 par défaut). À ne PAS lancer en même temps que l'API dans le même docker compose up (voir le commentaire dans docker-compose.yml) : deux processus ne peuvent pas écrire dans le même dossier Chroma persistant en même temps. Préfère un cron qui appelle /api/scrape/run.
-Intégrer le widget sur ton site
+Documentation interactive : `http://localhost:8000/docs`.
 
-Colle simplement cette balise avant </body> :
+## Intégrer le widget sur un site
 
+```html
 <script
   src="https://ton-domaine.com/skapa-widget.js"
-  data-api-url="https://ton-api.com/chat"
+  data-api-url="https://ton-api.com"
+  data-site-url="https://mon-site.fr"
   data-title="Assistant"
-  data-color="#1f6feb"
+  data-color="#5b3fd4"
 ></script>
+```
 
-Aucune dépendance, un seul fichier JS.
-Consulter / modifier ta base Chroma
+`data-site-url` limite les réponses au contenu de ce site (il doit avoir été
+analysé). Un seul fichier JS, sans dépendance.
 
-from app.chroma_client import get_collection
+## Déploiement (Railway)
 
-collection = get_collection()
-print(collection.count())          # nombre de chunks stockés
-collection.get(limit=5)             # voir quelques entrées
-collection.delete(where={"url": "https://exemple.com/page"})  # supprimer une page
+- La commande de démarrage utilise `backend/gunicorn.conf.py` : **1 worker +
+  8 threads**, timeout 300 s. Garder 1 worker (Chroma en mode fichier = un seul
+  processus écrivain ; suivi des scrapings en mémoire).
+- Railway ne fait pas tourner Ollama : utiliser `LLM_PROVIDER=anthropic` avec
+  `ANTHROPIC_API_KEY`, ou pointer `OLLAMA_BASE_URL` vers un serveur Ollama.
+- Monter un volume persistant et y placer `CHROMA_DIR` / `METADATA_DB`.
 
-Le dossier CHROMA_DIR (par défaut ./chroma_db) contient toute la base : tu peux le sauvegarder, le copier, ou le supprimer pour repartir de zéro.
-Variables d'environnement
+## Tests
 
-Voir .env.example pour la liste complète et les valeurs par défaut.
-Sécurité
+```bash
+cd backend && python -m pytest -q
+```
 
-    Ne jamais commiter .env (déjà dans .gitignore).
-    ANTHROPIC_API_KEY et ADMIN_TOKEN doivent rester secrets.
-    ALLOWED_ORIGINS : Flask-CORS ne gère qu'une seule origine ici — une liste séparée par des virgules ne fonctionnera pas telle quelle.
+Les tests tournent hors ligne (embeddings et LLM simulés, Chroma réel).
 
-Limites connues
+## Variables d'environnement
 
-    Si le site cible change sa structure HTML, les sélecteurs de parser.py/spider.py peuvent avoir besoin d'ajustements.
-    Le scraper Playwright (SCRAPER_USE_PLAYWRIGHT=true) est plus lent mais nécessaire pour les sites qui chargent leur contenu en JavaScript.
-    Pas de gestion de l'historique de conversation pour l'instant : chaque message envoyé à /chat est traité indépendamment.
+Voir `.env.example` (toutes les options sont commentées).
 
-About
+## Sécurité
 
-chatbot pour interface skapa academy
-Resources
-Readme
-Activity
-Custom properties
-Stars
-0 stars
-Watchers
-0 watching
-Forks
-0 forks
-Audit log
-Releases
-No releases published
-Create a new release
-Deployments
-3 (3)
+- Ne jamais commiter `.env` (dans `.gitignore`).
+- `/api/scrape/run` est protégé par `ADMIN_TOKEN` et refuse les adresses
+  internes (protection SSRF).
+- `ALLOWED_ORIGINS` accepte plusieurs domaines séparés par des virgules.
+- Les réponses du bot sont affichées sans `innerHTML` (pas de XSS).
 
-    caring-delight / production
-    yesterday
-    zesty-enthusiasm / production
-    yesterday
+## Limites connues
 
-Packages
-No packages published
-Publish your first package
-Contributors
-1 (1)
-
-    @asma-tbrk
-    asma-tbrk
-
-Languages
-
-    Python93.3%JavaScript3.9%C0.9%HTML0.8%C++0.7%Cython0.2%Other0.2%
+- Changer de modèle d'embedding crée une nouvelle collection : relancer
+  l'analyse des sites.
+- Les pages derrière une connexion (espace membre) ne sont pas accessibles.
+- Les sites protégés par un anti-bot agressif (Cloudflare « challenge »)
+  peuvent bloquer le scraping.

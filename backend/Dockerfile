@@ -17,4 +17,4 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["gunicorn", "app.api_agent:app", "--bind", "0.0.0.0:8000", "--chdir", "app/.."]
+CMD ["gunicorn", "app.api_agent:app", "--config", "gunicorn.conf.py"]

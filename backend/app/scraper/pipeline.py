@@ -54,20 +54,25 @@ def _precheck_is_spa(target_url):
 
 
 def _resolve_scheme(target_url):
-    """Le spider résout déjà les redirections http<->https.
-    On garde cette fonction uniquement pour les SSL errors franches."""
+    """https:// ajouté par défaut : si le site ne répond qu'en http, on bascule tout de suite.
+    Utilise HEAD (pas GET) pour ne pas télécharger le corps de la page."""
     if not target_url.startswith("https://"):
         return target_url
     try:
         requests.head(target_url, headers={"User-Agent": USER_AGENT},
-                      timeout=5, allow_redirects=True)
+                      timeout=10, allow_redirects=True)
         return target_url
-    except requests.exceptions.SSLError:
+    except (requests.exceptions.SSLError, requests.exceptions.ConnectionError):
         http_url = "http://" + target_url[len("https://"):]
-        print(f"[pipeline] SSL error -> {http_url}")
-        return http_url
+        try:
+            requests.head(http_url, headers={"User-Agent": USER_AGENT},
+                          timeout=10, allow_redirects=True)
+            print(f"[pipeline] le site ne répond pas en HTTPS -> {http_url}")
+            return http_url
+        except requests.RequestException:
+            return target_url
     except requests.RequestException:
-        return target_url  # laisse le spider gérer
+        return target_url
 
 
 def _crawl(target_url, max_pages, max_depth, progress):
@@ -99,6 +104,8 @@ def _crawl(target_url, max_pages, max_depth, progress):
 
 def _site_name(pages, titles):
     """Nom du site : og:site_name, sinon le segment de titre commun à plusieurs pages."""
+    if not pages:
+        return titles[0].split(" | ")[0].strip() if titles else ""
     soup = BeautifulSoup(pages[0]["html"], "html.parser")
     og = soup.find("meta", attrs={"property": "og:site_name"})
     if og and og.get("content", "").strip():

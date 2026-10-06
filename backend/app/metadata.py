@@ -1,63 +1,69 @@
 """
 Petite base SQLite qui trace les pages scrapées (métadonnées).
-Complètement indépendante de Chroma : Chroma garde le texte + les
-embeddings pour la recherche sémantique, SQLite garde juste un journal
-"quelle page, quand, combien de chunks" -> utile pour la traçabilité
-RGPD et pour prouver une vraie extraction SQL (C2) sur un modèle
-physique réel (C4), sans toucher à l'architecture Chroma existante.
+Indépendante de Chroma : Chroma garde le texte + les embeddings pour la
+recherche sémantique, SQLite garde un journal "quelle page, quand,
+combien de chunks" (traçabilité RGPD).
 """
 
-import os
 import sqlite3
+import threading
 from datetime import datetime, timezone
 
-METADATA_DB = os.environ.get("METADATA_DB", "./metadata.db")
+from app import config
+
+# Une connexion par fichier (avant : une seule connexion globale qui
+# ignorait db_path après le premier appel).
+_conns = {}
+_lock = threading.Lock()
+
+
+def _get_conn(db_path=None):
+    path = db_path or config.METADATA_DB
+    with _lock:
+        conn = _conns.get(path)
+        if conn is None:
+            conn = sqlite3.connect(path, check_same_thread=False)
+            conn.row_factory = sqlite3.Row
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS scraped_pages (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    url TEXT NOT NULL,
+                    title TEXT,
+                    scraped_at TEXT NOT NULL,
+                    nb_chunks INTEGER NOT NULL DEFAULT 0
+                )
+                """
+            )
+            conn.commit()
+            _conns[path] = conn
+        return conn
 
 
 def get_connection(db_path=None):
-    conn = sqlite3.connect(db_path or METADATA_DB)
-    conn.row_factory = sqlite3.Row
-    return conn
+    return _get_conn(db_path)
 
 
 def init_db(db_path=None):
-    """Modèle physique : une ligne = une page scrapée à un instant donné."""
-    conn = get_connection(db_path)
-    conn.execute(
-        """
-        CREATE TABLE IF NOT EXISTS scraped_pages (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            url TEXT NOT NULL,
-            title TEXT,
-            scraped_at TEXT NOT NULL,
-            nb_chunks INTEGER NOT NULL DEFAULT 0
-        )
-        """
-    )
-    conn.commit()
-    conn.close()
+    _get_conn(db_path)
 
 
 def log_scraped_page(url, title, nb_chunks, db_path=None):
-    """Import programmé (INSERT) à chaque page ingérée par le pipeline."""
-    init_db(db_path)
-    conn = get_connection(db_path)
+    conn = _get_conn(db_path)
+    # Ne pas tenir le verrou pendant le commit (bloque sinon tous les threads).
+    # sqlite3 avec check_same_thread=False est thread-safe en écriture sérialisée.
     conn.execute(
         "INSERT INTO scraped_pages (url, title, scraped_at, nb_chunks) VALUES (?, ?, ?, ?)",
         (url, title, datetime.now(timezone.utc).isoformat(), nb_chunks),
     )
     conn.commit()
-    conn.close()
 
 
 def get_recent_pages(limit=50, db_path=None):
-    """Requête SQL d'extraction (SELECT) -> preuve C2."""
-    init_db(db_path)
-    conn = get_connection(db_path)
+    conn = _get_conn(db_path)
     rows = conn.execute(
         "SELECT url, title, scraped_at, nb_chunks "
         "FROM scraped_pages ORDER BY scraped_at DESC LIMIT ?",
         (limit,),
     ).fetchall()
-    conn.close()
     return [dict(row) for row in rows]
