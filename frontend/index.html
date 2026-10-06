@@ -3,188 +3,168 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>novi · Assistant conversationnel</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap"
-    />
-    <link rel="stylesheet" href="./styles.css?v=20261006b" />
+    <title>Assistant Skapa</title>
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="page">
-      <!-- ====== Navigation ====== -->
-      <header class="nav" role="banner">
-        <div class="nav__inner">
-          <a class="brand" href="#" aria-label="novi, retour à l'accueil">
-            <span class="brand__mark" aria-hidden="true">
-              <svg viewBox="0 0 32 32" width="22" height="22">
-                <defs>
-                  <linearGradient id="novi-grad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#8b5cf6" />
-                    <stop offset="100%" stop-color="#5b2fd1" />
-                  </linearGradient>
-                </defs>
-                <path
-                  fill="url(#novi-grad)"
-                  d="M16 2.5c3.6 2.6 5.9 5.6 6.9 9 1 3.4.6 6.5-1.2 9.3-1.8 2.8-4.4 4.7-7.9 5.7-3.4-1-6-2.9-7.8-5.7-1.8-2.8-2.2-5.9-1.2-9.3 1-3.4 3.3-6.4 6.9-9 1-.7 2.3-.7 4.3 0Z"
-                />
-                <circle cx="16" cy="14" r="3.4" fill="#fff" />
-              </svg>
-            </span>
-            <span class="brand__name">novi</span>
-          </a>
 
-          <div class="nav__center">
-            <span class="nav__pill">Assistant conversationnel</span>
-          </div>
-
-          <nav class="nav__actions" aria-label="Actions principales">
-            <a class="btn btn--ghost" href="#configurer">Créer mon assistant</a>
-          </nav>
+    <!-- ── HERO SECTION ── -->
+    <section class="hero">
+      <div class="hero__content">
+        <div class="hero__eyebrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+          ASSISTANT CONVERSATIONNEL
         </div>
-      </header>
 
-      <!-- ====== Hero + Démo ====== -->
-      <main class="layout" id="top">
-        <section class="hero" aria-labelledby="hero-title">
-          <span class="badge">
-            <span class="badge__dot" aria-hidden="true"></span>
-            Assistant conversationnel
-          </span>
+        <h1 class="hero__heading">
+          Un accompagnement utile,
+          <span class="hero__heading--accent">au bon moment.</span>
+        </h1>
 
-          <h1 id="hero-title" class="hero__title">
-            Un accompagnement<br />
-            utile, <span class="text-grad">au bon moment.</span>
-          </h1>
+        <p class="hero__sub">
+          Transformez votre site en une conversation. L'assistant comprend vos contenus
+          et guide chaque visiteur vers la bonne réponse, naturellement.
+        </p>
 
-          <p class="hero__lede">
-            Transformez votre site en une conversation. Novi comprend vos
-            contenus et guide chaque visiteur vers la bonne réponse,
-            naturellement.
-          </p>
+        <div class="hero__demo-link">
+          <span class="live-dot"></span>
+          Démonstration interactive
+        </div>
+      </div>
 
-          <div class="hero__indicator" role="status" aria-live="polite">
-            <span class="hero__indicator-dot" aria-hidden="true"></span>
-            Démonstration interactive
-          </div>
-        </section>
-
-        <aside class="demo" aria-label="Démonstration">
-          <!-- ====== Carte de configuration ====== -->
-          <section
-            id="configurer"
-            class="config"
-            aria-labelledby="config-title"
-          >
-            <header class="config__head">
-              <div>
-                <h2 id="config-title" class="config__title">Connecter un site</h2>
-                <p class="config__subtitle">Personnalisation automatique</p>
-              </div>
-              <span class="config__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 1 0-7.07-7.07l-1 1" />
-                  <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 1 0 7.07 7.07l1-1" />
-                </svg>
-              </span>
-            </header>
-
-            <form class="url-field" id="siteForm" novalidate>
-              <label class="url-field__label" for="siteUrl">URL du site</label>
-              <div class="url-field__row">
-                <span class="url-field__icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
-                  </svg>
-                </span>
-                <input
-                  id="siteUrl"
-                  class="url-field__input"
-                  type="url"
-                  value="https://skapa-academy.fr"
-                  spellcheck="false"
-                  autocomplete="off"
-                />
-              </div>
-              <button type="submit" class="btn btn--primary btn--block" id="analyzeBtn">
-                Analyser et adapter
-              </button>
-            </form>
-
-            <div class="synced" aria-live="polite">
-              <div class="synced__row">
-                <div class="synced__check" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 12l5 5 11-12" />
-                  </svg>
-                </div>
-                <div class="synced__text">
-                  <span class="synced__label">Site synchronisé</span>
-                  <span class="synced__name">Skapa Academy</span>
-                </div>
-                <span class="pill pill--active">
-                  <span class="pill__dot" aria-hidden="true"></span>
-                  Actif
-                </span>
-              </div>
-
-              <div class="stats">
-                <div class="stat">
-                  <span class="stat__value">21</span>
-                  <span class="stat__label">pages analysées</span>
-                </div>
-                <div class="stat">
-                  <span class="stat__value">100%</span>
-                  <span class="stat__label">prêt à répondre</span>
-                </div>
-              </div>
-
-              <p class="synced__note">
-                Le ton, les couleurs et les réponses ont été adaptés à votre
-                marque.
-              </p>
-              <p class="synced__hint">
-                Novi évolue automatiquement avec le contenu du site.
-              </p>
+      <!-- ── CONNECT CARD ── -->
+      <div class="hero__card-wrap">
+        <div class="connect-card" id="connectCard">
+          <div class="connect-card__header">
+            <div class="connect-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             </div>
-          </section>
-        </aside>
-      </main>
-    </div>
+            <div>
+              <div class="connect-card__title">Connecter un site</div>
+              <div class="connect-card__sub">Personnalisation automatique</div>
+            </div>
+          </div>
 
-    <!-- ====== Chatbot flottant (restauré à l'identique) ====== -->
+          <label class="connect-card__label" for="siteUrlInput">Adresse du site</label>
+          <div class="connect-card__input-wrap">
+            <svg class="connect-card__input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <input
+              id="siteUrlInput"
+              class="connect-card__input"
+              type="url"
+              placeholder="https://skapa-academy.fr"
+              autocomplete="off"
+            />
+          </div>
+
+          <button id="analyseBtn" class="connect-card__btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+            Analyser et adapter
+          </button>
+
+          <p id="analyseProgress" class="connect-card__progress" aria-live="polite" hidden></p>
+          <p id="analyseError" class="connect-card__error" role="alert" hidden></p>
+
+          <!-- Status block (hidden until scrape completes) -->
+          <div id="siteStatus" class="site-status" hidden>
+            <div class="site-status__top">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Site synchronisé
+            </div>
+            <div class="site-status__site">
+              <div class="site-status__avatar" id="statusAvatar">S</div>
+              <div>
+                <div class="site-status__name" id="statusName">Skapa Academy</div>
+                <div class="site-status__url" id="statusUrl">skapa-academy.fr</div>
+              </div>
+              <div class="site-status__badge">● Actif</div>
+            </div>
+            <div class="site-status__stats">
+              <div class="site-status__stat">
+                <strong id="statPages">0</strong>
+                <span>pages analysées</span>
+              </div>
+              <div class="site-status__stat">
+                <strong id="statReady">100 %</strong>
+                <span>prêt à répondre</span>
+              </div>
+            </div>
+            <p class="site-status__note">
+              Le ton, les couleurs et les réponses ont été adaptés à votre site.
+            </p>
+          </div>
+
+          <div class="connect-card__footer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+            Le chatbot évolue automatiquement avec le contenu du site.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FLOATING CHAT WIDGET ── -->
     <div class="chat-widget">
-      <div id="chatPanel" class="chat-panel">
+      <div id="chatPanel" class="chat-panel" role="dialog" aria-label="Assistant virtuel" aria-modal="true">
         <div class="chat-header">
           <div class="chat-header__title">
-            <span>Assistant Skapa</span>
-            <span class="status-dot" aria-label="En ligne"></span>
+            <div class="chat-header__avatar" id="chatAvatar">S</div>
+            <div>
+              <div class="chat-header__name" id="chatName">Assistant Skapa</div>
+              <div class="chat-header__status">
+                <span class="status-dot" aria-hidden="true"></span>
+                En ligne
+              </div>
+            </div>
           </div>
-          <button id="closeBtn" class="chat-header__close" type="button" aria-label="Fermer">×</button>
+          <button id="closeBtn" class="chat-header__close" type="button" aria-label="Fermer le chat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
 
         <div class="chat-body">
-          <div id="messages" class="messages"></div>
+          <div id="messages" class="messages" aria-live="polite" aria-atomic="false"></div>
 
-          <div id="chips" class="chip-row" aria-label="Suggestions"></div>
+          <div id="chips" class="chip-row" aria-label="Suggestions rapides"></div>
 
           <form id="chatForm" class="chat-input" novalidate>
-            <input id="messageInput" class="chat-input__field" type="text" placeholder="Pose ta question..." autocomplete="off" />
-            <button type="submit" class="chat-input__button">Envoyer</button>
+            <input
+              id="messageInput"
+              class="chat-input__field"
+              type="text"
+              placeholder="Posez votre question…"
+              autocomplete="off"
+              aria-label="Votre message"
+            />
+            <button type="submit" class="chat-input__button" aria-label="Envoyer">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
           </form>
         </div>
       </div>
 
-      <button id="chatToggle" class="chat-toggle" type="button" aria-label="Ouvrir le chat">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 18.5V7.2A2.2 2.2 0 0 1 8.2 5h7.6A2.2 2.2 0 0 1 18 7.2v5.6A2.2 2.2 0 0 1 15.8 15H9.7L6 18.5Z"></path>
+      <button id="chatToggle" class="chat-toggle" type="button" aria-label="Ouvrir le chat" aria-expanded="false">
+        <svg class="chat-toggle__icon chat-toggle__icon--open" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+          <path d="M6 18.5V7.2A2.2 2.2 0 0 1 8.2 5h7.6A2.2 2.2 0 0 1 18 7.2v5.6A2.2 2.2 0 0 1 15.8 15H9.7L6 18.5Z"/>
+        </svg>
+        <svg class="chat-toggle__icon chat-toggle__icon--close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
       </button>
     </div>
 
-    <script src="./app.js?v=20261006b"></script>
+    <!-- Configuration : adresse de l'API (backend Flask) -->
+    <script>
+      // Par défaut : même hôte que la page, port 8000. Permet d'ouvrir le
+      // frontend depuis localhost OU depuis l'IP publique OVH sans changer
+      // de config. Peut être écrasé en définissant window.SKAPA_API_URL avant.
+      window.SKAPA_API_URL = window.SKAPA_API_URL
+        || `${location.protocol}//${location.hostname}:8000`;
+
+      // Token admin pré-rempli pour la démo (évite le prompt à chaque analyse).
+      // ⚠️ VISIBLE DANS LE SOURCE DE LA PAGE — n'utiliser que pour une démo.
+      // Pour la prod : retirer cette ligne et laisser le prompt faire son travail.
+      window.SKAPA_ADMIN_TOKEN = 'd565c633274e0bc299b2cdd98898271c1d63aebc8a50c3ae';
+    </script>
+    <script src="./app.js"></script>
   </body>
 </html>
