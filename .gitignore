@@ -15,3 +15,16 @@ backend/metadata.db
 .env.*.local
 backend/.env
 backend/backend/.env
+
+# Caches Python compilés
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs
+*.log
+
+# Configs locales d'outils
+.claude/
+.vscode/
+.idea/
