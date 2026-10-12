@@ -154,11 +154,13 @@
 
     <!-- Configuration : adresse de l'API (backend Flask) -->
     <script>
-      // Par défaut : même hôte que la page, port 8000. Permet d'ouvrir le
-      // frontend depuis localhost OU depuis l'IP publique OVH sans changer
-      // de config. Peut être écrasé en définissant window.SKAPA_API_URL avant.
-      window.SKAPA_API_URL = window.SKAPA_API_URL
-        || `${location.protocol}//${location.hostname}:8000`;
+      // - En HTTPS via domaine (chat.skapa.design) : même origin, Caddy route /chat et /api
+      // - En HTTP direct (localhost:8765 / IP:8765) : hostname + port 8000
+      window.SKAPA_API_URL = window.SKAPA_API_URL || (
+        (location.port === '' || location.port === '80' || location.port === '443')
+          ? `${location.protocol}//${location.host}`
+          : `${location.protocol}//${location.hostname}:8000`
+      );
 
       // Token admin pré-rempli pour la démo (évite le prompt à chaque analyse).
       // ⚠️ VISIBLE DANS LE SOURCE DE LA PAGE — n'utiliser que pour une démo.

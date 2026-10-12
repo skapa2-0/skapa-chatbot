@@ -55,6 +55,10 @@ echo "Installation des dépendances..."
 pip install -q --upgrade pip
 pip install -q -r requirements.txt
 
+# Dépendances du notebook benchmark.ipynb (optionnel mais pratique)
+echo "Installation des dépendances du notebook de benchmark..."
+pip install -q ipykernel python-dotenv pandas
+
 # Playwright Chromium (nécessaire pour les sites JS-rendus)
 echo "Vérification du navigateur Playwright..."
 playwright install chromium --quiet 2>/dev/null || true
@@ -71,15 +75,31 @@ set -a
 source .env
 set +a
 
-# ── Vérification Ollama ───────────────────────────────────────────────────────
+# ── Vérification des clés benchmark (optionnelles) ────────────────────────────
+echo ""
+echo "Clés API pour le benchmark :"
+for key in OLLAMA_API_KEY GROQ_API_KEY ANTHROPIC_API_KEY GEMINI_API_KEY; do
+  if [ -n "${!key}" ]; then
+    echo "  $key : ✓"
+  else
+    echo "  $key : ✗ (manquante — provider ignoré dans benchmark.ipynb)"
+  fi
+done
+echo ""
+
+# ── Vérification Ollama (+ pull auto du modèle si dispo) ──────────────────────
 if [ "${LLM_PROVIDER:-ollama}" != "anthropic" ]; then
   OLLAMA_URL="${OLLAMA_BASE_URL:-http://localhost:11434}"
   OLLAMA_URL="${OLLAMA_URL%% *}"
-  if ! curl -s -m 3 "$OLLAMA_URL/api/tags" >/dev/null 2>&1; then
+  OLLAMA_MODEL_NAME="${OLLAMA_MODEL:-llama3.2:1b}"
+  if curl -s -m 3 "$OLLAMA_URL/api/tags" >/dev/null 2>&1; then
+    echo "Ollama OK sur $OLLAMA_URL — pull de $OLLAMA_MODEL_NAME si besoin..."
+    ollama pull "$OLLAMA_MODEL_NAME" 2>&1 | tail -1 || true
+  else
     echo ""
     echo "⚠️  ATTENTION : Ollama ne répond pas sur $OLLAMA_URL"
     echo "   → Lance 'ollama serve' dans un autre terminal"
-    echo "   → Puis 'ollama pull ${OLLAMA_MODEL:-llama3.2}'"
+    echo "   → Puis 'ollama pull $OLLAMA_MODEL_NAME'"
     echo ""
   fi
 fi
