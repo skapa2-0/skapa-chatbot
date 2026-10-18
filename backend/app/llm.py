@@ -5,6 +5,8 @@ LLM_PROVIDER=ollama     -> OLLAMA_BASE_URL / OLLAMA_MODEL
 LLM_PROVIDER=anthropic  -> ANTHROPIC_API_KEY / ANTHROPIC_MODEL
 """
 
+import os
+
 import requests
 
 from app import config
@@ -15,10 +17,33 @@ class LLMError(RuntimeError):
 
 
 def _ollama_chat(system_prompt, messages):
+    msgs = [{"role": "system", "content": system_prompt}, *messages]
+
+    # Essai cloud (gpt-oss:20b, think=low, 15 s). Fallback silencieux sur local.
+    api_key = os.getenv("OLLAMA_API_KEY")
+    if api_key:
+        try:
+            resp = requests.post(
+                "https://ollama.com/api/chat",
+                headers={"Authorization": f"Bearer {api_key}"},
+                json={
+                    "model": "gpt-oss:20b",
+                    "stream": False,
+                    "think": "low",
+                    "messages": msgs,
+                    "options": {"temperature": 0.2, "num_ctx": config.OLLAMA_NUM_CTX},
+                },
+                timeout=15,
+            )
+            resp.raise_for_status()
+            return resp.json()["message"]["content"].strip()
+        except (requests.RequestException, KeyError, ValueError):
+            pass  # bascule sur le local
+
     payload = {
-        "model": config.OLLAMA_MODEL,
+        "model": "llama3.2:1b",
         "stream": False,
-        "messages": [{"role": "system", "content": system_prompt}, *messages],
+        "messages": msgs,
         # num_ctx : Ollama tronque à 2048 tokens par défaut -> le contexte RAG
         # était coupé et le modèle « oubliait » les infos du site.
         "options": {"temperature": 0.2, "num_ctx": config.OLLAMA_NUM_CTX},
@@ -35,8 +60,8 @@ def _ollama_chat(system_prompt, messages):
         raise LLMError("Ollama met trop de temps à répondre (modèle trop lourd pour la machine ?).")
     if resp.status_code == 404:
         raise LLMError(
-            f"Modèle Ollama '{config.OLLAMA_MODEL}' introuvable. "
-            f"Lancez : ollama pull {config.OLLAMA_MODEL}"
+            "Modèle Ollama 'llama3.2:1b' introuvable. "
+            "Lancez : ollama pull llama3.2:1b"
         )
     try:
         resp.raise_for_status()
