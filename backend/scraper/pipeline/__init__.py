@@ -6,7 +6,8 @@ import time
 from app import config
 from app.metadata import log_scraped_page
 from scraper.ingest import replace_domain_chunks
-from scraper.parser import extract_site_info, parse_page, site_info_chunks
+from scraper.parser import (boilerplate_lines, extract_site_info, parse_page,
+                            prepare_page_text, site_info_chunks)
 from scraper.pipeline.engine_select import pick_engine_and_crawl as _crawl, resolve_scheme
 from scraper.pipeline.site_name import site_name
 from scraper.spider import domain_key, normalize_url
@@ -17,10 +18,17 @@ DEFAULT_MAX_DEPTH = config.env_int("SCRAPER_MAX_DEPTH", 5)
 
 
 def _collect_chunks(pages):
-    """Parse chaque page et déduplique les chunks identiques entre pages."""
+    """Parse chaque page et déduplique les chunks identiques entre pages.
+    Avant le chunking, retire les lignes répétées sur une majorité de pages
+    (tagline / intro commune) pour que l'embedding voie le contenu propre
+    à chaque page."""
+    pre_texts = [prepare_page_text(p["url"], p["html"])[1] for p in pages]
+    boiler = boilerplate_lines(pre_texts)
+
     all_chunks, per_page, seen_texts = [], [], set()
     for page in pages:
-        chunks = parse_page(page["url"], page["html"], depth=page["depth"])
+        chunks = parse_page(page["url"], page["html"], depth=page["depth"],
+                            strip_lines=boiler)
         kept = []
         for c in chunks:
             body = c["text"].split("\n", 1)[-1]

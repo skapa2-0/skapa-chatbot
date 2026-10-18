@@ -14,17 +14,30 @@ from bs4 import BeautifulSoup
 
 from scraper.parser.chunks import chunk_id, chunk_text
 from scraper.parser.contact import extract_site_info
-from scraper.parser.html_clean import clean_html, description_of
+from scraper.parser.html_clean import boilerplate_lines, clean_html, description_of
 from scraper.spider import domain_key
 
 
-def parse_page(url, html, depth=0):
-    """Chunks prêts à indexer. Chaque chunk commence par le titre de la page :
-    l'embedding « sait » de quelle page il vient, ce qui améliore la recherche."""
+def prepare_page_text(url, html):
+    """Texte prêt à chunker : (titre, texte principal + description injectée).
+    Exposé pour que le pipeline multi-pages puisse pré-calculer le texte et
+    détecter le boilerplate avant appel à parse_page."""
     title, text = clean_html(html, url=url)
     description = description_of(BeautifulSoup(html or "", "html.parser"))
     if description and description[:60] not in text:
         text = f"{description}\n\n{text}" if text else description
+    return title, text
+
+
+def parse_page(url, html, depth=0, strip_lines=None):
+    """Chunks prêts à indexer. Chaque chunk commence par le titre de la page :
+    l'embedding « sait » de quelle page il vient, ce qui améliore la recherche.
+
+    `strip_lines` : set de lignes boilerplate (menu, tagline répétée…) à retirer
+    du texte avant le chunking."""
+    title, text = prepare_page_text(url, html)
+    if strip_lines:
+        text = "\n".join(ln for ln in text.splitlines() if ln.strip() not in strip_lines)
 
     source_domain = domain_key(url)
     scraped_at = datetime.now(timezone.utc).isoformat()

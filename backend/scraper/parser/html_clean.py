@@ -2,6 +2,7 @@
 Si trafilatura renvoie trop peu de texte, on retombe sur BeautifulSoup."""
 
 import re
+from collections import Counter
 
 from bs4 import BeautifulSoup
 
@@ -89,6 +90,21 @@ def bs4_text(soup):
     for block in root.find_all(["p", "li", "tr", "div", "section", "article", "dd", "dt"]):
         block.insert_after("\n")
     return clean_lines(root.get_text(separator="\n"))
+
+
+def boilerplate_lines(texts, min_pages=3, min_ratio=0.6, min_length=15):
+    """Lignes présentes sur ≥ `min_ratio` des pages ET ≥ `min_length` caractères.
+    Capture l'en-tête commun du site (ex. tagline répétée sur toutes les pages)
+    sans toucher aux labels courts (« Durée », « Format »…), qui portent du sens."""
+    if not texts:
+        return set()
+    counts = Counter()
+    for t in texts:
+        for line in {ln.strip() for ln in t.splitlines() if ln.strip()}:
+            counts[line] += 1
+    threshold = max(min_pages, int(min_ratio * len(texts)))
+    return {line for line, n in counts.items()
+            if n >= threshold and len(line) >= min_length}
 
 
 def clean_html(html, url=None):

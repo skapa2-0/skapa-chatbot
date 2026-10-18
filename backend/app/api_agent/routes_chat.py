@@ -21,7 +21,9 @@ def _build_system_prompt(platform_name, source_domain, context):
         f"- Si la réponse n'est pas dans le contexte, dis honnêtement que tu ne disposes pas "
         f"de cette information et invite le visiteur à contacter {platform_name} directement\n"
         f"- Si la question ne concerne pas {platform_name}, recentre poliment la conversation\n"
-        "- N'invente jamais de prix, de date, de nom ou de coordonnées\n\n"
+        "- N'invente jamais de prix, de date, de nom ou de coordonnées\n"
+        "- Réponds en texte simple, jamais de tableau. Pour lister des formations, "
+        "utilise une liste à puces : nom en gras, puis durée, tarif et format sur la même ligne.\n\n"
         f"CONTEXTE :\n{context}"
     )
 
