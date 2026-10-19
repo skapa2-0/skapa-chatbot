@@ -1,5 +1,7 @@
 # Skapa Chatbot
 
+> Dernière mise à jour : 2026-10-19
+
 Chatbot intégrable sur n'importe quel site. On saisit l'adresse d'un site, le
 backend le **scrape**, découpe le contenu en **chunks**, les stocke dans
 **ChromaDB**, et la bulle de chat répond aux questions **uniquement à partir
@@ -27,6 +29,9 @@ du contenu de ce site** (RAG).
   principal) + nettoyage BeautifulSoup (menus, bandeaux cookies, tableaux mis à
   plat « cellule | cellule »). Les coordonnées du pied de page (téléphone,
   email, adresse) sont indexées à part, une seule fois par site.
+- **PDF & OCR** : les PDFs sont extraits via **PyMuPDF** ; les pages sans texte
+  sélectionnable sont traitées par OCR (Tesseract) pour extraire le contenu
+  des images scannées.
 - **Chunking** : découpe récursive (paragraphes → lignes → phrases → mots),
   1000 caractères avec 150 de chevauchement, titre de la page en tête de chaque
   chunk.
