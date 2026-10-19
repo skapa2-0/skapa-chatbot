@@ -1,8 +1,9 @@
 """
-Génération de la réponse : Ollama (local, défaut) ou Anthropic Claude.
+Génération de la réponse : Ollama (local, défaut), Anthropic Claude, ou Groq.
 
 LLM_PROVIDER=ollama     -> OLLAMA_BASE_URL / OLLAMA_MODEL
 LLM_PROVIDER=anthropic  -> ANTHROPIC_API_KEY / ANTHROPIC_MODEL
+LLM_PROVIDER=groq       -> GROQ_API_KEY / GROQ_MODEL
 """
 
 import os
@@ -106,14 +107,52 @@ def _anthropic_chat(system_prompt, messages):
         raise LLMError(f"Impossible de joindre l'API Anthropic : {exc}")
 
 
+def _groq_chat(system_prompt, messages):
+    if not config.GROQ_API_KEY:
+        raise LLMError("GROQ_API_KEY manquante (LLM_PROVIDER=groq).")
+    msgs = [{"role": "system", "content": system_prompt}, *messages]
+    try:
+        resp = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {config.GROQ_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": config.GROQ_MODEL,
+                "messages": msgs,
+                "temperature": 0.2,
+                "max_tokens": 1024,
+            },
+            timeout=config.LLM_TIMEOUT,
+        )
+        resp.raise_for_status()
+        return resp.json()["choices"][0]["message"]["content"].strip()
+    except requests.exceptions.HTTPError as exc:
+        detail = ""
+        try:
+            detail = resp.json().get("error", {}).get("message", "")
+        except ValueError:
+            pass
+        raise LLMError(f"Erreur API Groq : {exc} {detail}".strip())
+    except (KeyError, IndexError, ValueError) as exc:
+        raise LLMError(f"Réponse Groq inattendue : {exc}")
+    except requests.RequestException as exc:
+        raise LLMError(f"Impossible de joindre l'API Groq : {exc}")
+
+
 def chat(system_prompt, messages):
     """messages : [{"role": "user"|"assistant", "content": str}, ...] (finit par user)."""
     if config.LLM_PROVIDER == "anthropic":
         return _anthropic_chat(system_prompt, messages)
+    if config.LLM_PROVIDER == "groq":
+        return _groq_chat(system_prompt, messages)
     return _ollama_chat(system_prompt, messages)
 
 
 def describe():
     if config.LLM_PROVIDER == "anthropic":
         return f"anthropic:{config.ANTHROPIC_MODEL}"
+    if config.LLM_PROVIDER == "groq":
+        return f"groq:{config.GROQ_MODEL}"
     return f"ollama:{config.OLLAMA_MODEL}"

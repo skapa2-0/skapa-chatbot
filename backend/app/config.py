@@ -58,13 +58,15 @@ METADATA_DB = resolve_path(env("METADATA_DB", "./metadata.db"))
 COLLECTION_BASE = env("CHROMA_COLLECTION", "web_knowledge")
 
 # ── LLM ──────────────────────────────────────────────────────────────────────
-# ollama (défaut, local) | anthropic (utile en prod : Railway ne fait pas tourner Ollama)
+# ollama (défaut, local) | anthropic | groq
 LLM_PROVIDER = env("LLM_PROVIDER", "ollama").lower()
 OLLAMA_BASE_URL = env("OLLAMA_BASE_URL", "http://localhost:11434").rstrip("/")
 OLLAMA_MODEL = env("OLLAMA_MODEL", "llama3.2")
 OLLAMA_NUM_CTX = env_int("OLLAMA_NUM_CTX", 8192)
 ANTHROPIC_API_KEY = env("ANTHROPIC_API_KEY")
 ANTHROPIC_MODEL = env("ANTHROPIC_MODEL", "claude-haiku-4-5-20251001")
+GROQ_API_KEY = env("GROQ_API_KEY")
+GROQ_MODEL = env("GROQ_MODEL", "openai/gpt-oss-20b")
 LLM_TIMEOUT = env_float("LLM_TIMEOUT", 180)
 
 # ── Embeddings ───────────────────────────────────────────────────────────────

@@ -105,12 +105,12 @@ if [ "${LLM_PROVIDER:-ollama}" != "anthropic" ]; then
 fi
 
 # ── Démarrer le frontend (serveur HTTP statique) ──────────────────────────────
-FRONTEND_PORT=3000
+FRONTEND_PORT=8765
 echo "Démarrage du frontend sur http://localhost:$FRONTEND_PORT ..."
 
 "$PYTHON_BIN" -m http.server "$FRONTEND_PORT" \
   --directory "$SCRIPT_DIR/frontend" \
-  --bind 127.0.0.1 \
+  --bind 0.0.0.0 \
   >"$SCRIPT_DIR/frontend.log" 2>&1 &
 FRONTEND_PID=$!
 
