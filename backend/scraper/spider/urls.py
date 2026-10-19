@@ -4,7 +4,7 @@ from urllib.parse import parse_qsl, urlencode, urljoin, urlparse, urlunparse
 
 from bs4 import BeautifulSoup
 
-from scraper.spider.const import SKIP_EXTENSIONS, SKIP_PATH_PARTS, TRACKING_PARAMS
+from scraper.spider.const import PDF_ENABLED, SKIP_EXTENSIONS, SKIP_PATH_PARTS, TRACKING_PARAMS
 
 
 def domain_key(url_or_netloc):
@@ -37,6 +37,8 @@ def is_crawlable(url):
     if parsed.scheme not in ("http", "https"):
         return False
     path = parsed.path.lower()
+    if not PDF_ENABLED and path.endswith(".pdf"):
+        return False
     if path.endswith(SKIP_EXTENSIONS):
         return False
     return not any(part in path for part in SKIP_PATH_PARTS)

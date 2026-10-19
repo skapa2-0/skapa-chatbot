@@ -16,8 +16,11 @@ RESPECT_ROBOTS = config.env_bool("SCRAPER_RESPECT_ROBOTS", False)
 USE_SITEMAP = config.env_bool("SCRAPER_USE_SITEMAP", True)
 MAX_WORKERS = config.env_int("SCRAPER_WORKERS", 5)
 
+PDF_ENABLED = config.env_bool("SCRAPER_PDF_ENABLED", True)
+PDF_MAX_MB = config.env_int("SCRAPER_PDF_MAX_MB", 10)
+
 SKIP_EXTENSIONS = (
-    ".pdf", ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".ico", ".bmp",
+    ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".ico", ".bmp",
     ".zip", ".rar", ".7z", ".gz", ".tar", ".mp4", ".mp3", ".avi", ".mov", ".webm",
     ".wav", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".csv", ".json",
     ".xml", ".css", ".js", ".woff", ".woff2", ".ttf", ".eot", ".dmg", ".exe",

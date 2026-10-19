@@ -7,7 +7,9 @@ from bs4 import BeautifulSoup
 
 def site_name(pages, titles):
     """og:site_name, sinon le segment de titre commun à plusieurs pages."""
-    soup = BeautifulSoup(pages[0]["html"], "html.parser")
+    html_pages = [p for p in pages if "html" in p]
+    first_html = (html_pages or pages)[0].get("html", "")
+    soup = BeautifulSoup(first_html, "html.parser")
     og = soup.find("meta", attrs={"property": "og:site_name"})
     if og and og.get("content", "").strip():
         return og["content"].strip()

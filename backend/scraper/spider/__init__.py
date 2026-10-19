@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
 
+from scraper.parser.pdf import extract_pdf_text, is_pdf
 from scraper.spider.const import (
     DELAY_SECONDS, MAX_DEPTH, MAX_PAGES, MAX_WORKERS,
     REQUEST_TIMEOUT, USE_SITEMAP, USER_AGENT,
@@ -51,7 +52,15 @@ def crawl(start_url, max_pages=MAX_PAGES, max_depth=MAX_DEPTH, progress=None):
         final_url = normalize_url(response.url)
         if not same_domain(start_url, final_url):
             return None, None, depth, False
-        if "html" not in response.headers.get("Content-Type", "text/html"):
+        content_type = response.headers.get("Content-Type", "text/html")
+        if is_pdf(final_url, content_type):
+            pdf_title, pdf_text = extract_pdf_text(response.content, final_url)
+            if not pdf_text:
+                return None, None, depth, False
+            page = {"url": final_url, "depth": depth, "format": "pdf",
+                    "title": pdf_title, "text": pdf_text}
+            return final_url, page, depth, False
+        if "html" not in content_type:
             return None, None, depth, False
         return final_url, response.text, depth, False
 
@@ -87,11 +96,15 @@ def crawl(start_url, max_pages=MAX_PAGES, max_depth=MAX_DEPTH, progress=None):
                         submit_pending()
                         continue
                     visited.add(final_url)
-                pages.append({"url": final_url, "html": html, "depth": depth})
+                if isinstance(html, dict):
+                    # résultat PDF : déjà structuré, pas d'extraction de liens
+                    pages.append(html)
+                else:
+                    pages.append({"url": final_url, "html": html, "depth": depth})
                 print(f"[spider] depth={depth} ok ({len(pages)}/{max_pages}): {final_url}")
                 if progress:
                     progress(len(pages), final_url)
-                if depth < max_depth:
+                if depth < max_depth and isinstance(html, str):
                     new_links = extract_links(html, final_url)
                     with lock:
                         all_urls_found.update(new_links)

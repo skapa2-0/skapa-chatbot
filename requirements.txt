@@ -17,6 +17,8 @@ requests==2.32.3
 playwright==1.45.0
 # extraction du contenu principal (retire menus, cookies, blocs répétés)
 trafilatura==2.3.0
+# extraction de texte depuis les PDF
+pymupdf==1.28.2
 
 # --- Planification du re-scraping ---
 APScheduler==3.10.4

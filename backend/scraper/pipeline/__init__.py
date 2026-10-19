@@ -22,13 +22,18 @@ def _collect_chunks(pages):
     Avant le chunking, retire les lignes répétées sur une majorité de pages
     (tagline / intro commune) pour que l'embedding voie le contenu propre
     à chaque page."""
-    pre_texts = [prepare_page_text(p["url"], p["html"])[1] for p in pages]
+    html_pages = [p for p in pages if "html" in p]
+    pre_texts = [prepare_page_text(p["url"], p["html"])[1] for p in html_pages]
     boiler = boilerplate_lines(pre_texts)
 
     all_chunks, per_page, seen_texts = [], [], set()
     for page in pages:
-        chunks = parse_page(page["url"], page["html"], depth=page["depth"],
-                            strip_lines=boiler)
+        if page.get("format") == "pdf":
+            chunks = parse_page(page["url"], None, depth=page["depth"],
+                                text=page["text"], title=page.get("title", ""))
+        else:
+            chunks = parse_page(page["url"], page["html"], depth=page["depth"],
+                                strip_lines=boiler)
         kept = []
         for c in chunks:
             body = c["text"].split("\n", 1)[-1]
@@ -43,14 +48,16 @@ def _collect_chunks(pages):
 
 
 def _contact_info_chunks(pages, per_page):
-    """Chunks du bloc contact (accueil + page contact)."""
+    """Chunks du bloc contact (accueil + page contact). Ignore les PDF."""
+    html_pages = [p for p in pages if "html" in p]
     info_parts = []
-    for page in pages:
+    for page in html_pages:
         if page["depth"] == 0 or "contact" in page["url"].lower():
             info = extract_site_info(page["html"])
             if info and info not in info_parts:
                 info_parts.append(info)
-    title = site_name(pages, [t for _, t, _ in per_page])
+    sn_pages = html_pages or pages
+    title = site_name(sn_pages, [t for _, t, _ in per_page])
     return site_info_chunks(pages[0]["url"], "\n\n".join(info_parts), site_name=title), title
 
 

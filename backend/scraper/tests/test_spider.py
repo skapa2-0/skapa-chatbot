@@ -20,7 +20,7 @@ def test_normalize_url():
 
 def test_is_crawlable_skips_files_and_admin():
     assert is_crawlable("https://site.fr/formations")
-    assert not is_crawlable("https://site.fr/brochure.pdf")
+    assert is_crawlable("https://site.fr/brochure.pdf")   # PDF autorisé si PDF_ENABLED=True
     assert not is_crawlable("https://site.fr/wp-admin/x")
     assert not is_crawlable("mailto:a@b.fr")
 
@@ -32,7 +32,9 @@ def test_extract_links_keeps_internal_pages_only():
       <a href="mailto:x@site.fr">m</a> <a href="#top">top</a>
     """
     links = extract_links(html, "https://site.fr/")
-    assert links == {"https://site.fr/formations", "https://www.site.fr/tarifs"}
+    # /doc.pdf est maintenant gardé (PDF_ENABLED=True par défaut)
+    assert links == {"https://site.fr/formations", "https://www.site.fr/tarifs",
+                     "https://site.fr/doc.pdf"}
 
 
 def test_crawl_follows_redirect_to_www(monkeypatch):
@@ -56,6 +58,9 @@ def test_crawl_follows_redirect_to_www(monkeypatch):
     class FakeSession:
         def __init__(self):
             self.headers = {}
+
+        def mount(self, prefix, adapter):
+            pass
 
         def get(self, url, **kw):
             return Resp(url)
