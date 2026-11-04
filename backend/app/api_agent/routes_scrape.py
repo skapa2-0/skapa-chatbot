@@ -65,6 +65,39 @@ def run_scrape():
                     "already_running": not created}), 202
 
 
+@app.route("/api/scrape/start", methods=["POST"])
+def start_scrape():
+    """Frontend-facing endpoint — no client token required.
+
+    The ADMIN_TOKEN stays in the backend .env; the browser never sees it.
+    Allowed when SCRAPE_PUBLIC=true or ADMIN_TOKEN is set.
+    """
+    from app import config as _cfg
+
+    if not _cfg.SCRAPE_PUBLIC and not _cfg.ADMIN_TOKEN:
+        return jsonify({"error": "Scraping is not configured on this server"}), 503
+
+    data = request.get_json(silent=True) or {}
+    target_url, err, code = _parse_url(data)
+    if err:
+        return jsonify(err), code
+
+    job, created = jobs.start_scrape_job(
+        normalize_url(target_url),
+        max_pages=_int(data.get("max_pages")),
+        max_depth=_int(data.get("max_depth")),
+    )
+
+    if data.get("wait"):
+        job = jobs.wait_for(job["job_id"])
+        return jsonify({**(job.get("result") or {}), "job_id": job["job_id"],
+                        "status": job["status"], "error": job.get("error")}), \
+            (200 if job["status"] == "success" else 502)
+
+    return jsonify({**job, "status_url": f"/api/scrape/status/{job['job_id']}",
+                    "already_running": not created}), 202
+
+
 @app.route("/api/scrape/status/<job_id>", methods=["GET"])
 def scrape_status(job_id):
     job = jobs.get_job(job_id)

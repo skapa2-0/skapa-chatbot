@@ -39,7 +39,6 @@ const state = {
   // Site actif : fixé par l'intégration (window.SKAPA_SITE_URL) ou par la dernière analyse
   siteUrl: window.SKAPA_SITE_URL || store.get('skapa_site_url') || null,
   siteName: store.get('skapa_site_name') || null,
-  adminToken: window.SKAPA_ADMIN_TOKEN || store.get('skapa_admin_token', true) || '',
   history: [],          // [{role, content}] — derniers échanges envoyés au backend
   sending: false,
 };
@@ -68,10 +67,20 @@ const statPages = $('statPages');
 const statReady = $('statReady');
 
 const CHIPS = [
-  'Quelles sont les formations disponibles ?',
-  'Prix et tarifs',
-  'Disponibilités',
-  'Comment vous contacter ?',
+  { emoji: '🎓', label: 'Quelles sont les formations disponibles ?' },
+  { emoji: '💸', label: 'Prix et tarifs' },
+  { emoji: '📅', label: 'Disponibilités' },
+  { emoji: '📞', label: 'Comment vous contacter ?' },
+];
+
+// Petites phrases rigolotes pendant l'analyse d'un site
+const FUN_LOADING = [
+  'Je lis vos pages avec un café ☕',
+  'Je mémorise tout, promis 🧠',
+  'Je fouille dans les recoins 🔍',
+  'Presque fini, ne partez pas 🏃',
+  'J\'apprends votre jargon 📚',
+  'Je range tout ça bien proprement 🗂️',
 ];
 
 const BTN_IDLE_HTML = analyseBtn.innerHTML;
@@ -380,8 +389,8 @@ function renderChips() {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'chip';
-    btn.textContent = label;
-    btn.addEventListener('click', () => sendMessage(label));
+    btn.textContent = `${label.emoji} ${label.label}`;
+    btn.addEventListener('click', () => sendMessage(label.label));
     chipsWrap.appendChild(btn);
   }
 }
@@ -389,8 +398,8 @@ function renderChips() {
 function welcomeText() {
   const name = state.siteName || (state.siteUrl ? hostOf(state.siteUrl) : null);
   return state.siteUrl
-    ? `Bonjour, je suis **Ada**, l'assistante de ${name}.\n\nJe connais maintenant le site. Comment puis-je vous aider aujourd'hui ?`
-    : 'Bonjour ! Je suis votre assistant. Analysez d\'abord un site avec « Analyser et adapter », puis posez-moi vos questions.';
+    ? `Hello 👋 Je suis **Ada**, l'assistante de ${name}.\n\nJ'ai tout lu sur le site (oui, même les mentions légales 😅). Comment puis-je vous aider aujourd'hui ?`
+    : 'Hello 👋 Je suis votre assistant ! Donnez-moi un site à lire avec « Analyser et adapter », et je deviens incollable dessus 🤓';
 }
 
 /** Cartes d'actions proposées dès l'accueil (quand un site est analysé). */
@@ -544,11 +553,9 @@ function showProgress(msg) {
 }
 
 async function postScrape(url) {
-  const headers = { 'Content-Type': 'application/json' };
-  if (state.adminToken) headers.Authorization = `Bearer ${state.adminToken}`;
-  return fetch(`${API_URL}/api/scrape/run`, {
+  return fetch(`${API_URL}/api/scrape/start`, {
     method: 'POST',
-    headers,
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ url }),
   });
 }
@@ -573,8 +580,8 @@ async function pollJob(jobId) {
 
     if (job.status === 'running' || job.status === 'queued') {
       const n = job.pages_done || 0;
-      setBusy(true, n ? `Analyse… ${n} page${n > 1 ? 's' : ''}` : 'Analyse en cours…');
-      showProgress(job.current_url ? `Lecture : ${job.current_url}` : 'Démarrage du crawl…');
+      setBusy(true, n ? `Analyse… ${n} page${n > 1 ? 's' : ''} 📄` : 'Analyse en cours…');
+      showProgress(FUN_LOADING[Math.floor(Date.now() / 3600) % FUN_LOADING.length]);
       continue;
     }
     if (job.status === 'success') return job.result;
@@ -597,24 +604,7 @@ async function analyse() {
   showProgress('Connexion au site…');
 
   try {
-    let res = await postScrape(url);
-
-    // Le serveur exige le token admin : on le demande une seule fois
-    if (res.status === 401) {
-      const token = window.prompt(
-        'Token administrateur requis pour analyser un site (ADMIN_TOKEN du fichier backend/.env) :'
-      );
-      if (!token) throw new Error('Analyse annulée : token administrateur requis.');
-      state.adminToken = token.trim();
-      res = await postScrape(url);
-      if (res.status === 401) {
-        state.adminToken = '';
-        store.del('skapa_admin_token', true);
-        throw new Error('Token administrateur invalide.');
-      }
-      store.set('skapa_admin_token', state.adminToken, true);
-    }
-
+    const res = await postScrape(url);
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
 
@@ -624,6 +614,8 @@ async function analyse() {
     const name = result.site_title || nameFromDomain(hostOf(siteUrl));
     showSiteCard({ name, url: siteUrl, pages: result.pages_scraped });
     setActiveSite(siteUrl, name);
+    confetti();
+    showChatWidget({ teaserDelay: null });
     siteStatus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     if (!chatPanel.classList.contains('open')) openChat();
   } catch (err) {
@@ -647,12 +639,12 @@ siteUrlInput.addEventListener('keydown', (e) => {
 async function restoreSite() {
   applySiteBranding();
   if (!state.siteUrl) return;
-  siteUrlInput.value = state.siteUrl;
   try {
     const res = await fetch(`${API_URL}/api/site?url=${encodeURIComponent(state.siteUrl)}`);
     const data = await res.json();
     if (res.ok && data.indexed) {
-      showSiteCard({ name: state.siteName, url: state.siteUrl, pages: data.pages ?? '—' });
+      // Site déjà indexé : on pré-remplit juste l'adresse. La carte et la bulle
+      // de chat n'apparaissent qu'après une analyse faite pendant cette visite.
     } else if (res.ok && !window.SKAPA_SITE_URL) {
       // base vidée / autre serveur : on oublie ce site
       state.siteUrl = null;
@@ -662,6 +654,41 @@ async function restoreSite() {
       applySiteBranding();
     }
   } catch { /* API éteinte : on garde l'état, l'erreur s'affichera au premier message */ }
+}
+
+// ── ✨ Fun : confettis + bulle « Psst… » ───────────────────────────────────
+
+function confetti(count = 70) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const colors = ['#8b5cf6', '#ec4899', '#f59e0b', '#22c55e', '#06b6d4'];
+  for (let i = 0; i < count; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = `${Math.random() * 100}vw`;
+    c.style.background = colors[i % colors.length];
+    c.style.animationDuration = `${1.8 + Math.random() * 1.6}s`;
+    c.style.animationDelay = `${Math.random() * 0.4}s`;
+    document.body.appendChild(c);
+    c.addEventListener('animationend', () => c.remove()); // rien ne reste en mémoire
+  }
+}
+
+const teaser = $('chatTeaser');
+if (teaser) chatToggle.addEventListener('click', () => teaser.classList.remove('show'));
+
+// ── La bulle de chat n'apparaît qu'une fois un site analysé ────────────────
+const chatWidget = $('chatWidget');
+function showChatWidget({ teaserDelay = 800 } = {}) {
+  if (!chatWidget.hidden) return;
+  chatWidget.hidden = false;
+  chatWidget.classList.add('chat-widget--appear');
+  setTimeout(() => chatWidget.classList.remove('chat-widget--appear'), 700);
+  if (teaser && teaserDelay !== null) {
+    setTimeout(() => {
+      if (!chatPanel.classList.contains('open')) teaser.classList.add('show');
+      setTimeout(() => teaser.classList.remove('show'), 5000);
+    }, teaserDelay);
+  }
 }
 
 renderChips();

@@ -4,12 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Assistant Skapa</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=3" />
   </head>
   <body>
 
     <!-- ── HERO SECTION ── -->
     <section class="hero">
+      <div class="blob blob--1" aria-hidden="true"></div>
+      <div class="blob blob--2" aria-hidden="true"></div>
+      <div class="blob blob--3" aria-hidden="true"></div>
       <div class="hero__content">
         <div class="hero__eyebrow">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
@@ -19,6 +22,7 @@
         <h1 class="hero__heading">
           Un accompagnement utile,
           <span class="hero__heading--accent">au bon moment.</span>
+          <span class="wave" aria-hidden="true">👋</span>
         </h1>
 
         <p class="hero__sub">
@@ -28,7 +32,7 @@
 
         <div class="hero__demo-link">
           <span class="live-dot"></span>
-          Démonstration interactive
+          Démonstration interactive — analysez un site pour réveiller l'assistant&nbsp;🤖
         </div>
       </div>
 
@@ -103,7 +107,7 @@
     </section>
 
     <!-- ── FLOATING CHAT WIDGET ── -->
-    <div class="chat-widget">
+    <div id="chatWidget" class="chat-widget" hidden>
       <div id="chatPanel" class="chat-panel" role="dialog" aria-label="Assistant virtuel" aria-modal="true">
         <div class="chat-header">
           <div class="chat-header__title">
@@ -142,6 +146,7 @@
         </div>
       </div>
 
+      <div id="chatTeaser" class="chat-teaser" aria-hidden="true">Psst… une question&nbsp;? 💬</div>
       <button id="chatToggle" class="chat-toggle" type="button" aria-label="Ouvrir le chat" aria-expanded="false">
         <svg class="chat-toggle__icon chat-toggle__icon--open" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
           <path d="M6 18.5V7.2A2.2 2.2 0 0 1 8.2 5h7.6A2.2 2.2 0 0 1 18 7.2v5.6A2.2 2.2 0 0 1 15.8 15H9.7L6 18.5Z"/>
@@ -162,11 +167,7 @@
           : `${location.protocol}//${location.hostname}:8000`
       );
 
-      // Token admin pré-rempli pour la démo (évite le prompt à chaque analyse).
-      // ⚠️ VISIBLE DANS LE SOURCE DE LA PAGE — n'utiliser que pour une démo.
-      // Pour la prod : retirer cette ligne et laisser le prompt faire son travail.
-      window.SKAPA_ADMIN_TOKEN = 'd565c633274e0bc299b2cdd98898271c1d63aebc8a50c3ae';
     </script>
-    <script src="./app.js"></script>
+    <script src="./app.js?v=3"></script>
   </body>
 </html>
