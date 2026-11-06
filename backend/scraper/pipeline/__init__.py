@@ -8,6 +8,7 @@ from app.metadata import log_scraped_page
 from scraper.ingest import count_domain, replace_domain_chunks
 from scraper.parser import (boilerplate_lines, extract_site_info, parse_page,
                             prepare_page_text, site_info_chunks)
+from scraper.pipeline.brand_color import extract_brand_color_safe as _extract_brand_color
 from scraper.pipeline.early import EARLY_PAGES, EarlyIndexer
 from scraper.pipeline.engine_select import pick_engine_and_crawl as _crawl, resolve_scheme
 from scraper.pipeline.site_name import site_name
@@ -101,6 +102,10 @@ def run_pipeline(target_url=None, max_pages=None, max_depth=None, progress=None,
     source_domain = domain_key(pages[0]["url"])
     all_chunks, per_page = _collect_chunks(pages)
     info_chunks, site_title = _contact_info_chunks(pages, per_page)
+    brand_color = _extract_brand_color(pages)
+    if brand_color:
+        for c in info_chunks:
+            c["metadata"]["brand_color"] = brand_color
     all_chunks.extend(info_chunks)
 
     early.wait()
@@ -114,6 +119,7 @@ def run_pipeline(target_url=None, max_pages=None, max_depth=None, progress=None,
         "pages_scraped": len(pages), "pages_failed": pages_failed,
         "chunks_created": total_chunks, "urls_found": urls_found, "engine": engine,
         "duration_seconds": round(time.time() - started_at, 1),
+        "brand_color": brand_color,
     }
     print(f"[pipeline] {result}")
     return result

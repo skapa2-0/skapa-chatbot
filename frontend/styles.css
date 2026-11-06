@@ -14,8 +14,10 @@
   --muted:         #5a6177;
   --card:          #ffffff;
   --border:        #e2e5ef;
-  --shadow-sm:     0 2px 8px rgba(60,50,120,.07);
-  --shadow-lg:     0 20px 48px rgba(60,50,120,.16);
+  --shadow-sm:        0 2px 8px rgba(60,50,120,.07);
+  --shadow-lg:        0 20px 48px rgba(60,50,120,.16);
+  --primary-shadow:   rgba(91, 63, 212, 0.22);
+  --primary-shadow-sm:rgba(91, 63, 212, 0.08);
   --radius:        18px;
   --radius-sm:     12px;
 }
@@ -460,7 +462,7 @@ html, body {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 10px rgba(109, 40, 217, 0.22);
+  box-shadow: 0 4px 10px var(--primary-shadow);
 }
 .message.bot .bot-avatar svg { width: 18px; height: 18px; }
 
@@ -531,12 +533,12 @@ html, body {
   transition: border-color .18s, box-shadow .18s, transform .1s;
 }
 .action-card:hover {
-  border-color: #A78BFA; /* violet-400 */
-  box-shadow: 0 6px 16px rgba(109, 40, 217, 0.08);
+  border-color: var(--accent);
+  box-shadow: 0 6px 16px var(--primary-shadow-sm);
   transform: translateY(-1px);
 }
 .action-card:focus-visible {
-  outline: 2px solid #6D28D9;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -544,8 +546,8 @@ html, body {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: #EDE9FE; /* violet-100 */
-  color: #6D28D9; /* violet-700 */
+  background: var(--primary-light);
+  color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -586,7 +588,7 @@ html, body {
 }
 .action-card__chevron svg { width: 20px; height: 20px; }
 .action-card:hover .action-card__chevron {
-  color: #6D28D9;
+  color: var(--primary);
   transform: translateX(2px);
 }
 
@@ -594,8 +596,8 @@ html, body {
   position: absolute;
   top: -8px;
   right: 14px;
-  background: #EDE9FE;
-  color: #6D28D9; /* violet-700 */
+  background: var(--primary-light);
+  color: var(--primary);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.6px;

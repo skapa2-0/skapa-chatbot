@@ -39,6 +39,7 @@ const state = {
   // Site actif : fixé par l'intégration (window.SKAPA_SITE_URL) ou par la dernière analyse
   siteUrl: window.SKAPA_SITE_URL || store.get('skapa_site_url') || null,
   siteName: store.get('skapa_site_name') || null,
+  brandColor: store.get('skapa_brand_color') || null,
   history: [],          // [{role, content}] — derniers échanges envoyés au backend
   sending: false,
 };
@@ -278,6 +279,87 @@ function scrollToBottom() {
   messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
+// ── Couleur de marque dynamique ─────────────────────────────────────────────
+
+function hexToRgb(hex) {
+  return [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)];
+}
+
+function relativeLuminance(r, g, b) {
+  return [r, g, b].reduce((acc, c, i) => {
+    const s = c / 255;
+    const lin = s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+    return acc + lin * [0.2126, 0.7152, 0.0722][i];
+  }, 0);
+}
+
+function hexToHsl(hex) {
+  let [r, g, b] = hexToRgb(hex).map(c => c / 255);
+  const max = Math.max(r,g,b), min = Math.min(r,g,b), d = max - min;
+  let h = 0, s = 0;
+  const l = (max + min) / 2;
+  if (d !== 0) {
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+    h /= 6;
+  }
+  return [h, s, l];
+}
+
+function hslToHex(h, s, l) {
+  function hue(p, q, t) {
+    if (t < 0) t += 1; if (t > 1) t -= 1;
+    if (t < 1/6) return p + (q - p) * 6 * t;
+    if (t < 1/2) return q;
+    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+    return p;
+  }
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s, p = 2 * l - q;
+  return '#' + [hue(p,q,h+1/3), hue(p,q,h), hue(p,q,h-1/3)]
+    .map(c => Math.round(c*255).toString(16).padStart(2,'0')).join('');
+}
+
+function darken(hex, amount) {
+  const [h, s, l] = hexToHsl(hex);
+  return hslToHex(h, s, Math.max(0, l - amount));
+}
+
+function withLightness(hex, l) {
+  const [h, s] = hexToHsl(hex);
+  return hslToHex(h, s, Math.max(0, Math.min(1, l)));
+}
+
+function ensureContrast(hex) {
+  for (let i = 0; i < 20; i++) {
+    const [r, g, b] = hexToRgb(hex);
+    if (1.05 / (relativeLuminance(r, g, b) + 0.05) >= 4.5) return hex;
+    hex = darken(hex, 0.05);
+  }
+  return hex;
+}
+
+function applyBrandColor(hex) {
+  const root = document.documentElement;
+  const vars = ['--primary','--primary-dark','--primary-light','--bubble-user',
+                 '--accent','--accent-text','--primary-shadow','--primary-shadow-sm'];
+  if (!hex || !/^#[0-9a-f]{6}$/i.test(hex)) {
+    vars.forEach(v => root.style.removeProperty(v));
+    return;
+  }
+  const primary = ensureContrast(hex);
+  const [r, g, b] = hexToRgb(primary);
+  root.style.setProperty('--primary', primary);
+  root.style.setProperty('--primary-dark', darken(primary, 0.10));
+  root.style.setProperty('--primary-light', withLightness(primary, 0.93));
+  root.style.setProperty('--bubble-user', primary);
+  root.style.setProperty('--accent', withLightness(primary, Math.min(0.9, hexToHsl(primary)[2] + 0.08)));
+  root.style.setProperty('--accent-text', primary);
+  root.style.setProperty('--primary-shadow', `rgba(${r},${g},${b},0.22)`);
+  root.style.setProperty('--primary-shadow-sm', `rgba(${r},${g},${b},0.08)`);
+}
+
 /** role = 'bot' | 'user' | 'system' | 'error' */
 function addMessage(text, role = 'bot', sources = [], extraCards = null) {
   const wrapper = document.createElement('div');
@@ -438,11 +520,15 @@ function showSiteCard({ name, url, pages, ready = true }) {
   siteStatus.hidden = false;
 }
 
-function setActiveSite(url, name) {
+function setActiveSite(url, name, brandColor) {
   state.siteUrl = url;
   state.siteName = name || nameFromDomain(hostOf(url));
+  state.brandColor = brandColor || null;
   store.set('skapa_site_url', url);
   store.set('skapa_site_name', state.siteName);
+  if (brandColor) store.set('skapa_brand_color', brandColor);
+  else store.del('skapa_brand_color');
+  applyBrandColor(state.brandColor);
   applySiteBranding();
   resetConversation();
 }
@@ -592,6 +678,28 @@ async function pollJob(jobId) {
   }
 }
 
+async function _finalizeJob(jobId) {
+  try {
+    const deadline = Date.now() + POLL_TIMEOUT_MS;
+    for (;;) {
+      if (Date.now() > deadline) return;
+      await sleep(POLL_MS * 2);
+      let res;
+      try { res = await fetch(`${API_URL}/api/scrape/status/${encodeURIComponent(jobId)}`); }
+      catch { continue; }
+      const job = await res.json().catch(() => ({}));
+      if (!res.ok || job.status === 'failed') return;
+      if (job.status === 'running' || job.status === 'queued') continue;
+      if (job.status === 'success' && job.result?.brand_color) {
+        state.brandColor = job.result.brand_color;
+        store.set('skapa_brand_color', job.result.brand_color);
+        applyBrandColor(job.result.brand_color);
+      }
+      return;
+    }
+  } catch { /* silent */ }
+}
+
 async function analyse() {
   showError('');
   const url = normalizeInputUrl(siteUrlInput.value);
@@ -611,12 +719,15 @@ async function analyse() {
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
 
-    const result = data.job_id ? await pollJob(data.job_id) : data;
+    const jobId = data.job_id || null;
+    const result = jobId ? await pollJob(jobId) : data;
 
     const siteUrl = result.site_url || url;
     const name = result.site_title || nameFromDomain(hostOf(siteUrl));
+    const brandColor = result.brand_color || null;
     showSiteCard({ name, url: siteUrl, pages: result.pages_scraped });
-    setActiveSite(siteUrl, name);
+    setActiveSite(siteUrl, name, brandColor);
+    if (result.partial && jobId) _finalizeJob(jobId);
     confetti();
     showChatWidget({ teaserDelay: null });
     siteStatus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -641,19 +752,26 @@ siteUrlInput.addEventListener('keydown', (e) => {
 
 async function restoreSite() {
   applySiteBranding();
+  if (state.brandColor) applyBrandColor(state.brandColor);
   if (!state.siteUrl) return;
   try {
     const res = await fetch(`${API_URL}/api/site?url=${encodeURIComponent(state.siteUrl)}`);
     const data = await res.json();
     if (res.ok && data.indexed) {
-      // Site déjà indexé : on pré-remplit juste l'adresse. La carte et la bulle
-      // de chat n'apparaissent qu'après une analyse faite pendant cette visite.
+      if (data.brand_color) {
+        state.brandColor = data.brand_color;
+        store.set('skapa_brand_color', data.brand_color);
+        applyBrandColor(data.brand_color);
+      }
     } else if (res.ok && !window.SKAPA_SITE_URL) {
       // base vidée / autre serveur : on oublie ce site
       state.siteUrl = null;
       state.siteName = null;
+      state.brandColor = null;
       store.del('skapa_site_url');
       store.del('skapa_site_name');
+      store.del('skapa_brand_color');
+      applyBrandColor(null);
       applySiteBranding();
     }
   } catch { /* API éteinte : on garde l'état, l'erreur s'affichera au premier message */ }

@@ -18,8 +18,9 @@ def site_status():
     res = get_collection().get(where={"source_domain": domain}, include=["metadatas"], limit=100000)
     metas = res.get("metadatas") or []
     pages = {m.get("url") for m in metas if m and m.get("kind", "page") == "page"}
+    brand_color = next((m["brand_color"] for m in metas if m and m.get("brand_color")), None)
     return jsonify({"source_domain": domain, "indexed": bool(metas),
-                    "chunks": len(metas), "pages": len(pages)})
+                    "chunks": len(metas), "pages": len(pages), "brand_color": brand_color})
 
 
 @app.route("/api/documents", methods=["GET"])
