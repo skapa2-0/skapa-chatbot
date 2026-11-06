@@ -4,6 +4,22 @@ from app import config
 from app.api_agent import MAX_HISTORY
 from app.chroma_client import get_collection
 
+_FORMATION_KEYWORDS = {
+    "formation", "formations", "programme", "programmes", "cours",
+    "catalogue", "apprendre", "tarif", "prix", "coût", "durée",
+    "certification", "istqb", "parcours", "offre", "proposez",
+}
+# Secondary query that semantically matches the indexed catalogue chunks
+_CATALOGUE_PROBE = (
+    "Fondamentaux IA ISTQB Product Builder Agentic Claude GenAI "
+    "multi-agents RAG ingénierie agentique Cursor Lovable managers"
+)
+
+
+def _is_formation_query(query):
+    words = set(query.lower().split())
+    return bool(words & _FORMATION_KEYWORDS)
+
 
 def default_platform_name(domain):
     if not domain:
@@ -64,6 +80,19 @@ def retrieve(query, domain, followup_query=None):
         seen = {h["text"] for h in hits}
         extra = [h for h in _query(collection, followup_query, domain, k) if h["text"] not in seen]
         hits = hits[: max(3, k - 2)] + extra[:2]
+
+    # For formation/catalogue queries, inject catalogue chunks that semantic
+    # search misses (the catalogue page ranks poorly against "quelles formations").
+    if _is_formation_query(query):
+        seen_texts = {h["text"] for h in hits}
+        catalogue_hits = [
+            h for h in _query(collection, _CATALOGUE_PROBE, domain, k)
+            if h["text"] not in seen_texts and "catalogue" in h["meta"].get("url", "")
+        ]
+        if catalogue_hits:
+            # Keep top 3 original hits for context, replace rest with catalogue
+            hits = hits[:3] + catalogue_hits[:max(3, k - 3)]
+
     if domain and not any(h["meta"].get("kind") == "site_info" for h in hits):
         info = collection.get(where={"$and": [{"source_domain": domain}, {"kind": "site_info"}]},
                               include=["documents", "metadatas"], limit=1)

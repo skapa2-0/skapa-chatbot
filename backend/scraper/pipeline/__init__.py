@@ -5,9 +5,10 @@ import time
 
 from app import config
 from app.metadata import log_scraped_page
-from scraper.ingest import replace_domain_chunks
+from scraper.ingest import count_domain, replace_domain_chunks
 from scraper.parser import (boilerplate_lines, extract_site_info, parse_page,
                             prepare_page_text, site_info_chunks)
+from scraper.pipeline.early import EARLY_PAGES, EarlyIndexer
 from scraper.pipeline.engine_select import pick_engine_and_crawl as _crawl, resolve_scheme
 from scraper.pipeline.site_name import site_name
 from scraper.spider import domain_key, normalize_url
@@ -22,9 +23,8 @@ def _collect_chunks(pages):
     Avant le chunking, retire les lignes répétées sur une majorité de pages
     (tagline / intro commune) pour que l'embedding voie le contenu propre
     à chaque page."""
-    html_pages = [p for p in pages if "html" in p]
-    pre_texts = [prepare_page_text(p["url"], p["html"])[1] for p in html_pages]
-    boiler = boilerplate_lines(pre_texts)
+    prepared = {p["url"]: prepare_page_text(p["url"], p["html"]) for p in pages if "html" in p}
+    boiler = boilerplate_lines([text for _, text in prepared.values()])
 
     all_chunks, per_page, seen_texts = [], [], set()
     for page in pages:
@@ -33,7 +33,7 @@ def _collect_chunks(pages):
                                 text=page["text"], title=page.get("title", ""))
         else:
             chunks = parse_page(page["url"], page["html"], depth=page["depth"],
-                                strip_lines=boiler)
+                                strip_lines=boiler, prepared=prepared.get(page["url"]))
         kept = []
         for c in chunks:
             body = c["text"].split("\n", 1)[-1]
@@ -61,23 +61,35 @@ def _contact_info_chunks(pages, per_page):
     return site_info_chunks(pages[0]["url"], "\n\n".join(info_parts), site_name=title), title
 
 
-def run_pipeline(target_url=None, max_pages=None, max_depth=None, progress=None):
+def run_pipeline(target_url=None, max_pages=None, max_depth=None, progress=None, on_ready=None):
+    """on_ready() est appelé dès que les premières pages sont interrogeables."""
     target_url = normalize_url(target_url or SCRAPER_TARGET_URL)
     max_pages = int(max_pages) if max_pages else DEFAULT_MAX_PAGES
     max_depth = int(max_depth) if max_depth is not None else DEFAULT_MAX_DEPTH
 
     started_at = time.time()
+    already = count_domain(domain_key(target_url)) > 0   # site déjà interrogeable
+    early = EarlyIndexer(on_ready, n=0 if already else EARLY_PAGES)
+    if already and on_ready:
+        on_ready()
+
+    def _progress(n, url, page=None):
+        early.add(page)
+        if progress:
+            progress(n, url)
+
     target_url = resolve_scheme(target_url)
     (pages, pages_failed, urls_found), engine = _crawl(
-        target_url, max_pages, max_depth, progress)
+        target_url, max_pages, max_depth, _progress)
 
     if not pages and target_url.startswith("https://"):
         http_url = "http://" + target_url[len("https://"):]
         print(f"[pipeline] aucune page en HTTPS -> nouvel essai en {http_url}")
         (pages, pages_failed, urls_found), engine = _crawl(
-            http_url, max_pages, max_depth, progress)
+            http_url, max_pages, max_depth, _progress)
 
     if not pages:
+        early.wait()
         return {
             "status": "error",
             "error": "Aucune page n'a pu être récupérée (site inaccessible, bloqué ou vide).",
@@ -91,6 +103,7 @@ def run_pipeline(target_url=None, max_pages=None, max_depth=None, progress=None)
     info_chunks, site_title = _contact_info_chunks(pages, per_page)
     all_chunks.extend(info_chunks)
 
+    early.wait()
     total_chunks = replace_domain_chunks(source_domain, all_chunks)
     for url, title, n in per_page:
         log_scraped_page(url, title, n)

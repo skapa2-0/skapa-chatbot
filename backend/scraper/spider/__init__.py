@@ -3,7 +3,7 @@
 import threading
 import time
 from collections import deque
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 
 import requests
 
@@ -78,7 +78,15 @@ def crawl(start_url, max_pages=MAX_PAGES, max_depth=MAX_DEPTH, progress=None):
 
         submit_pending()
         while futures:
-            for fut in list(as_completed(futures, timeout=REQUEST_TIMEOUT + 2)):
+            # On traite chaque page dès qu'elle arrive (avant : on attendait tout
+            # le lot, et une seule page lente levait TimeoutError -> crawl perdu).
+            done, _ = wait(futures, timeout=REQUEST_TIMEOUT * 3, return_when=FIRST_COMPLETED)
+            if not done:
+                print(f"[spider] {len(futures)} page(s) bloquée(s), abandonnée(s)")
+                failed_count[0] += len(futures)
+                executor.shutdown(wait=False, cancel_futures=True)
+                break
+            for fut in done:
                 orig_url, _ = futures.pop(fut)
                 try:
                     final_url, html, depth, is_err = fut.result()
@@ -103,7 +111,7 @@ def crawl(start_url, max_pages=MAX_PAGES, max_depth=MAX_DEPTH, progress=None):
                     pages.append({"url": final_url, "html": html, "depth": depth})
                 print(f"[spider] depth={depth} ok ({len(pages)}/{max_pages}): {final_url}")
                 if progress:
-                    progress(len(pages), final_url)
+                    progress(len(pages), final_url, pages[-1])
                 if depth < max_depth and isinstance(html, str):
                     new_links = extract_links(html, final_url)
                     with lock:

@@ -579,6 +579,9 @@ async function pollJob(jobId) {
     if (!res.ok) throw new Error(job.error || `HTTP ${res.status}`);
 
     if (job.status === 'running' || job.status === 'queued') {
+      // Les premières pages sont indexées : on ouvre le chat sans attendre la fin
+      // (le reste du site continue d'être indexé côté serveur).
+      if (job.ready) return { site_url: job.url, pages_scraped: job.pages_done, partial: true };
       const n = job.pages_done || 0;
       setBusy(true, n ? `Analyse… ${n} page${n > 1 ? 's' : ''} 📄` : 'Analyse en cours…');
       showProgress(FUN_LOADING[Math.floor(Date.now() / 3600) % FUN_LOADING.length]);

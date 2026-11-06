@@ -8,8 +8,7 @@ replace_domain_chunks() remplace le contenu d'un site de façon atomique :
 """
 
 from app.chroma_client import get_collection
-
-BATCH_SIZE = 256
+from scraper.upsert import existing_docs, upsert_changed
 
 
 def ingest_chunks(chunks):
@@ -18,13 +17,7 @@ def ingest_chunks(chunks):
         return 0
     collection = get_collection()
     unique = list({c["id"]: c for c in chunks}.values())
-    for i in range(0, len(unique), BATCH_SIZE):
-        batch = unique[i:i + BATCH_SIZE]
-        collection.upsert(
-            ids=[c["id"] for c in batch],
-            documents=[c["text"] for c in batch],
-            metadatas=[c["metadata"] for c in batch],
-        )
+    upsert_changed(collection, unique, existing_docs(collection, ids=[c["id"] for c in unique]))
     return len(unique)
 
 
@@ -52,21 +45,14 @@ def replace_domain_chunks(source_domain, chunks):
 
     collection = get_collection()
 
-    # 1. Récupère les IDs actuellement en base pour ce domaine
-    existing = collection.get(where={"source_domain": source_domain}, include=[])
-    old_ids = set(existing.get("ids", []))
+    # 1. Ce qui est déjà en base pour ce domaine (ids + textes)
+    old_docs = existing_docs(collection, where={"source_domain": source_domain})
+    old_ids = set(old_docs)
 
-    # 2. Upsert des nouveaux chunks (données toujours dispo après cette étape)
+    # 2. Upsert : seuls les chunks nouveaux ou modifiés sont ré-embeddés
     new_chunks = list({c["id"]: c for c in chunks}.values())
     new_ids = {c["id"] for c in new_chunks}
-
-    for i in range(0, len(new_chunks), BATCH_SIZE):
-        batch = new_chunks[i:i + BATCH_SIZE]
-        collection.upsert(
-            ids=[c["id"] for c in batch],
-            documents=[c["text"] for c in batch],
-            metadatas=[c["metadata"] for c in batch],
-        )
+    n_embedded = upsert_changed(collection, new_chunks, old_docs)
 
     # 3. Supprime uniquement les IDs qui ne sont plus dans le nouveau set
     stale_ids = list(old_ids - new_ids)
@@ -75,7 +61,7 @@ def replace_domain_chunks(source_domain, chunks):
 
     print(
         f"[ingest] {source_domain}: "
-        f"{len(new_chunks)} chunks upsertés, "
+        f"{len(new_chunks)} chunks ({n_embedded} ré-embeddés), "
         f"{len(stale_ids)} anciens supprimés"
     )
     return len(new_chunks)

@@ -80,6 +80,14 @@ docker compose up -d --build
 API : `http://localhost:8000` — démo : `http://localhost:8080`. Le conteneur
 joint l'Ollama de la machine hôte via `host.docker.internal`.
 
+## Vitesse du scraping
+
+- `SCRAPER_WORKERS` (défaut 16) : pages téléchargées en parallèle.
+- `SCRAPER_EARLY_PAGES` (défaut 10) : dès que ce nombre de pages est indexé, le
+  chat répond ; le reste du site continue d'être indexé en arrière-plan.
+- Re-scraper un site ne recalcule que les embeddings des passages modifiés
+  (l'étape la plus lente) : une mise à jour sans changement prend quelques secondes.
+
 ## Lancer un scraping sans l'interface
 
 ```bash
@@ -145,6 +153,16 @@ Voir `.env.example` (toutes les options sont commentées).
 - Ne jamais commiter `.env` (dans `.gitignore`).
 - `/api/scrape/run` est protégé par `ADMIN_TOKEN` et refuse les adresses
   internes (protection SSRF).
+- `/api/scrape/start` (utilisé par le front) n'envoie **aucun token** depuis le
+  navigateur. Comme il est public, il est bridé côté serveur :
+  - `SCRAPE_PUBLIC_RATE` (défaut 3) lancements par heure et par IP
+  - `SCRAPE_PUBLIC_MAX_JOBS` (défaut 2) analyses simultanées au maximum
+  - `SCRAPE_PUBLIC_MAX_PAGES` / `SCRAPE_PUBLIC_MAX_DEPTH` (défaut 30 / 3) ;
+    les valeurs envoyées par le client sont ignorées
+  - `SCRAPE_PUBLIC_COOLDOWN_HOURS` (défaut 24) : un site indexé récemment n'est
+    pas re-scrapé, l'index existant est renvoyé
+  - `SCRAPE_ALLOWED_DOMAINS` (optionnel, ex. `skapa.fr,autre.com`) : n'accepter
+    que ces sites
 - `ALLOWED_ORIGINS` accepte plusieurs domaines séparés par des virgules.
 - Les réponses du bot sont affichées sans `innerHTML` (pas de XSS).
 

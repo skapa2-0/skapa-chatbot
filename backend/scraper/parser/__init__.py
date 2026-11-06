@@ -19,7 +19,7 @@ from scraper.parser.chunks import chunk_id, chunk_text
 from scraper.parser.contact import extract_site_info
 from scraper.parser.html_clean import boilerplate_lines, clean_html, description_of
 from scraper.parser.pdf import extract_pdf_text, is_pdf
-from scraper.spider import domain_key
+from scraper.spider.urls import domain_key
 
 
 def prepare_page_text(url, html):
@@ -33,11 +33,13 @@ def prepare_page_text(url, html):
     return title, text
 
 
-def parse_page(url, html, depth=0, strip_lines=None, text=None, title=None):
+def parse_page(url, html, depth=0, strip_lines=None, text=None, title=None, prepared=None):
     """Chunks prêts à indexer pour une page HTML ou un PDF.
 
     Pour un PDF, passer `text` et `title` directement (html est ignoré).
     `strip_lines` : lignes boilerplate à retirer (HTML uniquement).
+    `prepared` : (titre, texte) déjà calculé par prepare_page_text (évite de
+    repasser la page dans trafilatura une seconde fois).
     """
     fmt = "html"
     if text is not None:
@@ -45,7 +47,7 @@ def parse_page(url, html, depth=0, strip_lines=None, text=None, title=None):
         fmt = "pdf"
         title = title or ""
     else:
-        title, text = prepare_page_text(url, html)
+        title, text = prepared or prepare_page_text(url, html)
         if strip_lines:
             text = "\n".join(ln for ln in text.splitlines() if ln.strip() not in strip_lines)
 

@@ -44,6 +44,7 @@ def start_scrape_job(url, max_pages=None, max_depth=None):
             "url": url,
             "domain": domain,
             "pages_done": 0,
+            "ready": False,  # True dès que les premières pages sont interrogeables
             "current_url": None,
             "result": None,
             "error": None,
@@ -60,10 +61,12 @@ def start_scrape_job(url, max_pages=None, max_depth=None):
         from scraper.pipeline import run_pipeline
         job["status"] = "running"
         try:
-            result = run_pipeline(url, max_pages=max_pages, max_depth=max_depth, progress=progress)
+            result = run_pipeline(url, max_pages=max_pages, max_depth=max_depth, progress=progress,
+                                  on_ready=lambda: job.update(ready=True))
             job["result"] = result
             if result.get("status") == "success":
                 job["status"] = "success"
+                job["ready"] = True
             else:
                 job["status"] = "error"
                 job["error"] = result.get("error", "Échec du scraping")
@@ -87,6 +90,11 @@ def _purge_old_jobs():
                  if j["status"] in ("success", "error") and (j.get("finished_at") or 0) < cutoff]
         for jid in stale:
             del _jobs[jid]
+
+
+def running_count():
+    with _lock:
+        return sum(1 for j in _jobs.values() if j["status"] in ("queued", "running"))
 
 
 def get_job(job_id):

@@ -88,7 +88,7 @@ def crawl_with_playwright(start_url, max_pages=MAX_PAGES, max_depth=MAX_DEPTH, p
                 pages.append({"url": final_url, "html": html, "depth": depth})
                 print(f"[spider-js] depth={depth} ok: {final_url}")
                 if progress:
-                    progress(len(pages), final_url)
+                    progress(len(pages), final_url, pages[-1])
 
                 if depth < max_depth:
                     new_links = extract_links(html, final_url)
