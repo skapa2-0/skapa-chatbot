@@ -24,7 +24,7 @@ def _get_conn(db_path=None):
         if conn is None:
             conn = sqlite3.connect(path, check_same_thread=False)
             conn.row_factory = sqlite3.Row
-            conn.execute(
+            conn.executescript(
                 """
                 CREATE TABLE IF NOT EXISTS scraped_pages (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,7 +32,13 @@ def _get_conn(db_path=None):
                     title TEXT,
                     scraped_at TEXT NOT NULL,
                     nb_chunks INTEGER NOT NULL DEFAULT 0
-                )
+                );
+                CREATE TABLE IF NOT EXISTS sites (
+                    domain TEXT PRIMARY KEY,
+                    brand_color TEXT,
+                    site_title TEXT,
+                    updated_at TEXT NOT NULL
+                );
                 """
             )
             conn.commit()
@@ -57,6 +63,26 @@ def log_scraped_page(url, title, nb_chunks, db_path=None):
         (url, title, datetime.now(timezone.utc).isoformat(), nb_chunks),
     )
     conn.commit()
+
+
+def upsert_site(domain: str, brand_color: "str | None", site_title: "str | None",
+                db_path=None) -> None:
+    conn = _get_conn(db_path)
+    conn.execute(
+        "INSERT INTO sites (domain, brand_color, site_title, updated_at) VALUES (?,?,?,?) "
+        "ON CONFLICT(domain) DO UPDATE SET brand_color=excluded.brand_color, "
+        "site_title=excluded.site_title, updated_at=excluded.updated_at",
+        (domain, brand_color, site_title, datetime.now(timezone.utc).isoformat()),
+    )
+    conn.commit()
+
+
+def get_site(domain: str, db_path=None) -> "dict | None":
+    row = _get_conn(db_path).execute(
+        "SELECT domain, brand_color, site_title, updated_at FROM sites WHERE domain=?",
+        (domain,),
+    ).fetchone()
+    return dict(row) if row else None
 
 
 def get_recent_pages(limit=50, db_path=None):

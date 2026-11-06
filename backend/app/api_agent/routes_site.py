@@ -5,7 +5,7 @@ from flask import jsonify, request
 from app.api_agent import app
 from app.api_agent.admin_guard import check_admin
 from app.chroma_client import get_collection
-from app.metadata import get_recent_pages
+from app.metadata import get_recent_pages, get_site
 from scraper.spider import domain_key
 
 
@@ -18,9 +18,10 @@ def site_status():
     res = get_collection().get(where={"source_domain": domain}, include=["metadatas"], limit=100000)
     metas = res.get("metadatas") or []
     pages = {m.get("url") for m in metas if m and m.get("kind", "page") == "page"}
-    brand_color = next((m["brand_color"] for m in metas if m and m.get("brand_color")), None)
+    site_info = get_site(domain) or {}
     return jsonify({"source_domain": domain, "indexed": bool(metas),
-                    "chunks": len(metas), "pages": len(pages), "brand_color": brand_color})
+                    "chunks": len(metas), "pages": len(pages),
+                    "brand_color": site_info.get("brand_color")})
 
 
 @app.route("/api/documents", methods=["GET"])

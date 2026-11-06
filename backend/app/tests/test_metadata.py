@@ -1,4 +1,4 @@
-from app.metadata import init_db, log_scraped_page, get_recent_pages
+from app.metadata import init_db, log_scraped_page, get_recent_pages, upsert_site, get_site
 
 
 def test_init_db_creates_table(tmp_path):
@@ -29,3 +29,34 @@ def test_get_recent_pages_respects_limit(tmp_path):
 
     pages = get_recent_pages(limit=2, db_path=db_path)
     assert len(pages) == 2
+
+
+# ── sites table ───────────────────────────────────────────────────────────────
+
+def test_upsert_and_get_site(tmp_path):
+    db_path = str(tmp_path / "test.db")
+    upsert_site("exemple.fr", "#e53e3e", "Exemple", db_path=db_path)
+    row = get_site("exemple.fr", db_path=db_path)
+    assert row is not None
+    assert row["brand_color"] == "#e53e3e"
+    assert row["site_title"] == "Exemple"
+    assert row["updated_at"]
+
+def test_upsert_site_updates_existing(tmp_path):
+    db_path = str(tmp_path / "test.db")
+    upsert_site("exemple.fr", "#e53e3e", "Ancien", db_path=db_path)
+    upsert_site("exemple.fr", "#2b6cb0", "Nouveau", db_path=db_path)
+    row = get_site("exemple.fr", db_path=db_path)
+    assert row["brand_color"] == "#2b6cb0"
+    assert row["site_title"] == "Nouveau"
+
+def test_upsert_site_accepts_null_color(tmp_path):
+    db_path = str(tmp_path / "test.db")
+    upsert_site("exemple.fr", None, "Exemple", db_path=db_path)
+    row = get_site("exemple.fr", db_path=db_path)
+    assert row["brand_color"] is None
+
+def test_get_site_returns_none_for_unknown(tmp_path):
+    db_path = str(tmp_path / "test.db")
+    init_db(db_path)
+    assert get_site("inconnu.fr", db_path=db_path) is None

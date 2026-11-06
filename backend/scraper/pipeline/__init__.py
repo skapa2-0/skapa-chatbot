@@ -4,7 +4,7 @@ Utilisé par /api/scrape/run (en tâche de fond) et par scheduler.py."""
 import time
 
 from app import config
-from app.metadata import log_scraped_page
+from app.metadata import log_scraped_page, upsert_site
 from scraper.ingest import count_domain, replace_domain_chunks
 from scraper.parser import (boilerplate_lines, extract_site_info, parse_page,
                             prepare_page_text, site_info_chunks)
@@ -112,6 +112,7 @@ def run_pipeline(target_url=None, max_pages=None, max_depth=None, progress=None,
     total_chunks = replace_domain_chunks(source_domain, all_chunks)
     for url, title, n in per_page:
         log_scraped_page(url, title, n)
+    upsert_site(source_domain, brand_color, site_title)
 
     result = {
         "status": "success", "start_url": target_url, "site_url": pages[0]["url"],

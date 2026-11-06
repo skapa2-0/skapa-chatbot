@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 
 from app import config, jobs
 from app.chroma_client import get_collection
+from app.metadata import get_site
 
 MAX_PAGES = config.env_int("SCRAPE_PUBLIC_MAX_PAGES", 30)
 MAX_DEPTH = config.env_int("SCRAPE_PUBLIC_MAX_DEPTH", 3)
@@ -85,20 +86,13 @@ def recent_index(domain):
 
     pages = [m for m in metas if m.get("kind", "page") == "page"]
     site_url = min(pages or metas, key=lambda m: m.get("depth", 0)).get("url")
-    site_title = ""
-    brand_color = None
-    for m, doc in zip(metas, res.get("documents") or []):
-        if m.get("kind") == "site_info":
-            if not brand_color and m.get("brand_color"):
-                brand_color = m["brand_color"]
-            if not site_title and doc and " – " in doc.split("\n", 1)[0]:
-                site_title = doc.split("\n", 1)[0].split(" – ", 1)[1].strip()
+    site_info = get_site(domain) or {}
     return {
         "status": "success", "cached": True, "site_url": site_url,
-        "source_domain": domain, "site_title": site_title,
+        "source_domain": domain, "site_title": site_info.get("site_title", ""),
         "pages_scraped": len({m.get("url") for m in pages}),
         "chunks_created": len(metas), "indexed_at": last.isoformat(),
-        "brand_color": brand_color,
+        "brand_color": site_info.get("brand_color"),
     }
 
 
