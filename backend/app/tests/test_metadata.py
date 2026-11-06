@@ -60,3 +60,16 @@ def test_get_site_returns_none_for_unknown(tmp_path):
     db_path = str(tmp_path / "test.db")
     init_db(db_path)
     assert get_site("inconnu.fr", db_path=db_path) is None
+
+def test_upsert_site_stores_actions(tmp_path):
+    db_path = str(tmp_path / "test.db")
+    actions = [{"label": "Candidater", "url": "https://exemple.fr/candidater"}]
+    upsert_site("exemple.fr", "#e53e3e", "Exemple", actions=actions, db_path=db_path)
+    row = get_site("exemple.fr", db_path=db_path)
+    assert row["actions"] == actions
+
+def test_upsert_site_actions_none_by_default(tmp_path):
+    db_path = str(tmp_path / "test.db")
+    upsert_site("exemple.fr", "#e53e3e", "Exemple", db_path=db_path)
+    row = get_site("exemple.fr", db_path=db_path)
+    assert row["actions"] is None

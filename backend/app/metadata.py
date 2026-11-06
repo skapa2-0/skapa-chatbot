@@ -5,6 +5,7 @@ recherche sémantique, SQLite garde un journal "quelle page, quand,
 combien de chunks" (traçabilité RGPD).
 """
 
+import json
 import sqlite3
 import threading
 from datetime import datetime, timezone
@@ -42,6 +43,12 @@ def _get_conn(db_path=None):
                 """
             )
             conn.commit()
+            # Migration : ajoute la colonne actions si absente
+            try:
+                conn.execute("ALTER TABLE sites ADD COLUMN actions TEXT")
+                conn.commit()
+            except sqlite3.OperationalError:
+                pass  # colonne déjà présente
             _conns[path] = conn
         return conn
 
@@ -66,23 +73,36 @@ def log_scraped_page(url, title, nb_chunks, db_path=None):
 
 
 def upsert_site(domain: str, brand_color: "str | None", site_title: "str | None",
-                db_path=None) -> None:
+                actions: "list | None" = None, db_path=None) -> None:
     conn = _get_conn(db_path)
+    actions_json = json.dumps(actions, ensure_ascii=False) if actions else None
     conn.execute(
-        "INSERT INTO sites (domain, brand_color, site_title, updated_at) VALUES (?,?,?,?) "
+        "INSERT INTO sites (domain, brand_color, site_title, actions, updated_at) "
+        "VALUES (?,?,?,?,?) "
         "ON CONFLICT(domain) DO UPDATE SET brand_color=excluded.brand_color, "
-        "site_title=excluded.site_title, updated_at=excluded.updated_at",
-        (domain, brand_color, site_title, datetime.now(timezone.utc).isoformat()),
+        "site_title=excluded.site_title, actions=excluded.actions, "
+        "updated_at=excluded.updated_at",
+        (domain, brand_color, site_title, actions_json,
+         datetime.now(timezone.utc).isoformat()),
     )
     conn.commit()
 
 
 def get_site(domain: str, db_path=None) -> "dict | None":
     row = _get_conn(db_path).execute(
-        "SELECT domain, brand_color, site_title, updated_at FROM sites WHERE domain=?",
+        "SELECT domain, brand_color, site_title, actions, updated_at "
+        "FROM sites WHERE domain=?",
         (domain,),
     ).fetchone()
-    return dict(row) if row else None
+    if not row:
+        return None
+    d = dict(row)
+    if d.get('actions'):
+        try:
+            d['actions'] = json.loads(d['actions'])
+        except (json.JSONDecodeError, TypeError):
+            d['actions'] = None
+    return d
 
 
 def delete_site(domain: str, db_path=None) -> None:

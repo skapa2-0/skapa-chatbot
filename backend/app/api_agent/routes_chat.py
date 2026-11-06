@@ -7,6 +7,7 @@ from app.api_agent import app
 from app.api_agent.rag_helpers import (
     clean_history, default_platform_name, domain_count, retrieve,
 )
+from app.metadata import get_site
 from scraper.spider import domain_key
 
 
@@ -77,6 +78,9 @@ def chat():
             seen.add(url)
             sources.append({"url": url, "title": h["meta"].get("title", "")})
 
+    site_info = get_site(source_domain) if source_domain else {}
+    actions = (site_info or {}).get('actions') or []
+
     return jsonify({
         "reply": reply_text or "Je n'ai pas pu formuler de réponse.",
         "sources_used": len(hits),
@@ -84,4 +88,5 @@ def chat():
         "site_filter": source_domain or "all",
         "platform_name": platform_name,
         "indexed": bool(hits),
+        "actions": actions,
     })

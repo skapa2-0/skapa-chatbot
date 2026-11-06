@@ -40,6 +40,7 @@ const state = {
   siteUrl: window.SKAPA_SITE_URL || store.get('skapa_site_url') || null,
   siteName: store.get('skapa_site_name') || null,
   brandColor: store.get('skapa_brand_color') || null,
+  siteActions: null,    // [{label, url}] — liens CTA du site analysé
   history: [],          // [{role, content}] — derniers échanges envoyés au backend
   sending: false,
 };
@@ -155,6 +156,11 @@ const ICONS = {
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
     '<polyline points="9 6 15 12 9 18"/>' +
     '</svg>',
+  link:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>' +
+    '<polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>' +
+    '</svg>',
 };
 
 /**
@@ -220,22 +226,24 @@ function cleanMeta(s) {
 }
 
 /** Choisit l'icône selon le contenu du titre. */
-function pickIcon(title) {
+function pickIcon(title, isLink = false) {
+  if (isLink) return ICONS.link;
   const t = title.toLowerCase();
   if (/conseil|contact|parler|aide|rdv|rendez/.test(t)) return ICONS.refresh;
-  return ICONS.cap; // par défaut: diplôme (formations)
+  return ICONS.cap;
 }
 
 /** Crée un bouton carte interactif. */
-function buildActionCard({ title, meta, badge }, onClick) {
+function buildActionCard({ title, meta, badge, url }, onClick) {
   const card = document.createElement('button');
   card.type = 'button';
   card.className = 'action-card';
+  if (url) card.classList.add('action-card--link');
   card.setAttribute('aria-label', title + (meta ? ' — ' + meta : ''));
 
   const iconWrap = document.createElement('div');
   iconWrap.className = 'action-card__icon';
-  iconWrap.innerHTML = pickIcon(title);
+  iconWrap.innerHTML = pickIcon(title, !!url);
 
   const body = document.createElement('div');
   body.className = 'action-card__body';
@@ -401,10 +409,10 @@ function addMessage(text, role = 'bot', sources = [], extraCards = null) {
     cardsWrap.className = 'action-cards';
     for (const item of cards) {
       cardsWrap.appendChild(
-        buildActionCard(item, () => {
-          const query = item.query || item.title;
-          sendMessage(query);
-        })
+        buildActionCard(item, item.url
+          ? () => window.open(item.url, '_blank', 'noopener noreferrer')
+          : () => sendMessage(item.query || item.title)
+        )
       );
     }
     content.appendChild(cardsWrap);
@@ -486,6 +494,9 @@ function welcomeText() {
 
 /** Cartes d'actions proposées dès l'accueil (quand un site est analysé). */
 function welcomeActionCards() {
+  if (state.siteActions && state.siteActions.length) {
+    return state.siteActions.map(a => ({ title: a.label, url: a.url, meta: '' }));
+  }
   return [
     { title: 'Voir les formations',  meta: 'Explorer le catalogue', query: 'Quelles sont les formations disponibles ?' },
     { title: 'Être conseillé',       meta: 'Parler de votre projet', query: 'J\'aimerais être conseillé sur mon projet.' },
@@ -520,10 +531,11 @@ function showSiteCard({ name, url, pages, ready = true }) {
   siteStatus.hidden = false;
 }
 
-function setActiveSite(url, name, brandColor) {
+function setActiveSite(url, name, brandColor, actions) {
   state.siteUrl = url;
   state.siteName = name || nameFromDomain(hostOf(url));
   state.brandColor = brandColor || null;
+  state.siteActions = (actions && actions.length) ? actions : null;
   store.set('skapa_site_url', url);
   store.set('skapa_site_name', state.siteName);
   if (brandColor) store.set('skapa_brand_color', brandColor);
@@ -561,7 +573,8 @@ async function sendMessage(question) {
 
     const reply = data.reply || 'Aucune réponse reçue.';
     typingEl.remove();
-    addMessage(reply, 'bot', data.sources || []);
+    const linkCards = (data.actions || []).map(a => ({ title: a.label, url: a.url, meta: '' }));
+    addMessage(reply, 'bot', data.sources || [], linkCards.length ? linkCards : null);
     state.history.push({ role: 'user', content: question }, { role: 'assistant', content: reply });
     state.history = state.history.slice(-12);
   } catch (err) {
@@ -725,8 +738,9 @@ async function analyse() {
     const siteUrl = result.site_url || url;
     const name = result.site_title || nameFromDomain(hostOf(siteUrl));
     const brandColor = result.brand_color || null;
+    const actions = result.actions || null;
     showSiteCard({ name, url: siteUrl, pages: result.pages_scraped });
-    setActiveSite(siteUrl, name, brandColor);
+    setActiveSite(siteUrl, name, brandColor, actions);
     if (result.partial && jobId) _finalizeJob(jobId);
     confetti();
     showChatWidget({ teaserDelay: null });
@@ -762,6 +776,9 @@ async function restoreSite() {
         state.brandColor = data.brand_color;
         store.set('skapa_brand_color', data.brand_color);
         applyBrandColor(data.brand_color);
+      }
+      if (data.actions && data.actions.length) {
+        state.siteActions = data.actions;
       }
     } else if (res.ok && !window.SKAPA_SITE_URL) {
       // base vidée / autre serveur : on oublie ce site

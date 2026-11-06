@@ -13,6 +13,7 @@ from scraper.pipeline.early import EARLY_PAGES, EarlyIndexer
 from scraper.pipeline.engine_select import pick_engine_and_crawl as _crawl, resolve_scheme
 from scraper.pipeline.site_name import site_name
 from scraper.cleanup import maybe_delete_others
+from scraper.pipeline.actions import extract_cta_links, fetch_missing_cta_pages
 from scraper.spider import domain_key, normalize_url
 
 SCRAPER_TARGET_URL = config.env("SCRAPER_TARGET_URL", "https://example.com")
@@ -101,6 +102,19 @@ def run_pipeline(target_url=None, max_pages=None, max_depth=None, progress=None,
         }
 
     source_domain = domain_key(pages[0]["url"])
+
+    # Extraire les liens CTA depuis la page d'accueil avant le chunking
+    home_page = next((p for p in pages if p.get("depth") == 0 and "html" in p), None)
+    cta_links = []
+    if home_page:
+        cta_links = extract_cta_links(home_page["html"], pages[0]["url"])
+        # Récupérer les pages CTA pas encore crawlées (ex. /candidater JS-rendu)
+        crawled_urls = {p["url"] for p in pages}
+        extra = fetch_missing_cta_pages(cta_links, crawled_urls, pages[0]["url"])
+        if extra:
+            print(f"[pipeline] {len(extra)} page(s) CTA ajoutée(s) : {[p['url'] for p in extra]}")
+            pages = pages + extra
+
     all_chunks, per_page = _collect_chunks(pages)
     info_chunks, site_title = _contact_info_chunks(pages, per_page)
     brand_color = _extract_brand_color(pages)
@@ -113,7 +127,7 @@ def run_pipeline(target_url=None, max_pages=None, max_depth=None, progress=None,
     total_chunks = replace_domain_chunks(source_domain, all_chunks)
     for url, title, n in per_page:
         log_scraped_page(url, title, n)
-    upsert_site(source_domain, brand_color, site_title)
+    upsert_site(source_domain, brand_color, site_title, actions=cta_links or None)
 
     result = {
         "status": "success", "start_url": target_url, "site_url": pages[0]["url"],
@@ -121,7 +135,7 @@ def run_pipeline(target_url=None, max_pages=None, max_depth=None, progress=None,
         "pages_scraped": len(pages), "pages_failed": pages_failed,
         "chunks_created": total_chunks, "urls_found": urls_found, "engine": engine,
         "duration_seconds": round(time.time() - started_at, 1),
-        "brand_color": brand_color,
+        "brand_color": brand_color, "actions": cta_links or None,
     }
     print(f"[pipeline] {result}")
     maybe_delete_others(source_domain)

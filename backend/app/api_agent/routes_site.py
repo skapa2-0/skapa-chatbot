@@ -21,7 +21,8 @@ def site_status():
     site_info = get_site(domain) or {}
     return jsonify({"source_domain": domain, "indexed": bool(metas),
                     "chunks": len(metas), "pages": len(pages),
-                    "brand_color": site_info.get("brand_color")})
+                    "brand_color": site_info.get("brand_color"),
+                    "actions": site_info.get("actions") or []})
 
 
 @app.route("/api/documents", methods=["GET"])
