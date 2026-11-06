@@ -8,6 +8,8 @@ from app.api_agent import app
 from app.api_agent.rag_helpers import (
     clean_history, default_platform_name, domain_count, retrieve,
 )
+from app.api_agent.chat_prompt import build_system_prompt, cited_links
+from app.api_agent.site_map import format_site_map, site_map
 from app.metadata import get_site
 from scraper.spider import domain_key
 
@@ -19,24 +21,6 @@ _ACTION_QUESTION_RE = re.compile(
     r'rejoindre|particip|s.inscri|soumettre|demande',
     re.I,
 )
-
-
-def _build_system_prompt(platform_name, source_domain, context):
-    domain_hint = f" ({source_domain})" if source_domain else ""
-    return (
-        f"Tu es l'assistant virtuel officiel du site {platform_name}{domain_hint}.\n\n"
-        "Règles absolues :\n"
-        "- Réponds dans la langue du visiteur (français par défaut), de façon courte, claire et professionnelle\n"
-        "- Utilise UNIQUEMENT les informations du CONTEXTE ci-dessous (extraits du site)\n"
-        "- Quand c'est utile, donne le lien de la page source (URL complète)\n"
-        f"- Si la réponse n'est pas dans le contexte, dis honnêtement que tu ne disposes pas "
-        f"de cette information et invite le visiteur à contacter {platform_name} directement\n"
-        f"- Si la question ne concerne pas {platform_name}, recentre poliment la conversation\n"
-        "- N'invente jamais de prix, de date, de nom ou de coordonnées\n"
-        "- Réponds en texte simple, jamais de tableau. Pour lister des formations, "
-        "utilise une liste à puces : nom en gras, puis durée, tarif et format sur la même ligne.\n\n"
-        f"CONTEXTE :\n{context}"
-    )
 
 
 @app.route("/chat", methods=["POST"])
@@ -59,7 +43,7 @@ def chat():
                       "puis reposez votre question."),
             "sources_used": 0, "sources": [],
             "site_filter": source_domain, "platform_name": platform_name,
-            "indexed": False, "actions": [],
+            "indexed": False, "actions": [], "links": [],
         })
 
     last_user = next((m["content"] for m in reversed(history) if m["role"] == "user"), None)
@@ -72,8 +56,14 @@ def chat():
         return jsonify({"error": f"Recherche dans la base impossible : {exc}"}), 503
 
     context = ("\n\n---\n\n".join(
-        f"[Source : {h['meta'].get('url', 'inconnue')}]\n{h['text']}" for h in hits
+        f"[Source : {h['meta'].get('title') or 'page'} — {h['meta'].get('url', 'inconnue')}]"
+        f"\n{h['text']}" for h in hits
     ) if hits else "(Aucune information trouvée dans la base pour l'instant.)")
+
+    # Plan du site : titres + liens de toutes les pages (pour les questions « liste »)
+    pages = site_map(source_domain, limit=500) if source_domain else []
+    if pages:
+        context += "\n\n" + format_site_map(pages[:40])
 
     # Injecte les actions du site dans le contexte pour que le LLM cite les bons liens
     site_info = get_site(source_domain) if source_domain else {}
@@ -82,7 +72,7 @@ def chat():
         lines = "\n".join(f"- {a['label']} : {a['url']}" for a in raw_actions)
         context += f"\n\nACTIONS DISPONIBLES SUR CE SITE (liens directs à citer) :\n{lines}"
 
-    system_prompt = _build_system_prompt(platform_name, source_domain, context)
+    system_prompt = build_system_prompt(platform_name, source_domain, context)
     try:
         reply_text = llm.chat(system_prompt, [*history, {"role": "user", "content": user_message}])
     except llm.LLMError as exc:
@@ -98,8 +88,12 @@ def chat():
     # N'envoie les boutons d'action que si la question est liée à une action
     actions = raw_actions if _ACTION_QUESTION_RE.search(user_message) else []
 
+    # Boutons « En savoir plus » : seulement les pages que la réponse cite vraiment
+    links = cited_links(reply_text, pages, exclude_urls=[a["url"] for a in actions])
+
     return jsonify({
         "reply": reply_text or "Je n'ai pas pu formuler de réponse.",
+        "links": links,
         "sources_used": len(hits),
         "sources": sources[:5],
         "site_filter": source_domain or "all",

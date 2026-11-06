@@ -111,30 +111,6 @@ function nameFromDomain(domain) {
   return base.replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-/** Gras (**x**) + URLs cliquables, sans jamais injecter de HTML (pas de XSS). */
-function parseBotText(rawText) {
-  const fragment = document.createDocumentFragment();
-  const tokens = rawText.split(/(\*\*[^*]+\*\*|https?:\/\/[^\s<>()\[\]]+[^\s<>().,;:!?\[\]])/g);
-  for (const token of tokens) {
-    if (!token) continue;
-    if (token.startsWith('**') && token.endsWith('**') && token.length > 4) {
-      const b = document.createElement('strong');
-      b.textContent = token.slice(2, -2);
-      fragment.appendChild(b);
-    } else if (/^https?:\/\//.test(token)) {
-      const a = document.createElement('a');
-      a.href = token;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.textContent = token;
-      fragment.appendChild(a);
-    } else {
-      fragment.appendChild(document.createTextNode(token));
-    }
-  }
-  return fragment;
-}
-
 // ── SVG icons (vectoriels, sans dépendance externe) ─────────────────────────
 const ICONS = {
   bot:
@@ -162,68 +138,6 @@ const ICONS = {
     '<polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>' +
     '</svg>',
 };
-
-/**
- * Détecte une liste structurée dans la réponse du bot et la segmente en
- * { intro, items[{title, meta, badge?}], count }.
- * Retourne null si moins de 2 éléments de liste sont détectés.
- */
-function parseStructuredResponse(rawText) {
-  const normalized = rawText.replace(/\r\n/g, '\n');
-  // Puces markdown fréquentes: *, -, •, 1. / 1)
-  const bulletRe = /(?:^|\n)\s*(?:[*\-•]|\d+[.)])\s+([^\n]+)/g;
-  const items = [];
-  let firstMatchIdx = -1;
-  let m;
-  while ((m = bulletRe.exec(normalized)) !== null) {
-    if (firstMatchIdx === -1) firstMatchIdx = m.index + m[0].indexOf(m[1]) - 2;
-    const raw = m[1].trim();
-    if (!raw || raw.length > 180) continue; // trop long = probablement une phrase
-    items.push(parseItemLine(raw));
-  }
-  if (items.length < 2) return null;
-
-  // Tout ce qui précède la première puce = intro
-  const intro = normalized
-    .slice(0, Math.max(0, firstMatchIdx))
-    .replace(/\n+$/, '')
-    .trim();
-
-  return { intro, items, count: items.length };
-}
-
-/** Extrait titre + sous-titre d'une ligne de puce. */
-function parseItemLine(line) {
-  // Badge éventuel: "(POPULAIRE)" ou "[POPULAIRE]" ou "— POPULAIRE" en fin
-  let badge = null;
-  const badgeMatch = line.match(/[\s(\[—–\-]+(POPULAIRE|NOUVEAU|RECOMMANDÉ|TOP)[\s)\]]*$/i);
-  if (badgeMatch) {
-    badge = badgeMatch[1].toUpperCase();
-    line = line.slice(0, badgeMatch.index).trim();
-  }
-
-  // Pattern 1: **Titre** — meta  OU  **Titre** : meta
-  let mm = line.match(/^\*\*([^*]+)\*\*\s*[—–:·\-]?\s*(.*)$/);
-  if (mm) return { title: mm[1].trim(), meta: cleanMeta(mm[2]), badge };
-
-  // Pattern 2: Titre — meta  (séparateur typographique au milieu)
-  mm = line.match(/^(.+?)\s+[—–]\s+(.+)$/);
-  if (mm) return { title: stripFormatting(mm[1]), meta: cleanMeta(mm[2]), badge };
-
-  // Pattern 3: Titre : meta
-  mm = line.match(/^([^:]{3,80}):\s+(.+)$/);
-  if (mm) return { title: stripFormatting(mm[1]), meta: cleanMeta(mm[2]), badge };
-
-  // Fallback: pas de séparation claire
-  return { title: stripFormatting(line), meta: '', badge };
-}
-
-function stripFormatting(s) {
-  return s.replace(/\*\*/g, '').trim();
-}
-function cleanMeta(s) {
-  return stripFormatting(s).replace(/\s*\.$/, '');
-}
 
 /** Choisit l'icône selon le contenu du titre. */
 function pickIcon(title, isLink = false) {
@@ -273,14 +187,6 @@ function buildActionCard({ title, meta, badge, url }, onClick) {
 
   if (typeof onClick === 'function') card.addEventListener('click', onClick);
   return card;
-}
-
-/** Mot pluralisé pour le compteur sous les cartes. */
-function pluralLabel(count, items) {
-  const t = items.map((i) => (i.title + ' ' + i.meta).toLowerCase()).join(' ');
-  if (/formation|cours|module/.test(t)) return `${count} formation${count > 1 ? 's' : ''} correspondent`;
-  if (/produit|offre/.test(t))         return `${count} offre${count > 1 ? 's' : ''} correspondent`;
-  return `${count} résultat${count > 1 ? 's' : ''}`;
 }
 
 function scrollToBottom() {
@@ -369,7 +275,7 @@ function applyBrandColor(hex) {
 }
 
 /** role = 'bot' | 'user' | 'system' | 'error' */
-function addMessage(text, role = 'bot', sources = [], extraCards = null) {
+function addMessage(text, role = 'bot', extraCards = null) {
   const wrapper = document.createElement('div');
   wrapper.className = `message ${role}`;
 
@@ -385,25 +291,18 @@ function addMessage(text, role = 'bot', sources = [], extraCards = null) {
   const content = document.createElement('div');
   content.className = role === 'bot' || role === 'error' ? 'bot-content' : '';
 
-  // Parsing structuré pour messages bot uniquement
-  let parsed = null;
-  if (role === 'bot') parsed = parseStructuredResponse(text);
-
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
-  if (parsed) {
-    // Si la liste a été détectée: la bulle ne contient que l'intro
-    const introText = parsed.intro || 'Voici les options disponibles :';
-    bubble.appendChild(parseBotText(introText));
-  } else if (role === 'bot') {
-    bubble.appendChild(parseBotText(text));
+  if (role === 'bot') {
+    // Réponse affichée EN ENTIER (listes, gras, liens) — rendu sûr, sans innerHTML
+    bubble.appendChild(window.renderMarkdown(text));
   } else {
     bubble.textContent = text;
   }
   content.appendChild(bubble);
 
-  // --- Cartes d'actions (depuis parsing ou fournies explicitement) ---
-  const cards = extraCards || (parsed ? parsed.items : null);
+  // --- Cartes (actions du site, liens « En savoir plus », suggestions d'accueil) ---
+  const cards = extraCards;
   if (cards && cards.length) {
     const cardsWrap = document.createElement('div');
     cardsWrap.className = 'action-cards';
@@ -416,30 +315,6 @@ function addMessage(text, role = 'bot', sources = [], extraCards = null) {
       );
     }
     content.appendChild(cardsWrap);
-
-    // Footer de synthèse si plus de 2 cartes
-    if (cards.length >= 2 && parsed) {
-      const footer = document.createElement('div');
-      footer.className = 'cards-footer';
-      footer.textContent = pluralLabel(cards.length, cards);
-      content.appendChild(footer);
-    }
-  }
-
-  // --- Sources sous la bulle ---
-  if (role === 'bot' && sources.length) {
-    const list = document.createElement('div');
-    list.className = 'sources';
-    for (const s of sources) {
-      const a = document.createElement('a');
-      a.href = s.url;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.title = s.url;
-      a.textContent = (s.title || s.url).split(/\s[|–—]\s/)[0];
-      list.appendChild(a);
-    }
-    content.appendChild(list);
   }
 
   if (role === 'bot' || role === 'error') wrapper.appendChild(content);
@@ -513,7 +388,7 @@ function resetConversation() {
   state.history = [];
   messagesEl.replaceChildren();
   if (state.siteUrl) {
-    addMessage(welcomeText(), 'bot', [], welcomeActionCards());
+    addMessage(welcomeText(), 'bot', welcomeActionCards());
   } else {
     addMessage(welcomeText(), 'bot');
   }
@@ -583,23 +458,14 @@ async function sendMessage(question) {
     const actionCards = (data.actions || []).map(a => ({ title: a.label, url: a.url, meta: '' }));
     const actionUrls = new Set(actionCards.map(c => c.url));
 
-    // Boutons "En savoir plus" depuis les sources (hors accueil et pages légales)
-    const _LEGAL_PATH = /\/(mentions?|cgu|cgv|cookies?|confidential|privacy|politique|legal|terms)/i;
-    const sourceCards = (data.sources || [])
-      .filter(s => {
-        if (!s.url || !s.title) return false;
-        try {
-          const path = new URL(s.url).pathname;
-          if (path === '/' || path === '') return false;
-          if (_LEGAL_PATH.test(path)) return false;
-        } catch { return false; }
-        return !actionUrls.has(s.url);
-      })
+    // Boutons « En savoir plus » : pages réellement citées dans la réponse (serveur)
+    const sourceCards = (data.links || [])
+      .filter(l => l.url && !actionUrls.has(l.url))
       .slice(0, 2)
-      .map(s => ({ title: 'En savoir plus', meta: s.title, url: s.url }));
+      .map(l => ({ title: 'En savoir plus', meta: l.title, url: l.url }));
 
     const allCards = [...actionCards, ...sourceCards];
-    addMessage(reply, 'bot', data.sources || [], allCards.length ? allCards : null);
+    addMessage(reply, 'bot', allCards.length ? allCards : null);
     state.history.push({ role: 'user', content: question }, { role: 'assistant', content: reply });
     state.history = state.history.slice(-12);
   } catch (err) {

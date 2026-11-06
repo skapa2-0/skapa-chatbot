@@ -1,5 +1,7 @@
 """Helpers de récupération (RAG) et d'historique pour la route /chat."""
 
+import re
+
 from app import config
 from app.api_agent import MAX_HISTORY
 from app.chroma_client import get_collection
@@ -14,6 +16,31 @@ _CATALOGUE_PROBE = (
     "Fondamentaux IA ISTQB Product Builder Agentic Claude GenAI "
     "multi-agents RAG ingénierie agentique Cursor Lovable managers"
 )
+
+
+# Questions qui demandent une énumération (« quelles sont les... », « liste »...)
+LIST_QUERY_RE = re.compile(
+    r"\b(quel(le)?s?\s+(sont|formations?|services?|offres?|produits?|types?|cours)|"
+    r"liste|toutes?\s+les|tous\s+les|que\s+propose|qu.est.ce\s+que\s+vous\s+propos|"
+    r"catalogue|disponibles?)\b", re.I)
+
+
+def is_list_query(text):
+    return bool(LIST_QUERY_RE.search(text or ""))
+
+
+def _diverse(hits, k, per_page):
+    """Garde au plus `per_page` passages par page, dans l'ordre de pertinence."""
+    out, per = [], {}
+    for h in hits:
+        url = h["meta"].get("url", "")
+        if per.get(url, 0) >= per_page:
+            continue
+        per[url] = per.get(url, 0) + 1
+        out.append(h)
+        if len(out) >= k:
+            break
+    return out
 
 
 def _is_formation_query(query):
@@ -74,8 +101,12 @@ def retrieve(query, domain, followup_query=None):
     total = collection.count()
     if total == 0:
         return []
-    k = min(config.RAG_TOP_K, total)
-    hits = _query(collection, query, domain, k)
+    listing = is_list_query(query)
+    k = min(max(config.RAG_TOP_K, 10) if listing else config.RAG_TOP_K, total)
+    # On demande plus de candidats puis on garde des passages de pages variées :
+    # une question « liste » doit couvrir plusieurs pages, pas une seule.
+    pool = _query(collection, query, domain, min(total, k * 3))
+    hits = _diverse(pool, k, per_page=2 if listing else 3)
     if followup_query:
         seen = {h["text"] for h in hits}
         extra = [h for h in _query(collection, followup_query, domain, k) if h["text"] not in seen]

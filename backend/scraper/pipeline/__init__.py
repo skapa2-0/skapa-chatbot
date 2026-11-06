@@ -13,6 +13,7 @@ from scraper.pipeline.brand_color import extract_brand_color_safe as _extract_br
 from scraper.pipeline.early import EARLY_PAGES, EarlyIndexer
 from scraper.pipeline.engine_select import pick_engine_and_crawl as _crawl, resolve_scheme
 from scraper.pipeline.site_name import site_name
+from scraper.pipeline.titles import distinct_titles
 from scraper.cleanup import maybe_delete_others
 from scraper.pipeline.actions import extract_cta_links, fetch_missing_cta_pages
 from scraper.spider import domain_key, normalize_url
@@ -29,6 +30,9 @@ def _collect_chunks(pages):
     à chaque page."""
     prepared = {p["url"]: prepare_page_text(p["url"], p["html"]) for p in pages if "html" in p}
     boiler = boilerplate_lines([text for _, text in prepared.values()])
+    # Titres distincts pour le chat ; les titres d'origine restent pour site_name()
+    original = {url: t for url, (t, _) in prepared.items()}
+    prepared = distinct_titles(prepared, {p["url"]: p.get("html") for p in pages})
 
     all_chunks, per_page, seen_texts = [], [], set()
     for page in pages:
@@ -46,7 +50,7 @@ def _collect_chunks(pages):
             seen_texts.add(body)
             kept.append(c)
         all_chunks.extend(kept)
-        title = chunks[0]["metadata"]["title"] if chunks else ""
+        title = original.get(page["url"]) or (chunks[0]["metadata"]["title"] if chunks else "")
         per_page.append((page["url"], title, len(kept)))
     return all_chunks, per_page
 
