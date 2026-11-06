@@ -109,6 +109,21 @@ def _anthropic_chat(system_prompt, messages):
         raise LLMError(f"Impossible de joindre l'API Anthropic : {exc}")
 
 
+def _groq_payload(msgs):
+    """gpt-oss « réfléchit » avant de répondre : sans limite, ce raisonnement peut
+    consommer tout le budget et la réponse arrive vide. On le règle sur « low »."""
+    payload = {
+        "model": config.GROQ_MODEL,
+        "messages": msgs,
+        "temperature": 0.2,
+        "max_completion_tokens": config.LLM_MAX_TOKENS,
+    }
+    if config.GROQ_MODEL.startswith("openai/gpt-oss"):
+        payload["reasoning_effort"] = config.GROQ_REASONING_EFFORT
+        payload["include_reasoning"] = False
+    return payload
+
+
 def _groq_chat(system_prompt, messages):
     if not config.GROQ_API_KEY:
         raise LLMError("GROQ_API_KEY manquante (LLM_PROVIDER=groq).")
@@ -122,12 +137,7 @@ def _groq_chat(system_prompt, messages):
                     "Authorization": f"Bearer {config.GROQ_API_KEY}",
                     "Content-Type": "application/json",
                 },
-                json={
-                    "model": config.GROQ_MODEL,
-                    "messages": msgs,
-                    "temperature": 0.2,
-                    "max_tokens": 1024,
-                },
+                json=_groq_payload(msgs),
                 timeout=config.LLM_TIMEOUT,
             )
             if resp.status_code == 429:
@@ -137,9 +147,13 @@ def _groq_chat(system_prompt, messages):
                 last_exc = requests.exceptions.HTTPError(resp.status_code, response=resp)
                 continue
             resp.raise_for_status()
-            content = resp.json()["choices"][0]["message"]["content"].strip()
+            choice = resp.json()["choices"][0]
+            content = (choice["message"].get("content") or "").strip()
             if not content:
-                raise LLMError("Le modèle Groq a renvoyé une réponse vide.")
+                # Cas typique : le raisonnement interne a consommé tout le budget de tokens
+                print(f"[llm] réponse Groq vide (finish_reason={choice.get('finish_reason')}, "
+                      f"usage={resp.json().get('usage')})")
+                raise LLMError("Le modèle n'a pas pu formuler de réponse, reformulez la question.")
             return content
         except requests.exceptions.HTTPError as exc:
             detail = ""

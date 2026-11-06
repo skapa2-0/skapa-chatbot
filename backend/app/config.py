@@ -70,6 +70,10 @@ GROQ_MODEL = env("GROQ_MODEL", "openai/gpt-oss-20b")
 GEMINI_API_KEY = env("GEMINI_API_KEY")
 GEMINI_MODEL = env("GEMINI_MODEL", "gemini-2.0-flash")
 LLM_TIMEOUT = env_float("LLM_TIMEOUT", 180)
+# Budget de tokens de la réponse (raisonnement compris pour les modèles qui réfléchissent)
+LLM_MAX_TOKENS = env_int("LLM_MAX_TOKENS", 2048)
+# gpt-oss sur Groq : effort de raisonnement low | medium | high
+GROQ_REASONING_EFFORT = env("GROQ_REASONING_EFFORT", "low")
 
 # ── Embeddings ───────────────────────────────────────────────────────────────
 # auto    -> modèle d'embedding Ollama s'il est installé, sinon modèle Chroma par défaut
