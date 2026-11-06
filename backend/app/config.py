@@ -86,3 +86,10 @@ ADMIN_TOKEN = env("ADMIN_TOKEN")
 # true -> /api/scrape/run accessible sans token (pratique en local / démo)
 SCRAPE_PUBLIC = env_bool("SCRAPE_PUBLIC", False)
 ALLOWED_ORIGINS = env("ALLOWED_ORIGINS", "*")
+
+# ── Nettoyage automatique ─────────────────────────────────────────────────────
+# true -> après chaque scraping réussi, supprime tous les autres domaines sauf
+# le domaine courant et ceux listés dans SCRAPE_KEEP_DOMAINS
+SCRAPE_KEEP_ONLY_LAST = env_bool("SCRAPE_KEEP_ONLY_LAST", False)
+# Domaines protégés (jamais supprimés), séparés par des virgules
+SCRAPE_KEEP_DOMAINS = env("SCRAPE_KEEP_DOMAINS", "")

@@ -12,6 +12,7 @@ from scraper.pipeline.brand_color import extract_brand_color_safe as _extract_br
 from scraper.pipeline.early import EARLY_PAGES, EarlyIndexer
 from scraper.pipeline.engine_select import pick_engine_and_crawl as _crawl, resolve_scheme
 from scraper.pipeline.site_name import site_name
+from scraper.cleanup import maybe_delete_others
 from scraper.spider import domain_key, normalize_url
 
 SCRAPER_TARGET_URL = config.env("SCRAPER_TARGET_URL", "https://example.com")
@@ -123,4 +124,5 @@ def run_pipeline(target_url=None, max_pages=None, max_depth=None, progress=None,
         "brand_color": brand_color,
     }
     print(f"[pipeline] {result}")
+    maybe_delete_others(source_domain)
     return result

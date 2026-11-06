@@ -85,6 +85,12 @@ def get_site(domain: str, db_path=None) -> "dict | None":
     return dict(row) if row else None
 
 
+def delete_site(domain: str, db_path=None) -> None:
+    conn = _get_conn(db_path)
+    conn.execute("DELETE FROM sites WHERE domain=?", (domain,))
+    conn.commit()
+
+
 def get_recent_pages(limit=50, db_path=None):
     conn = _get_conn(db_path)
     rows = conn.execute(
