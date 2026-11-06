@@ -49,7 +49,9 @@ def parse_page(url, html, depth=0, strip_lines=None, text=None, title=None, prep
     else:
         title, text = prepared or prepare_page_text(url, html)
         if strip_lines:
-            text = "\n".join(ln for ln in text.splitlines() if ln.strip() not in strip_lines)
+            stripped = "\n".join(ln for ln in text.splitlines() if ln.strip() not in strip_lines)
+            # Safety net: never empty a page — keep original if stripping removes too much
+            text = stripped if len(stripped.strip()) >= 200 else text
 
     source_domain = domain_key(url)
     scraped_at = datetime.now(timezone.utc).isoformat()

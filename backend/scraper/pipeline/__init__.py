@@ -2,6 +2,7 @@
 Utilisé par /api/scrape/run (en tâche de fond) et par scheduler.py."""
 
 import time
+from urllib.parse import urlparse
 
 from app import config
 from app.metadata import log_scraped_page, upsert_site
@@ -82,6 +83,14 @@ def run_pipeline(target_url=None, max_pages=None, max_depth=None, progress=None,
             progress(n, url)
 
     target_url = resolve_scheme(target_url)
+    # Toujours partir de la page d'accueil pour éviter qu'un scraping depuis
+    # une sous-page n'écrase un index plus complet.
+    _p = urlparse(target_url)
+    _home = f"{_p.scheme}://{_p.netloc}/"
+    if _home.rstrip('/') != target_url.rstrip('/'):
+        print(f"[pipeline] démarrage normalisé vers l'accueil : {_home}")
+        target_url = _home
+
     (pages, pages_failed, urls_found), engine = _crawl(
         target_url, max_pages, max_depth, _progress)
 

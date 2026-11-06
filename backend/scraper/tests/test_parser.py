@@ -1,5 +1,6 @@
 from scraper.parser import (chunk_text, clean_html, extract_site_info, parse_page,
-                            site_info_chunks)
+                            prepare_page_text, site_info_chunks)
+from scraper.parser.html_clean import boilerplate_lines
 
 SAMPLE_HTML = """
 <html>
@@ -73,3 +74,79 @@ def test_parse_page_returns_chunks_with_metadata():
     assert chunks[0]["text"].startswith("Page : Ma page")
     assert "Résumé de la page" in chunks[0]["text"]
     assert len({c["id"] for c in chunks}) == len(chunks)
+
+
+# ── boilerplate_lines ─────────────────────────────────────────────────────────
+
+def test_boilerplate_lines_detects_repeated_lines():
+    """Une ligne présente sur ≥60 % des pages uniques est boilerplate."""
+    repeated = "Tagline commune à toutes les pages du site web."
+    pages = [f"{repeated}\nContenu unique {i}." for i in range(10)]
+    result = boilerplate_lines(pages, min_pages=5, min_ratio=0.6)
+    assert repeated in result
+
+
+def test_boilerplate_lines_ignores_short_labels():
+    """Les labels courts (<15 chars) ne sont pas retenus."""
+    pages = ["Durée\nFoo bar baz" for _ in range(10)]
+    result = boilerplate_lines(pages)
+    assert "Durée" not in result
+
+
+def test_boilerplate_deduplicates_identical_pages():
+    """Pages identiques comptent comme une seule pour le calcul du seuil.
+
+    Sans dédup : 10 pages identiques font monter le compteur → faux boilerplate.
+    Avec dédup : elles comptent pour 1, le seuil n'est pas atteint."""
+    listing_line = "Découvrez les témoignages de nos apprenants et les tendances."
+    repeated_page = f"{listing_line}\nAutre contenu du listing."
+    unique_pages = [f"Contenu unique et spécifique à la page {i}." for i in range(4)]
+    # 10 pages identiques + 4 uniques = 14 pages
+    texts = [repeated_page] * 10 + unique_pages
+    result = boilerplate_lines(texts, min_pages=5, min_ratio=0.6)
+    # Sans dédup, listing_line apparaîtrait sur 10/14 pages → boilerplate
+    # Avec dédup, 1 unique listing + 4 uniques = 5 unique texts ; threshold = max(5,3)=5
+    # listing_line sur 1/5 pages → pas boilerplate
+    assert listing_line not in result, "Ligne d'une page dupliquée ne doit pas être boilerplate"
+
+
+# ── parse_page safety net ─────────────────────────────────────────────────────
+
+_PAGE_WITH_CONTENT = """
+<html>
+  <head><title>Formation Développeur Web</title></head>
+  <body>
+    <main>
+      <h1>Formation Développeur Web</h1>
+      <p>Apprenez à créer des applications web modernes avec HTML, CSS et JavaScript.</p>
+      <p>Durée : 6 mois. Format : présentiel. Financement : CPF.</p>
+    </main>
+  </body>
+</html>
+"""
+
+
+def test_parse_page_fallback_when_strip_lines_would_empty_page():
+    """Si strip_lines viderait la page (< 200 chars), on garde le texte original."""
+    _, text = prepare_page_text("https://example.com/dev-web", _PAGE_WITH_CONTENT)
+    all_lines = {ln.strip() for ln in text.splitlines() if ln.strip()}
+    # Marquer TOUTES les lignes comme boilerplate
+    chunks = parse_page("https://example.com/dev-web", _PAGE_WITH_CONTENT, strip_lines=all_lines)
+    assert len(chunks) >= 1
+    full_text = " ".join(c["text"] for c in chunks)
+    assert "Formation Développeur Web" in full_text
+
+
+def test_parse_page_strips_true_boilerplate():
+    """Les vraies lignes boilerplate sont retirées quand la page reste lisible."""
+    boilerplate = "Cette ligne apparaît sur toutes les pages du site web entier."
+    unique = "\n".join(
+        f"Paragraphe unique {i} avec du contenu spécifique à cette formation."
+        for i in range(10)
+    )
+    html = f"<html><head><title>Page</title></head><body><p>{boilerplate}</p><p>{unique}</p></body></html>"
+    _, text = prepare_page_text("https://example.com/page", html)
+    chunks = parse_page("https://example.com/page", html, strip_lines={boilerplate})
+    full_text = " ".join(c["text"] for c in chunks)
+    assert boilerplate not in full_text
+    assert "Paragraphe unique 0" in full_text

@@ -92,17 +92,24 @@ def bs4_text(soup):
     return clean_lines(root.get_text(separator="\n"))
 
 
-def boilerplate_lines(texts, min_pages=3, min_ratio=0.6, min_length=15):
-    """Lignes présentes sur ≥ `min_ratio` des pages ET ≥ `min_length` caractères.
-    Capture l'en-tête commun du site (ex. tagline répétée sur toutes les pages)
-    sans toucher aux labels courts (« Durée », « Format »…), qui portent du sens."""
+def boilerplate_lines(texts, min_pages=5, min_ratio=0.6, min_length=15):
+    """Lignes présentes sur ≥ min_ratio des pages (dédupliquées) ET ≥ min_length chars.
+
+    Pages au contenu identique comptent pour une seule afin d'éviter que des pages
+    répétitives (ex. listing d'articles retourné sans JS) faussent le calcul.
+    Les éléments <header>/<nav>/<footer> doivent être retirés du HTML avant appel
+    (fait par preclean). Seules les lignes vraiment présentes sur la majorité
+    des pages UNIQUES sont considérées boilerplate."""
     if not texts:
         return set()
+    unique_texts = [t for t in dict.fromkeys(t for t in texts if t)]
+    if not unique_texts:
+        return set()
     counts = Counter()
-    for t in texts:
+    for t in unique_texts:
         for line in {ln.strip() for ln in t.splitlines() if ln.strip()}:
             counts[line] += 1
-    threshold = max(min_pages, int(min_ratio * len(texts)))
+    threshold = max(min_pages, int(min_ratio * len(unique_texts)))
     return {line for line, n in counts.items()
             if n >= threshold and len(line) >= min_length}
 

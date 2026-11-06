@@ -1,5 +1,6 @@
 from scraper import spider
 from scraper.spider import domain_key, extract_links, is_crawlable, normalize_url, same_domain
+from scraper.spider import _url_depth
 
 
 def test_domain_key_ignores_www_case_and_port():
@@ -35,6 +36,26 @@ def test_extract_links_keeps_internal_pages_only():
     # /doc.pdf est maintenant gardé (PDF_ENABLED=True par défaut)
     assert links == {"https://site.fr/formations", "https://www.site.fr/tarifs",
                      "https://site.fr/doc.pdf"}
+
+
+def test_url_depth_counts_path_segments():
+    assert _url_depth("https://site.fr/") == 0
+    assert _url_depth("https://site.fr/formations") == 1
+    assert _url_depth("https://site.fr/formations/python") == 2
+    assert _url_depth("https://site.fr/a/b/c") == 3
+
+
+def test_seed_queue_prioritises_shallow_urls(monkeypatch):
+    """URLs de profondeur 1 doivent être avant celles de profondeur 2 dans la file."""
+    shallow = "https://site.fr/contact"       # depth 1
+    deep    = "https://site.fr/articles/foo"  # depth 2
+    monkeypatch.setattr(spider, "USE_SITEMAP", True)
+    monkeypatch.setattr(spider, "discover_sitemap_urls",
+                        lambda *a, **kw: {shallow, deep})
+    robots = type("R", (), {"sitemaps": [], "allowed": lambda s, u: True})()
+    queue, _ = spider._seed_queue("https://site.fr/", robots)
+    urls_in_order = [u for u, _ in queue]
+    assert urls_in_order.index(shallow) < urls_in_order.index(deep)
 
 
 def test_crawl_follows_redirect_to_www(monkeypatch):

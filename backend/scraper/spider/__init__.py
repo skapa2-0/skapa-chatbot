@@ -20,12 +20,21 @@ from scraper.spider.urls import (
 )
 
 
+def _url_depth(url):
+    """Nombre de segments non-vides dans le chemin URL (priorité BFS)."""
+    from urllib.parse import urlparse
+    return len([p for p in urlparse(url).path.split('/') if p])
+
+
 def _seed_queue(start_url, robots):
     queue = deque([(start_url, 0)])
     sitemap_urls = set()
     if USE_SITEMAP:
         sitemap_urls = discover_sitemap_urls(start_url, getattr(robots, "sitemaps", []))
-        queue.extend((u, 1) for u in sorted(sitemap_urls) if u != start_url)
+        # Trier par profondeur d'URL croissante : les pages racines (/formations,
+        # /contact…) sont indexées avant les articles et sous-pages détaillées.
+        sorted_urls = sorted(sitemap_urls, key=lambda u: (_url_depth(u), u))
+        queue.extend((u, 1) for u in sorted_urls if u != start_url)
     return queue, sitemap_urls
 
 
