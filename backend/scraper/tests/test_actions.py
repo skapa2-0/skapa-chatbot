@@ -1,11 +1,29 @@
 """Tests pour scraper/pipeline/actions.py (sans réseau)."""
-from scraper.pipeline.actions import extract_cta_links
+from scraper.pipeline.actions import extract_cta_links, _has_action_intent
 
 
 BASE = "https://exemple.fr"
 
 
-# ── extract_cta_links ──────────────────────────────────────────────────────────
+# ── _has_action_intent ────────────────────────────────────────────────────────
+
+def test_intent_on_label_candidater():
+    assert _has_action_intent("Candidater", "https://exemple.fr/page")
+
+def test_intent_on_label_contact():
+    assert _has_action_intent("Nous contacter", "https://exemple.fr/page")
+
+def test_intent_on_url_path():
+    assert _has_action_intent("Cliquez ici", "https://exemple.fr/candidater")
+
+def test_no_intent_category_label():
+    assert not _has_action_intent("Formations", "https://exemple.fr/formations")
+
+def test_intent_typo_condidater():
+    assert _has_action_intent("condidater", "https://exemple.fr/page")
+
+
+# ── extract_cta_links — détection ─────────────────────────────────────────────
 
 def test_detects_button_link_in_header():
     html = '''<html><body>
@@ -17,41 +35,54 @@ def test_detects_button_link_in_header():
                for r in result)
 
 
-def test_detects_nav_links():
+def test_detects_action_nav_links():
     html = '''<html><body>
     <nav>
-      <a href="/formations">Formations</a>
       <a href="/contact">Nous contacter</a>
+      <a href="/inscription">S\'inscrire</a>
     </nav></body></html>'''
     result = extract_cta_links(html, BASE)
     labels = [r['label'] for r in result]
-    assert 'Formations' in labels
     assert 'Nous contacter' in labels
+    assert "S'inscrire" in labels
+
+
+def test_ignores_category_links():
+    """Les pages de catégories (formations, produits) ne sont pas des actions."""
+    html = '''<html><body>
+    <nav>
+      <a href="/formations">Formations</a>
+      <a href="/contact">Contact</a>
+    </nav></body></html>'''
+    result = extract_cta_links(html, BASE)
+    labels = [r['label'] for r in result]
+    assert 'Formations' not in labels
+    assert 'Contact' in labels
 
 
 def test_ignores_homepage_link():
     html = '''<html><body>
     <nav>
       <a href="/">Accueil</a>
-      <a href="/formations">Formations</a>
+      <a href="/contact">Contact</a>
     </nav></body></html>'''
     result = extract_cta_links(html, BASE)
     urls = [r['url'] for r in result]
     assert BASE + '/' not in urls
     assert BASE not in urls
-    assert any('/formations' in u for u in urls)
+    assert any('/contact' in u for u in urls)
 
 
 def test_ignores_external_links():
     html = '''<html><body>
     <nav>
-      <a href="https://autre-site.fr/page">Externe</a>
-      <a href="/interne">Interne</a>
+      <a href="https://autre-site.fr/candidater">Externe</a>
+      <a href="/contact">Contact</a>
     </nav></body></html>'''
     result = extract_cta_links(html, BASE)
     for r in result:
         assert 'autre-site.fr' not in r['url']
-    assert any('/interne' in r['url'] for r in result)
+    assert any('/contact' in r['url'] for r in result)
 
 
 def test_ignores_mailto_and_tel():
@@ -59,7 +90,7 @@ def test_ignores_mailto_and_tel():
     <nav>
       <a href="mailto:contact@exemple.fr">Email</a>
       <a href="tel:0123456789">Appel</a>
-      <a href="/formations">Formations</a>
+      <a href="/candidater">Candidater</a>
     </nav></body></html>'''
     result = extract_cta_links(html, BASE)
     for r in result:
@@ -71,13 +102,12 @@ def test_button_links_ranked_before_nav_links():
     html = '''<html><body>
     <header>
       <nav>
-        <a href="/page-a">Page A</a>
-        <a href="/page-b">Page B</a>
+        <a href="/contact-a">Contacter A</a>
+        <a href="/contact-b">Contacter B</a>
       </nav>
       <a href="/candidater" class="btn-cta">Candidater</a>
     </header></body></html>'''
     result = extract_cta_links(html, BASE)
-    # Le bouton CTA doit être avant les liens nav
     btn = next((r for r in result if r['label'] == 'Candidater'), None)
     assert btn is not None
     if len(result) >= 2:
@@ -89,20 +119,20 @@ def test_ignores_generic_labels():
     <nav>
       <a href="/accueil">Accueil</a>
       <a href="/connexion">Connexion</a>
-      <a href="/formations">Formations</a>
+      <a href="/contact">Contact</a>
     </nav></body></html>'''
     result = extract_cta_links(html, BASE)
     labels_lower = [r['label'].lower() for r in result]
     assert 'accueil' not in labels_lower
     assert 'connexion' not in labels_lower
-    assert 'formations' in labels_lower
+    assert 'contact' in labels_lower
 
 
-def test_limits_to_six():
-    links = ''.join(f'<a href="/p{i}">Page {i}</a>' for i in range(20))
+def test_limits_to_three():
+    links = ''.join(f'<a href="/contact-{i}">Contacter {i}</a>' for i in range(10))
     html = f'<html><body><nav>{links}</nav></body></html>'
     result = extract_cta_links(html, BASE)
-    assert len(result) <= 6
+    assert len(result) <= 3
 
 
 def test_empty_html_returns_empty():
@@ -111,10 +141,10 @@ def test_empty_html_returns_empty():
 
 def test_no_header_nav_falls_back_to_body():
     html = '''<html><body>
-      <a href="/formations" class="btn">Formations</a>
+      <a href="/contact" class="btn">Contacter</a>
     </body></html>'''
     result = extract_cta_links(html, BASE)
-    assert any('/formations' in r['url'] for r in result)
+    assert any('/contact' in r['url'] for r in result)
 
 
 def test_best_label_wins_for_duplicate_url():
@@ -128,3 +158,13 @@ def test_best_label_wins_for_duplicate_url():
     result = extract_cta_links(html, BASE)
     assert len(result) == 1
     assert result[0]['label'] == 'Candidater'
+
+
+def test_detects_footer_contact_link():
+    """Les liens de contact dans le footer sont aussi détectés."""
+    html = '''<html><body>
+    <header><a href="/formations">Formations</a></header>
+    <footer><a href="/contact">Nous contacter</a></footer>
+    </body></html>'''
+    result = extract_cta_links(html, BASE)
+    assert any('/contact' in r['url'] for r in result)

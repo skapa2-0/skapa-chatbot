@@ -1,4 +1,5 @@
 """Route /chat : question au chatbot RAG."""
+import re
 
 from flask import jsonify, request
 
@@ -9,6 +10,15 @@ from app.api_agent.rag_helpers import (
 )
 from app.metadata import get_site
 from scraper.spider import domain_key
+
+# Mots-clés qui rendent les boutons d'action pertinents pour la réponse.
+# Tolère les fautes courantes (condidater, candider…).
+_ACTION_QUESTION_RE = re.compile(
+    r'contact|candidat|cond[io]dat|postuler|inscri|rencontr|rendez.?vous|\brdv\b|'
+    r'tarif|prix|co[uû]t|financ|devis|d[eé]mo|r[eé]serv|apply|signup|'
+    r'rejoindre|particip|s.inscri|soumettre|demande',
+    re.I,
+)
 
 
 def _build_system_prompt(platform_name, source_domain, context):
@@ -49,7 +59,7 @@ def chat():
                       "puis reposez votre question."),
             "sources_used": 0, "sources": [],
             "site_filter": source_domain, "platform_name": platform_name,
-            "indexed": False,
+            "indexed": False, "actions": [],
         })
 
     last_user = next((m["content"] for m in reversed(history) if m["role"] == "user"), None)
@@ -65,6 +75,13 @@ def chat():
         f"[Source : {h['meta'].get('url', 'inconnue')}]\n{h['text']}" for h in hits
     ) if hits else "(Aucune information trouvée dans la base pour l'instant.)")
 
+    # Injecte les actions du site dans le contexte pour que le LLM cite les bons liens
+    site_info = get_site(source_domain) if source_domain else {}
+    raw_actions = (site_info or {}).get('actions') or []
+    if raw_actions:
+        lines = "\n".join(f"- {a['label']} : {a['url']}" for a in raw_actions)
+        context += f"\n\nACTIONS DISPONIBLES SUR CE SITE (liens directs à citer) :\n{lines}"
+
     system_prompt = _build_system_prompt(platform_name, source_domain, context)
     try:
         reply_text = llm.chat(system_prompt, [*history, {"role": "user", "content": user_message}])
@@ -78,13 +95,13 @@ def chat():
             seen.add(url)
             sources.append({"url": url, "title": h["meta"].get("title", "")})
 
-    site_info = get_site(source_domain) if source_domain else {}
-    actions = (site_info or {}).get('actions') or []
+    # N'envoie les boutons d'action que si la question est liée à une action
+    actions = raw_actions if _ACTION_QUESTION_RE.search(user_message) else []
 
     return jsonify({
         "reply": reply_text or "Je n'ai pas pu formuler de réponse.",
         "sources_used": len(hits),
-        "sources": sources[:3],
+        "sources": sources[:5],
         "site_filter": source_domain or "all",
         "platform_name": platform_name,
         "indexed": bool(hits),

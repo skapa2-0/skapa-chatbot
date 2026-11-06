@@ -1,14 +1,14 @@
 """Extraction des liens CTA (call-to-action) depuis la page d'accueil.
 
 Stratégie :
-  1. Cherche dans <header>, <nav>, [role=navigation]
-  2. Score chaque lien : bouton standalone > lien nav simple
-     - URL courte (1 segment, pas de query) : score élevé
-     - Label court sans chiffres : score élevé
-     - Classe CSS w-button / btn-primary / cta… : bonus fort
-  3. Renvoie les 6 meilleurs CTAs
-  4. Pour les pages CTA pas encore crawlées, les récupère individuellement
-     (requests → Playwright si contenu JS détecté)
+  1. Cherche dans <header>, <nav>, [role=navigation] ET <footer>
+  2. Ne garde que les liens avec INTENTION D'ACTION :
+     label ou chemin URL contenant candidat, contact, inscription, rdv…
+  3. Score par classe CSS + longueur URL : bouton standalone > lien nav
+  4. Déduplication par URL (garde le meilleur score)
+  5. Max 3 actions
+  6. Pages manquantes récupérées individuellement (requests → Playwright),
+     protégées par is_safe_url + même domaine (anti-SSRF)
 """
 import re
 from urllib.parse import urljoin, urlparse
@@ -18,9 +18,18 @@ from bs4 import BeautifulSoup
 
 from scraper.pipeline.engine_select import looks_like_js_rendered_spa
 from scraper.spider.const import REQUEST_TIMEOUT, USER_AGENT
+from scraper.spider.safe_url import is_safe_url
 from scraper.spider.urls import is_crawlable, normalize_url, same_domain
 
-# Classe CSS signalant un bouton CTA "pur" (sans composante nav)
+# Mots-clés qui signalent une intention d'action dans le label ou le chemin URL
+_ACTION_INTENT_RE = re.compile(
+    r'contact|candidat|cond[io]dat|postuler|inscri|rencontr|rendez.?vous|\brdv\b|'
+    r'devis|d[eé]mo|r[eé]serv|apply|signup|sign[\-_ ]?up|book|rejoindre|particip|'
+    r'candidature|engag|s.inscri|soumettre|demande',
+    re.I,
+)
+
+# Classe CSS signalant un bouton CTA "pur" (Webflow, Bootstrap, etc.)
 _PURE_BTN_RE = re.compile(
     r'\b(?:w-button|btn-primary|btn-cta|cta|call[\-_]?to[\-_]?action)\b', re.I,
 )
@@ -31,8 +40,15 @@ _BTN_RE = re.compile(
 _GENERIC_LABELS = frozenset({
     'accueil', 'home', 'menu', 'fr', 'en', 'connexion', 'login', 'se connecter',
     'intranet', 'retour', 'back', 'retourner', 'skip to content', 'aller au contenu',
-    'en', 'fr',
 })
+
+
+def _has_action_intent(label: str, url: str) -> bool:
+    """True si le libellé OU le chemin URL contient un mot-clé d'action."""
+    return bool(
+        _ACTION_INTENT_RE.search(label) or
+        _ACTION_INTENT_RE.search(urlparse(url).path)
+    )
 
 
 def _cta_score(label: str, url: str, cls: str) -> int:
@@ -41,13 +57,11 @@ def _cta_score(label: str, url: str, cls: str) -> int:
     parsed = urlparse(url)
     path_parts = [p for p in parsed.path.split('/') if p]
 
-    # Bonus fort : classe de bouton "pur" (w-button, btn-primary…)
     if _PURE_BTN_RE.search(cls):
         score += 60
     elif _BTN_RE.search(cls):
         score += 20
 
-    # Bonus : URL courte sans query params (page principale, pas un filtre)
     if len(path_parts) == 1:
         score += 25
     elif len(path_parts) >= 3:
@@ -55,11 +69,9 @@ def _cta_score(label: str, url: str, cls: str) -> int:
     if not parsed.query:
         score += 10
 
-    # Pénalité : label contient des chiffres (items de mega-menu concaténés)
     if re.search(r'\d', label):
         score -= 30
 
-    # Bonus : label court (1-3 mots)
     words = label.split()
     if len(words) <= 3:
         score += 10
@@ -70,24 +82,23 @@ def _cta_score(label: str, url: str, cls: str) -> int:
 
 
 def extract_cta_links(html: str, base_url: str) -> list[dict]:
-    """Retourne [{label, url}] depuis le header/nav de la page d'accueil.
+    """Retourne [{label, url}] depuis le header/nav/footer de la page d'accueil.
 
-    Préfère les liens stylisés en bouton standalone (w-button, btn-primary…),
-    pénalise les items de mega-menu (labels avec chiffres, URL profondes).
-    Résultat limité à 6 entrées triées par score décroissant.
+    Seuls les liens avec INTENTION D'ACTION sont retenus.
+    Résultat limité à 3 entrées triées par score décroissant.
     """
     soup = BeautifulSoup(html, 'html.parser')
 
     zones = (
         soup.find_all('header') +
         soup.find_all('nav') +
-        soup.find_all(attrs={'role': 'navigation'})
+        soup.find_all(attrs={'role': 'navigation'}) +
+        soup.find_all('footer')
     )
     if not zones:
         body = soup.find('body')
         zones = [body] if body else [soup]
 
-    # url -> meilleur candidat (on garde le score le plus élevé par URL)
     best: dict = {}
 
     for zone in zones:
@@ -105,6 +116,10 @@ def extract_cta_links(html: str, base_url: str) -> list[dict]:
             if not label or len(label) > 60 or label.lower() in _GENERIC_LABELS:
                 continue
 
+            # Filtre principal : intention d'action obligatoire
+            if not _has_action_intent(label, full_url):
+                continue
+
             cls = ' '.join(tag.get('class', []))
             score = _cta_score(label, full_url, cls)
             prev = best.get(full_url)
@@ -112,16 +127,22 @@ def extract_cta_links(html: str, base_url: str) -> list[dict]:
                 best[full_url] = {'label': label, 'url': full_url, '_score': score}
 
     candidates = sorted(best.values(), key=lambda x: -x['_score'])
-    return [{'label': c['label'], 'url': c['url']} for c in candidates[:6]]
+    return [{'label': c['label'], 'url': c['url']} for c in candidates[:3]]
 
 
 def fetch_missing_cta_pages(cta_links: list[dict], crawled_urls: set,
                              base_url: str) -> list[dict]:
     """Récupère les pages CTA pas encore crawlées.
 
+    Protégé contre le SSRF : is_safe_url() + même domaine que base_url.
     Utilise requests, puis Playwright si le contenu est généré en JS.
     """
-    missing = [c['url'] for c in cta_links if c['url'] not in crawled_urls]
+    missing = [
+        c['url'] for c in cta_links
+        if c['url'] not in crawled_urls
+        and same_domain(base_url, c['url'])   # même domaine (anti-SSRF niveau 1)
+        and is_safe_url(c['url'])             # IP publique (anti-SSRF niveau 2)
+    ]
     if not missing:
         return []
 
@@ -132,6 +153,11 @@ def fetch_missing_cta_pages(cta_links: list[dict], crawled_urls: set,
             resp = requests.get(url, headers={"User-Agent": USER_AGENT},
                                 timeout=REQUEST_TIMEOUT, allow_redirects=True)
             if not resp.ok:
+                continue
+            # Vérifie que la redirection éventuelle reste sur le même domaine
+            final_url = resp.url
+            if not same_domain(base_url, final_url) or not is_safe_url(final_url):
+                print(f"[actions] redirection hors-domaine bloquée : {final_url}")
                 continue
             html = resp.text
             if looks_like_js_rendered_spa(html):

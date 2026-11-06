@@ -492,15 +492,20 @@ function welcomeText() {
     : 'Hello 👋 Je suis votre assistant ! Donnez-moi un site à lire avec « Analyser et adapter », et je deviens incollable dessus 🤓';
 }
 
-/** Cartes d'actions proposées dès l'accueil (quand un site est analysé). */
+/** Cartes d'actions proposées dès l'accueil (quand un site est analysé).
+ *  2 cartes génériques + jusqu'à 2 actions spécifiques du site = max 4. */
 function welcomeActionCards() {
-  if (state.siteActions && state.siteActions.length) {
-    return state.siteActions.map(a => ({ title: a.label, url: a.url, meta: '' }));
-  }
-  return [
+  const defaults = [
     { title: 'Voir les formations',  meta: 'Explorer le catalogue', query: 'Quelles sont les formations disponibles ?' },
     { title: 'Être conseillé',       meta: 'Parler de votre projet', query: 'J\'aimerais être conseillé sur mon projet.' },
   ];
+  if (!state.siteActions || !state.siteActions.length) return defaults;
+  const defaultLabels = new Set(defaults.map(d => d.title.toLowerCase()));
+  const extra = state.siteActions
+    .filter(a => !defaultLabels.has(a.label.toLowerCase()))
+    .slice(0, 2)
+    .map(a => ({ title: a.label, url: a.url, meta: '' }));
+  return [...defaults, ...extra].slice(0, 4);
 }
 
 /** Réinitialise la conversation (nouveau site analysé). */
@@ -573,8 +578,28 @@ async function sendMessage(question) {
 
     const reply = data.reply || 'Aucune réponse reçue.';
     typingEl.remove();
-    const linkCards = (data.actions || []).map(a => ({ title: a.label, url: a.url, meta: '' }));
-    addMessage(reply, 'bot', data.sources || [], linkCards.length ? linkCards : null);
+
+    // Cartes d'action (CTA du site, filtrées côté serveur par mot-clé)
+    const actionCards = (data.actions || []).map(a => ({ title: a.label, url: a.url, meta: '' }));
+    const actionUrls = new Set(actionCards.map(c => c.url));
+
+    // Boutons "En savoir plus" depuis les sources (hors accueil et pages légales)
+    const _LEGAL_PATH = /\/(mentions?|cgu|cgv|cookies?|confidential|privacy|politique|legal|terms)/i;
+    const sourceCards = (data.sources || [])
+      .filter(s => {
+        if (!s.url || !s.title) return false;
+        try {
+          const path = new URL(s.url).pathname;
+          if (path === '/' || path === '') return false;
+          if (_LEGAL_PATH.test(path)) return false;
+        } catch { return false; }
+        return !actionUrls.has(s.url);
+      })
+      .slice(0, 2)
+      .map(s => ({ title: 'En savoir plus', meta: s.title, url: s.url }));
+
+    const allCards = [...actionCards, ...sourceCards];
+    addMessage(reply, 'bot', data.sources || [], allCards.length ? allCards : null);
     state.history.push({ role: 'user', content: question }, { role: 'assistant', content: reply });
     state.history = state.history.slice(-12);
   } catch (err) {
