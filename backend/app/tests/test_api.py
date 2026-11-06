@@ -23,7 +23,7 @@ def client(temp_store, monkeypatch):
     monkeypatch.setattr(pipeline, "_crawl", lambda url, mp, md, progress: ((PAGES, 0, 2), "test"))
     monkeypatch.setattr(config, "ADMIN_TOKEN", "secret")
     monkeypatch.setattr(config, "SCRAPE_PUBLIC", False)
-    monkeypatch.setattr(api_agent, "_is_private_host", lambda host: False)
+    monkeypatch.setattr(api_agent, "_is_safe_url", lambda url: True)
 
     calls = []
 
@@ -57,6 +57,40 @@ def test_scrape_rejects_bad_scheme(client):
     r = client.post("/api/scrape/run", json={"url": "ftp://skapa.fr"},
                     headers={"Authorization": "Bearer secret"})
     assert r.status_code == 400
+
+
+def test_scrape_rejects_link_local_ip(temp_store, monkeypatch):
+    """POST /api/scrape/run rejette les IPs link-local (169.254.x.x)."""
+    from app import api_agent, config
+    monkeypatch.setattr(config, "ADMIN_TOKEN", "secret")
+    monkeypatch.setattr(config, "SCRAPE_PUBLIC", False)
+    c = api_agent.app.test_client()
+    r = c.post("/api/scrape/run", json={"url": "http://169.254.169.254/"},
+               headers={"Authorization": "Bearer secret"})
+    assert r.status_code == 400
+
+
+def test_scrape_rejects_loopback_ip(temp_store, monkeypatch):
+    """POST /api/scrape/run rejette 127.0.0.1 (loopback)."""
+    from app import api_agent, config
+    monkeypatch.setattr(config, "ADMIN_TOKEN", "secret")
+    monkeypatch.setattr(config, "SCRAPE_PUBLIC", False)
+    c = api_agent.app.test_client()
+    r = c.post("/api/scrape/run", json={"url": "http://127.0.0.1/"},
+               headers={"Authorization": "Bearer secret"})
+    assert r.status_code == 400
+
+
+def test_health_db_reports_degraded_when_flag_set(temp_store):
+    """Si _degraded_reason est défini, /health/db renvoie status='degraded'."""
+    from app import chroma_client
+    from app.api_agent import app as flask_app
+
+    chroma_client._degraded_reason = "Ollama indisponible (test)"
+    r = flask_app.test_client().get("/health/db")
+    data = r.get_json()
+    assert data["status"] == "degraded"
+    assert data.get("degraded_reason") is not None
 
 
 def test_chat_before_scrape_says_site_not_indexed(client):

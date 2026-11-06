@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 import requests
 
 from scraper.spider.const import RESPECT_ROBOTS, USER_AGENT
+from scraper.spider.safe_url import is_safe_url
 from scraper.spider.urls import is_crawlable, normalize_url, same_domain
 
 
@@ -19,8 +20,12 @@ class Robots:
         if not RESPECT_ROBOTS:
             return
         p = urlparse(start_url)
+        robots_url = f"{p.scheme}://{p.netloc}/robots.txt"
+        if not is_safe_url(robots_url):
+            self.sitemaps = []
+            return
         try:
-            resp = requests.get(f"{p.scheme}://{p.netloc}/robots.txt",
+            resp = requests.get(robots_url,
                                 headers={"User-Agent": USER_AGENT}, timeout=10)
             if resp.ok and "text" in resp.headers.get("Content-Type", "text"):
                 rp = robotparser.RobotFileParser()
@@ -39,7 +44,11 @@ class Robots:
 
 
 def discover_sitemap_urls(start_url, extra_sitemaps=(), limit=2000):
-    """URLs listées dans sitemap.xml (+ sitemaps d'index, + ceux de robots.txt)."""
+    """URLs listées dans sitemap.xml (+ sitemaps d'index, + ceux de robots.txt).
+
+    Chaque URL de sitemap-index n'est suivie que si elle est sur le même
+    domaine ET passe is_safe_url (protection SSRF sur les sitemaps imbriqués).
+    """
     p = urlparse(start_url)
     base = f"{p.scheme}://{p.netloc}"
     todo = deque(dict.fromkeys([*extra_sitemaps, f"{base}/sitemap.xml",
@@ -48,6 +57,8 @@ def discover_sitemap_urls(start_url, extra_sitemaps=(), limit=2000):
     while todo and len(seen) < 20 and len(urls) < limit:
         sm = todo.popleft()
         if sm in seen:
+            continue
+        if not is_safe_url(sm):
             continue
         seen.add(sm)
         try:
@@ -63,7 +74,8 @@ def discover_sitemap_urls(start_url, extra_sitemaps=(), limit=2000):
                 continue
             u = loc.text.strip()
             if is_index:
-                todo.append(u)
+                if same_domain(start_url, u) and is_safe_url(u):
+                    todo.append(u)
             else:
                 u = normalize_url(u)
                 if same_domain(start_url, u) and is_crawlable(u):

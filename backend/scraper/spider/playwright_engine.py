@@ -6,6 +6,7 @@ from scraper.spider.const import (
     BROWSER_UA, MAX_DEPTH, MAX_PAGES, PLAYWRIGHT_TIMEOUT, USE_SITEMAP,
 )
 from scraper.spider.robots import Robots, discover_sitemap_urls
+from scraper.spider.safe_url import is_safe_url
 from scraper.spider.urls import extract_links, normalize_url, same_domain
 
 
@@ -49,9 +50,17 @@ def crawl_with_playwright(start_url, max_pages=MAX_PAGES, max_depth=MAX_DEPTH, p
         browser = _launch_chromium(p)
         try:
             context = browser.new_context(user_agent=BROWSER_UA, locale="fr-FR")
-            context.route("**/*", lambda route: route.abort()
-                          if route.request.resource_type in ("image", "media", "font")
-                          else route.continue_())
+            def _route_handler(route):
+                req = route.request
+                if req.resource_type in ("image", "media", "font"):
+                    route.abort()
+                elif not is_safe_url(req.url):
+                    print(f"[spider-js] bloqué SSRF : {req.url}")
+                    route.abort()
+                else:
+                    route.continue_()
+
+            context.route("**/*", _route_handler)
             page = context.new_page()
 
             while queue and len(pages) < max_pages:

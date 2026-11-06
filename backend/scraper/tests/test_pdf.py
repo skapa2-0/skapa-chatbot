@@ -37,6 +37,8 @@ def test_crawl_keeps_pdf_page(monkeypatch):
     from scraper import spider
     pdf_data = _make_pdf("Brochure")
     class Resp:
+        is_redirect = False
+
         def __init__(self, url):
             self.url, is_p = url, url.endswith(".pdf")
             self.headers = {"Content-Type": "application/pdf" if is_p else "text/html"}
@@ -48,6 +50,8 @@ def test_crawl_keeps_pdf_page(monkeypatch):
         headers = {}
         def mount(self, *a): pass
         def get(self, url, **kw): return Resp(url)
+    import scraper.spider.http_utils as _hutils
+    monkeypatch.setattr(_hutils, "is_safe_url", lambda url: True)
     monkeypatch.setattr(spider.requests, "Session", FakeSession)
     monkeypatch.setattr(spider, "Robots",
         lambda u: type("R", (), {"allowed": lambda s, u: True, "sitemaps": []})())

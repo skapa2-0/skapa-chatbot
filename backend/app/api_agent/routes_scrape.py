@@ -24,11 +24,8 @@ def _parse_url(data):
     if not parsed.hostname:
         return None, {"error": "Invalid URL: missing host"}, 400
 
-    private = api_agent._is_private_host(parsed.hostname)
-    if private is None:
-        return None, {"error": f"Domaine introuvable : {parsed.hostname}"}, 400
-    if private and not ALLOW_PRIVATE_URLS:
-        return None, {"error": "Les adresses internes / privées ne sont pas autorisées"}, 400
+    if not ALLOW_PRIVATE_URLS and not api_agent._is_safe_url(target_url):
+        return None, {"error": "URL inaccessible ou adresse interne non autorisée"}, 400
     return target_url, None, 200
 
 

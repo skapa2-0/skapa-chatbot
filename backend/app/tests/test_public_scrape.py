@@ -20,7 +20,7 @@ def client(temp_store, monkeypatch):
     monkeypatch.setattr(pipeline, "_crawl", fake_crawl)
     monkeypatch.setattr(config, "ADMIN_TOKEN", "secret")
     monkeypatch.setattr(config, "SCRAPE_PUBLIC", False)
-    monkeypatch.setattr(api_agent, "_is_private_host", lambda host: False)
+    monkeypatch.setattr(api_agent, "_is_safe_url", lambda url: True)
     monkeypatch.delenv("SCRAPE_ALLOWED_DOMAINS", raising=False)
     public_guard.reset_for_tests()
     c = api_agent.app.test_client()

@@ -44,6 +44,8 @@ def test_crawl_follows_redirect_to_www(monkeypatch):
     }
 
     class Resp:
+        is_redirect = False
+
         def __init__(self, url):
             self.url = "https://www.site.fr/" if url == "https://site.fr/" else url
             self.status_code = 200 if self.url in pages else 404
@@ -65,6 +67,8 @@ def test_crawl_follows_redirect_to_www(monkeypatch):
         def get(self, url, **kw):
             return Resp(url)
 
+    import scraper.spider.http_utils as _hutils
+    monkeypatch.setattr(_hutils, "is_safe_url", lambda url: True)
     monkeypatch.setattr(spider.requests, "Session", FakeSession)
     monkeypatch.setattr(spider, "Robots", lambda url: type("R", (), {"allowed": lambda s, u: True, "sitemaps": []})())
     monkeypatch.setattr(spider, "discover_sitemap_urls", lambda *a, **k: set())
