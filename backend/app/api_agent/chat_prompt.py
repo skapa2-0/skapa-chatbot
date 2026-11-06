@@ -1,8 +1,10 @@
 """Prompt système du chat + liens « En savoir plus » réellement cités par le LLM."""
 
 import re
+from collections import Counter
 
 from app.api_agent.site_map import is_home, is_legal, norm_url
+from scraper.pipeline.titles import path_label
 
 _URL_RE = re.compile(r"https?://[^\s<>()\[\]\"']+")
 MAX_LINKS = 2
@@ -39,6 +41,7 @@ def cited_links(reply, pages, exclude_urls=()):
     """Pages du site dont l'URL apparaît dans la réponse (hors accueil, pages
     légales et URLs déjà affichées en bouton d'action). Max MAX_LINKS."""
     known = {norm_url(p["url"]): p for p in pages}
+    shared = Counter(p["title"] for p in pages)
     skip = {norm_url(u) for u in exclude_urls}
     out, seen = [], set()
     for raw in _URL_RE.findall(reply or ""):
@@ -47,7 +50,11 @@ def cited_links(reply, pages, exclude_urls=()):
         if not page or url in seen or url in skip or is_home(url) or is_legal(url):
             continue
         seen.add(url)
-        out.append({"title": page["title"], "url": page["url"]})
+        # Titre commun à plusieurs pages (ex. nom du site partout) : libellé tiré de l'URL
+        title = page["title"]
+        if shared[title] > 1 or any(o["title"] == title for o in out):
+            title = path_label(page["url"]) or title
+        out.append({"title": title, "url": page["url"]})
         if len(out) >= MAX_LINKS:
             break
     return out

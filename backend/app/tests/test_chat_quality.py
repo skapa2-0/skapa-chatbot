@@ -107,3 +107,10 @@ def test_chat_gives_site_map_and_cited_links(client):
     assert "/mentions-legales" not in prompt.split("PLAN DU SITE (pages")[1]
     assert data["links"] == [{"title": "Formation Python", "url": BASE + "/formations/python"}]
     assert "jamais à la place" in prompt               # contenu d'abord, lien en complément
+
+
+def test_cited_links_shared_titles_use_url_label():
+    pages = [{"title": "Exemple Academy", "url": BASE + "/catalogue/genai-managers"},
+             {"title": "Exemple Academy", "url": BASE + "/faq"}]
+    reply = f"{BASE}/catalogue/genai-managers et {BASE}/faq"
+    assert [l["title"] for l in cited_links(reply, pages)] == ["Genai managers", "Faq"]
