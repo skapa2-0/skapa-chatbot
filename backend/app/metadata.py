@@ -25,6 +25,8 @@ def _get_conn(db_path=None):
         if conn is None:
             conn = sqlite3.connect(path, check_same_thread=False)
             conn.row_factory = sqlite3.Row
+            conn.execute("PRAGMA journal_mode=WAL")
+            conn.execute("PRAGMA busy_timeout=5000")
             conn.executescript(
                 """
                 CREATE TABLE IF NOT EXISTS scraped_pages (
@@ -39,6 +41,25 @@ def _get_conn(db_path=None):
                     brand_color TEXT,
                     site_title TEXT,
                     updated_at TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS feedback (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    date TEXT NOT NULL,
+                    domain TEXT NOT NULL,
+                    vote TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS clicks (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    date TEXT NOT NULL,
+                    domain TEXT NOT NULL,
+                    action TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS chat_requests (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    date TEXT NOT NULL,
+                    domain TEXT NOT NULL,
+                    duration_ms INTEGER NOT NULL,
+                    is_error INTEGER NOT NULL DEFAULT 0
                 );
                 """
             )
@@ -109,6 +130,54 @@ def delete_site(domain: str, db_path=None) -> None:
     conn = _get_conn(db_path)
     conn.execute("DELETE FROM sites WHERE domain=?", (domain,))
     conn.commit()
+
+
+def add_feedback(domain: str, vote: str, db_path=None) -> None:
+    conn = _get_conn(db_path)
+    conn.execute(
+        "INSERT INTO feedback (date, domain, vote) VALUES (?, ?, ?)",
+        (datetime.now(timezone.utc).isoformat(), domain, vote),
+    )
+    conn.commit()
+
+
+def add_click(domain: str, action: str, db_path=None) -> None:
+    conn = _get_conn(db_path)
+    conn.execute(
+        "INSERT INTO clicks (date, domain, action) VALUES (?, ?, ?)",
+        (datetime.now(timezone.utc).isoformat(), domain, action),
+    )
+    conn.commit()
+
+
+def log_chat_request(domain: str, duration_ms: int, is_error: bool = False, db_path=None) -> None:
+    conn = _get_conn(db_path)
+    conn.execute(
+        "INSERT INTO chat_requests (date, domain, duration_ms, is_error) VALUES (?, ?, ?, ?)",
+        (datetime.now(timezone.utc).isoformat(), domain, duration_ms, int(is_error)),
+    )
+    conn.commit()
+
+
+def get_admin_sites(db_path=None) -> list:
+    conn = _get_conn(db_path)
+    rows = conn.execute(
+        "SELECT domain, brand_color, site_title, updated_at FROM sites ORDER BY updated_at DESC"
+    ).fetchall()
+    result = []
+    for r in rows:
+        pages = conn.execute(
+            "SELECT count(*) FROM scraped_pages WHERE url LIKE ?",
+            (f"%{r['domain']}%",),
+        ).fetchone()[0]
+        result.append({
+            "domain": r["domain"],
+            "brand_color": r["brand_color"],
+            "site_title": r["site_title"],
+            "updated_at": r["updated_at"],
+            "pages": pages,
+        })
+    return result
 
 
 def get_recent_pages(limit=50, db_path=None):

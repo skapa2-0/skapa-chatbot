@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Skapa Chatbot</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<div id="loginView">
+  <div class="login-card">
+    <h2>Administration</h2>
+    <label for="tokenInput">Token administrateur</label>
+    <input id="tokenInput" type="password" placeholder="••••••••" autocomplete="current-password">
+    <button id="loginBtn" class="btn-primary">Se connecter</button>
+    <p id="loginError" class="error-msg" aria-live="polite"></p>
+  </div>
+</div>
+
+<div id="adminApp" hidden>
+  <nav id="sidebar">
+    <strong class="sidebar-title">Skapa Admin</strong>
+    <button class="nav-btn active" data-view="dashboard">📊 Tableau de bord</button>
+    <button class="nav-btn" data-view="sites">🌐 Sites</button>
+    <a class="nav-btn" href="/docs" target="_blank" rel="noopener">📖 Documentation API</a>
+    <button class="nav-btn logout" id="logoutBtn">Déconnexion</button>
+  </nav>
+
+  <main id="mainContent">
+    <!-- Tableau de bord -->
+    <div id="viewDashboard">
+      <div id="filterBar">
+        <select id="domainSelect"><option value="">Tous les sites</option></select>
+        <select id="daysSelect">
+          <option value="7">7 jours</option>
+          <option value="30">30 jours</option>
+        </select>
+      </div>
+      <div id="statCards"></div>
+      <h3>Questions par jour</h3>
+      <div id="barChart"></div>
+      <h3>Satisfaction 👍 / 👎</h3>
+      <div id="satisfactionRow"></div>
+      <h3>Clics par action</h3>
+      <div id="clicksTable"></div>
+      <p id="noDataMsg"></p>
+    </div>
+
+    <!-- Sites -->
+    <div id="viewSites" hidden>
+      <p>
+        <button id="addSiteBtn" class="btn-primary btn-sm">+ Ajouter un site</button>
+      </p>
+      <div id="addSiteForm" hidden>
+        <input id="newSiteUrl" type="url" placeholder="https://exemple.fr">
+        <button id="submitAddSite" class="btn-primary btn-sm">Analyser</button>
+        <span id="addSiteMsg"></span>
+      </div>
+      <table id="sitesTable">
+        <thead><tr>
+          <th>Domaine</th><th>Titre</th><th>Pages</th>
+          <th>Dernière analyse</th><th>Actions</th><th>Widget</th>
+        </tr></thead>
+        <tbody id="sitesBody"></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script>const API_URL = (window.SKAPA_API_URL || 'http://localhost:8000').replace(/\/+$/, '');</script>
+<script src="admin.js"></script>
+</body>
+</html>

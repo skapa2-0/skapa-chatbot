@@ -21,6 +21,46 @@
 const API_URL = (window.SKAPA_API_URL || 'http://localhost:8000').replace(/\/+$/, '');
 const POLL_MS = 1200;
 
+// ── Collecte feedback (vote 👍/👎) et clics — RGPD : aucun texte enregistré ──
+
+async function trackFeedback(domain, vote) {
+  await fetch(`${API_URL}/api/feedback`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ domain, vote }),
+  }).catch(() => {});
+}
+
+async function trackClick(domain, action) {
+  await fetch(`${API_URL}/api/click`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ domain, action }),
+  }).catch(() => {});
+}
+
+function addVoteButtons(msgWrapper, domain) {
+  let voted = false;
+  const wrap = document.createElement('div');
+  wrap.className = 'vote-buttons';
+  for (const v of ['up', 'down']) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'vote-btn';
+    btn.textContent = v === 'up' ? '👍' : '👎';
+    btn.setAttribute('aria-label', v === 'up' ? 'Utile' : 'Pas utile');
+    btn.addEventListener('click', () => {
+      if (voted) return;
+      voted = true;
+      wrap.querySelectorAll('.vote-btn').forEach(b => { b.disabled = true; });
+      btn.classList.add('voted');
+      trackFeedback(domain, v);
+    });
+    wrap.appendChild(btn);
+  }
+  msgWrapper.querySelector('.bot-content').appendChild(wrap);
+}
+
 // ── Stockage navigateur (peut être indisponible : navigation privée…) ───────
 const store = {
   get(k, session = false) {
@@ -309,7 +349,7 @@ function addMessage(text, role = 'bot', extraCards = null) {
     for (const item of cards) {
       cardsWrap.appendChild(
         buildActionCard(item, item.url
-          ? () => window.open(item.url, '_blank', 'noopener noreferrer')
+          ? () => { if (item.track) item.track(); window.open(item.url, '_blank', 'noopener noreferrer'); }
           : () => sendMessage(item.query || item.title)
         )
       );
@@ -455,7 +495,11 @@ async function sendMessage(question) {
     typingEl.remove();
 
     // Cartes d'action (CTA du site, filtrées côté serveur par mot-clé)
-    const actionCards = (data.actions || []).map(a => ({ title: a.label, url: a.url, meta: '' }));
+    const domain = state.siteUrl ? hostOf(state.siteUrl) : null;
+    const actionCards = (data.actions || []).map(a => ({
+      title: a.label, url: a.url, meta: '',
+      ...(domain ? { track: () => trackClick(domain, a.label) } : {}),
+    }));
     const actionUrls = new Set(actionCards.map(c => c.url));
 
     // Boutons « En savoir plus » : pages réellement citées dans la réponse (serveur)
@@ -465,7 +509,8 @@ async function sendMessage(question) {
       .map(l => ({ title: 'En savoir plus', meta: l.title, url: l.url }));
 
     const allCards = [...actionCards, ...sourceCards];
-    addMessage(reply, 'bot', allCards.length ? allCards : null);
+    const msgEl = addMessage(reply, 'bot', allCards.length ? allCards : null);
+    if (domain) addVoteButtons(msgEl, domain);
     state.history.push({ role: 'user', content: question }, { role: 'assistant', content: reply });
     state.history = state.history.slice(-12);
   } catch (err) {

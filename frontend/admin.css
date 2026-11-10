@@ -1,0 +1,59 @@
+/* admin.css — interface d'administration */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; background: var(--bg, #eef0f7); color: #1e1b4b; }
+
+/* ── Login ─────────────────────────────────────────────────────────────────── */
+#loginView { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+.login-card { background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,.1); width: 100%; max-width: 360px; }
+.login-card h2 { margin: 0 0 1.5rem; font-size: 1.3rem; }
+.login-card label { display: block; font-size: .85rem; color: #555; margin-bottom: .4rem; }
+.login-card input { width: 100%; padding: .6rem .75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: .95rem; margin-bottom: .75rem; }
+.btn-primary { background: var(--primary, #5b3fd4); color: #fff; border: none; padding: .65rem 1.2rem; border-radius: 6px; font-size: .9rem; cursor: pointer; }
+.btn-primary:hover { opacity: .88; }
+.btn-sm { font-size: .8rem; padding: .4rem .85rem; }
+.error-msg { color: #dc2626; font-size: .85rem; margin: .5rem 0 0; min-height: 1.2em; }
+
+/* ── Layout ─────────────────────────────────────────────────────────────────── */
+#adminApp { display: flex; min-height: 100vh; }
+#sidebar { width: 220px; background: #1e1b4b; color: #c4b5fd; display: flex; flex-direction: column; padding: 1.5rem 0; flex-shrink: 0; }
+.sidebar-title { display: block; color: #fff; font-size: 1rem; padding: 0 1.25rem 1.25rem; border-bottom: 1px solid #312e81; margin-bottom: .5rem; }
+.nav-btn { display: block; width: 100%; text-align: left; padding: .6rem 1.25rem; color: #c4b5fd; background: none; border: none; font-size: .88rem; cursor: pointer; text-decoration: none; }
+.nav-btn:hover, .nav-btn.active { background: #312e81; color: #fff; }
+.nav-btn.logout { margin-top: auto; color: #f87171; }
+#mainContent { flex: 1; padding: 2rem; overflow-y: auto; }
+
+/* ── Tableau de bord ──────────────────────────────────────────────────────── */
+#filterBar { display: flex; gap: .75rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+#filterBar select { padding: .4rem .7rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: .88rem; }
+#statCards { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.stat-card { background: #fff; border-radius: 10px; padding: 1.1rem 1.4rem; min-width: 140px; box-shadow: 0 1px 6px rgba(0,0,0,.07); }
+.stat-card-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: #6b7280; }
+.stat-card-value { font-size: 1.9rem; font-weight: 700; color: #1e1b4b; margin-top: .2rem; }
+#barChart { display: flex; align-items: flex-end; gap: 3px; height: 80px; margin-bottom: 1.5rem; }
+.bar { flex: 1; background: var(--primary, #5b3fd4); opacity: .7; border-radius: 2px 2px 0 0; min-height: 2px; position: relative; }
+.bar-label { position: absolute; bottom: -1.3em; left: 50%; transform: translateX(-50%); font-size: .6rem; color: #9ca3af; white-space: nowrap; }
+.vote-row { display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem; font-size: .9rem; }
+.vote-track { width: 140px; height: 8px; background: #fee2e2; border-radius: 4px; overflow: hidden; }
+.vote-fill { height: 100%; background: #10b981; }
+#noDataMsg { color: #9ca3af; font-size: .9rem; }
+#clicksTable table { border-collapse: collapse; }
+#clicksTable th, #clicksTable td { padding: .4rem .9rem; text-align: left; font-size: .85rem; border-bottom: 1px solid #f0f0f0; }
+#clicksTable th { background: #f3f4f6; font-weight: 600; }
+
+/* ── Sites ──────────────────────────────────────────────────────────────────── */
+#addSiteForm { display: flex; gap: .5rem; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
+#addSiteForm input { padding: .45rem .75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: .9rem; min-width: 240px; }
+#sitesTable { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,.07); margin-top: .5rem; }
+#sitesTable th { background: #f3f4f6; padding: .7rem 1rem; text-align: left; font-size: .82rem; color: #374151; font-weight: 600; }
+#sitesTable td { padding: .65rem 1rem; font-size: .85rem; border-bottom: 1px solid #f0f0f0; }
+#sitesTable tr:last-child td { border-bottom: none; }
+.btn-action { padding: .3rem .65rem; font-size: .78rem; border: 1px solid #d1d5db; background: #fff; border-radius: 5px; cursor: pointer; margin-right: .3rem; }
+.btn-action:hover { background: #f3f4f6; }
+.widget-code { font-family: monospace; font-size: .72rem; background: #f3f4f6; padding: .2rem .4rem; border-radius: 3px; max-width: 200px; display: inline-block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
+
+/* ── Boutons de vote dans le widget chat ─────────────────────────────────── */
+.vote-buttons { display: flex; gap: .4rem; margin-top: .5rem; }
+.vote-btn { background: none; border: 1px solid #e5e7eb; border-radius: 6px; padding: .2rem .5rem; font-size: .9rem; cursor: pointer; }
+.vote-btn:hover { background: #f3f4f6; }
+.vote-btn.voted { background: var(--primary-light, #ede9fe); border-color: var(--primary, #5b3fd4); }
+.vote-btn:disabled { cursor: default; }

@@ -5,7 +5,7 @@
  * Aucun innerHTML : tout passe par createElement / textContent (pas de XSS).
  */
 (function () {
-  const INLINE_RE = /(\*\*[^*\n]+\*\*|\[[^\]\n]+\]\(https?:\/\/[^)\s]+\)|https?:\/\/[^\s<>()\[\]"']+)/g;
+  const INLINE_RE = /(\*\*[^*\n]+\*\*|\[[^\]\n]+\]\(https?:\/\/[^)\s]+\)|<https?:\/\/[^>\s]+>|https?:\/\/[^\s<>()\[\]"']+)/g;
   const BULLET_RE = /^\s*(?:[-*•]|(\d+)[.)])\s+(.*)$/;
 
   /** Libellé court pour une URL affichée seule : domaine + chemin. */
@@ -38,6 +38,9 @@
       } else if ((m = tok.match(/^\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)$/))) {
         const label = /^https?:\/\//.test(m[1]) ? shortUrl(m[2]) : m[1];
         frag.appendChild(link(m[2], label));
+      } else if (/^<https?:\/\//.test(tok)) {
+        const url = tok.slice(1, -1);
+        frag.appendChild(link(url, shortUrl(url)));
       } else if (/^https?:\/\//.test(tok)) {
         const url = tok.replace(/[.,;:!?»]+$/, '');
         frag.appendChild(link(url, shortUrl(url)));

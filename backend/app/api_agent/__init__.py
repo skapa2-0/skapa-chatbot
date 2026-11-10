@@ -34,4 +34,4 @@ MAX_HISTORY = 6
 from scraper.spider.safe_url import is_safe_url as _is_safe_url  # noqa: E402
 
 # Charge les routes (chaque module décore `app` au moment de son import).
-from app.api_agent import routes_chat, routes_docs, routes_health, routes_scrape, routes_site  # noqa: E402,F401
+from app.api_agent import routes_admin, routes_chat, routes_docs, routes_health, routes_scrape, routes_site  # noqa: E402,F401

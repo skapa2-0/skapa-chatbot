@@ -1,9 +1,10 @@
 """Route /chat : question au chatbot RAG."""
 import re
+import time
 
 from flask import jsonify, request
 
-from app import llm
+from app import llm, metadata
 from app.api_agent import app
 from app.api_agent.rag_helpers import (
     clean_history, default_platform_name, domain_count, retrieve,
@@ -21,6 +22,13 @@ _ACTION_QUESTION_RE = re.compile(
     r'rejoindre|particip|s.inscri|soumettre|demande',
     re.I,
 )
+
+
+def _log_req(domain, t0, is_error):
+    try:
+        metadata.log_chat_request(domain or "all", int((time.time() - t0) * 1000), is_error)
+    except Exception:
+        pass
 
 
 @app.route("/chat", methods=["POST"])
@@ -73,10 +81,13 @@ def chat():
         context += f"\n\nACTIONS DISPONIBLES SUR CE SITE (liens directs à citer) :\n{lines}"
 
     system_prompt = build_system_prompt(platform_name, source_domain, context)
+    t0 = time.time()
     try:
         reply_text = llm.chat(system_prompt, [*history, {"role": "user", "content": user_message}])
     except llm.LLMError as exc:
+        _log_req(source_domain, t0, is_error=True)
         return jsonify({"error": str(exc)}), 503
+    _log_req(source_domain, t0, is_error=False)
 
     sources, seen = [], set()
     for h in hits:
