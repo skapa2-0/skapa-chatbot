@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Documentation - Kosette.ia</title>
+<link rel="icon" type="image/png" href="/logo.png?v=2" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#141827;background:#fff;-webkit-font-smoothing:antialiased}
+  h1,h2,h4{font-family:inherit}
+  /* navbar, badges, pied de page (autonome, sans styles.css) */
+  .soon{display:inline-block;font-size:11px;font-weight:700;letter-spacing:0;text-transform:none;color:#5b3fd4;background:#ede9ff;border:1px solid #d6ccfb;border-radius:999px;padding:1px 8px;vertical-align:middle;margin-left:4px}
+  .soon--dark{color:#cbb8ff;background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.4)}
+  .knav{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:28px;padding:14px 48px;background:linear-gradient(90deg,rgba(239,234,253,.92),rgba(246,238,251,.92) 60%,rgba(238,246,253,.92));backdrop-filter:blur(10px);border-bottom:1px solid #e3dcf8}
+  .knav__logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:20px;letter-spacing:-.02em;color:#141827;text-decoration:none}
+  .knav__logo img{width:36px;height:36px;border-radius:9px;object-fit:cover}
+  .knav__logo b{color:#ec4899}
+  .knav__links{display:flex;gap:24px;margin-left:16px}.knav__links a{color:#3b4256;text-decoration:none;font-weight:500;font-size:15px}.knav__links a:hover{color:#5b3fd4}
+  .knav__right{margin-left:auto;display:flex;align-items:center;gap:18px}
+  .knav__login{color:#8a90a2;font-size:15px}
+  .knav__cta{background:#5b3fd4;color:#fff;border:0;border-radius:999px;padding:10px 20px;font-weight:700;font-size:14px;cursor:pointer}.knav__cta:hover{background:#4730b0}
+  .kfoot{background:radial-gradient(ellipse at 50% 0%,#4a2a86 0,#151318 55%);color:#c9c6d6;padding:70px 48px 0;overflow:hidden}
+  .kfoot__grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:30px;max-width:1180px;margin:0 auto}
+  .kfoot a.knav__logo{display:flex;color:#fff}.kfoot p{max-width:320px;line-height:1.6;margin-top:14px}
+  .kfoot h4{color:#fff;margin:0 0 12px}.kfoot a,.kfoot__grid>div>span{display:block;color:#c9c6d6;text-decoration:none;margin-bottom:9px}.kfoot a:hover{color:#fff}
+  .kfoot__copy{max-width:1180px;margin:40px auto 0!important;font-size:13px;color:#8f8aa3}
+  .kfoot__word{font-size:17vw;font-weight:800;letter-spacing:-.05em;line-height:.85;margin-top:30px;text-align:center;background:linear-gradient(180deg,#5b2db8 0%,rgba(91,45,184,.12) 85%);-webkit-background-clip:text;background-clip:text;color:transparent;user-select:none}
+  @media(max-width:900px){.knav{padding:12px 18px;gap:12px}.knav__links,.knav__login{display:none}.kfoot__grid{grid-template-columns:1fr}}
+  .dc-wrap{display:grid;grid-template-columns:260px minmax(0,1fr);gap:56px;max-width:1240px;margin:0 auto;padding:36px 40px 80px}
+  .dc-side{position:sticky;top:90px;align-self:start;max-height:calc(100vh - 110px);overflow:auto}
+  .dc-side p{font-weight:700;color:#141827;margin:18px 12px 6px}
+  .dc-side a{display:block;padding:8px 12px;border-radius:12px;color:#4a5268;text-decoration:none;font-size:15px}
+  .dc-side a:hover,.dc-side a.on{background:#ede9ff;color:#5b3fd4;font-weight:600}
+  .dc-main{max-width:780px}
+  .dc-main section{padding-top:20px;margin-bottom:56px;scroll-margin-top:90px}
+  .dc-main .dc-eye{color:#5b3fd4;font-weight:600;margin:0}
+  .dc-main h1{font-size:42px;letter-spacing:-.03em;line-height:1.1;margin:6px 0 10px}
+  .dc-main h2{font-size:26px;letter-spacing:-.02em;margin:30px 0 12px}
+  .dc-lead{font-size:19px;color:#4a5268;line-height:1.55}
+  .dc-main p,.dc-main li{line-height:1.7;color:#3b4256}
+  .dc-main a{color:#5b3fd4;font-weight:600}
+  .dc-main code{background:#f3f4f8;border-radius:6px;padding:1px 6px;font-size:.92em}
+  .dc-call{display:flex;gap:12px;border-radius:16px;padding:16px 20px;margin:16px 0;line-height:1.55}
+  .dc-call.tip{background:#edfaf0;border:1px solid #b8e8c4;color:#166534}
+  .dc-call.info{background:#f7f8fb;border:1px solid #e2e5ef}
+  .dc-call.warn{background:#fff8eb;border:1px solid #f6dda8;color:#7c4a03}
+  .dc-steps{list-style:none;counter-reset:s;padding:0;margin:14px 0}
+  .dc-steps li{counter-increment:s;position:relative;padding:0 0 24px 54px;border-left:1px solid #e2e5ef;margin-left:16px}
+  .dc-steps li:last-child{border-left-color:transparent}
+  .dc-steps li:before{content:counter(s);position:absolute;left:-17px;top:-4px;width:34px;height:34px;border-radius:50%;background:#f3f4f8;border:1px solid #e2e5ef;display:grid;place-items:center;font-weight:700;font-size:14px}
+  .dc-code{background:#16151c;border-radius:14px;margin:12px 0 18px}
+  .dc-code pre{color:#e7e3f7;padding:18px 20px;margin:0;overflow:auto;font-size:13.5px;line-height:1.6}
+  .dc-tab{width:100%;border-collapse:collapse;margin:10px 0 20px;font-size:14.5px}
+  .dc-tab th,.dc-tab td{text-align:left;padding:10px 12px;border-bottom:1px solid #eceef4}
+  .dc-cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
+  .dc-cards a{display:block;border:1px solid #eceef4;border-radius:18px;padding:22px;text-decoration:none;color:#141827}
+  .dc-cards a:hover{border-color:#b9a9f2}.dc-cards b{display:block;font-size:17px;margin-bottom:4px}.dc-cards span{color:#5a6177;font-weight:400}
+  @media(max-width:860px){.dc-wrap{grid-template-columns:1fr;padding:24px 18px}.dc-side{display:none}.dc-cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <header class="knav">
+    <a class="knav__logo" href="/"><img src="/logo.png?v=2" alt="" /><span>Kosette<b>.ia</b></span></a>
+    <nav class="knav__links"><a href="/">Accueil</a><a href="#overview">Guide</a><a href="#integrations">Intégrations</a></nav>
+    <div class="knav__right"><a class="knav__cta" style="text-decoration:none" href="/">Analyser mon site</a></div>
+  </header>
+
+  <div class="dc-wrap">
+    <aside class="dc-side">
+      <p>Démarrer</p>
+      <a href="#overview">Présentation</a>
+      <a href="#create">Créer votre assistant</a>
+      <a href="#install">Installer le widget</a>
+      <a href="#langs">Langues des visiteurs</a>
+      <p>Intégrations</p>
+      <a href="#integrations">WordPress, Shopify, Wix…</a>
+      <p>Bientôt</p>
+      <a href="#soon">Tableau de bord, tarifs, actions</a>
+    </aside>
+
+    <main class="dc-main">
+      <section id="overview">
+        <p class="dc-eye">Démarrer</p>
+        <h1>Présentation</h1>
+        <p class="dc-lead">Kosette.ia transforme votre site en assistant conversationnel. Il lit vos pages, répond à vos visiteurs dans leur langue et donne le lien de la page d'où vient chaque réponse.</p>
+        <div class="dc-call info">ℹ️ <div>Vous voulez essayer tout de suite ? Collez l'adresse de votre site sur la <a href="/">page d'accueil</a>.</div></div>
+        <div class="dc-cards">
+          <a href="#create"><b>Créer votre assistant</b><span>Analyser votre site en un clic.</span></a>
+          <a href="#install"><b>Installer le widget</b><span>Une ligne de code sur votre site.</span></a>
+        </div>
+      </section>
+
+      <section id="create">
+        <p class="dc-eye">Démarrer</p>
+        <h1>Créer votre assistant</h1>
+        <p class="dc-lead">Fonctionne pour tous les sites : boutique, agence, école, SaaS, restaurant.</p>
+        <ol class="dc-steps">
+          <li><b>Collez votre adresse</b><p>Sur la page d'accueil, entrez l'adresse de votre site, par exemple <code>https://mon-site.fr</code>, puis cliquez sur <b>Analyser et adapter</b>.</p></li>
+          <li><b>Laissez Kosette lire votre site</b><p>Le nombre de pages lues s'affiche pendant l'analyse.</p></li>
+          <li><b>Testez votre assistant</b><p>Quand l'analyse est terminée, la bulle de chat apparaît en bas à droite. Posez-lui une question.</p></li>
+        </ol>
+        <h2>Ce que votre assistant apprend</h2>
+        <ul>
+          <li>Les pages publiques de votre site : accueil, services, tarifs, contact, FAQ.</li>
+          <li>Les documents PDF ajoutés à sa base.</li>
+        </ul>
+        <div class="dc-call tip">💡 <div>Si une information n'est pas sur votre site, l'assistant le dit au lieu d'inventer.</div></div>
+      </section>
+
+      <section id="install">
+        <p class="dc-eye">Démarrer</p>
+        <h1>Installer le widget</h1>
+        <p class="dc-lead">Une ligne de code, collée juste avant <code>&lt;/body&gt;</code>.</p>
+        <div class="dc-code"><pre>&lt;script
+  src="https://chat.skapa.design/skapa-widget.js"
+  data-api-url="https://chat.skapa.design"
+  data-site-url="https://mon-site.fr"
+  data-title="Assistant"
+  data-color="#5b3fd4"
+  async&gt;&lt;/script&gt;</pre></div>
+        <table class="dc-tab">
+          <tr><th>Attribut</th><th>Rôle</th></tr>
+          <tr><td><code>data-api-url</code></td><td>Adresse du serveur de l'assistant.</td></tr>
+          <tr><td><code>data-site-url</code></td><td>Le site dont l'assistant doit parler (déjà analysé).</td></tr>
+          <tr><td><code>data-title</code></td><td>Nom affiché en haut du chat.</td></tr>
+          <tr><td><code>data-color</code></td><td>Couleur principale du widget.</td></tr>
+        </table>
+
+        <h2>Autre option : une iframe</h2>
+        <p>À utiliser si votre site n'accepte pas les scripts tiers, ou pour afficher le chat toujours ouvert au milieu d'une page (Contact, FAQ).</p>
+        <div class="dc-code"><pre>&lt;iframe
+  src="https://chat.skapa.design/embed.html?site=https://mon-site.fr&amp;title=Assistant&amp;color=%235b3fd4"
+  title="Assistant"
+  loading="lazy"
+  style="width:100%;max-width:420px;height:600px;border:0;border-radius:16px"
+&gt;&lt;/iframe&gt;</pre></div>
+        <table class="dc-tab">
+          <tr><th>Paramètre</th><th>Rôle</th></tr>
+          <tr><td><code>site</code></td><td>URL complète du site dont l'assistant doit parler (déjà analysé).</td></tr>
+          <tr><td><code>title</code></td><td>Nom affiché en haut du chat (60 caractères max, « Assistant » par défaut).</td></tr>
+          <tr><td><code>color</code></td><td>Couleur principale, au format hexadécimal. Le <code>#</code> s'écrit <code>%23</code> dans une URL.</td></tr>
+        </table>
+        <div class="dc-call tip">💡 <div>Le script affiche une bulle flottante en bas à droite de la page. L'iframe affiche le chat toujours ouvert à l'endroit où vous la placez.</div></div>
+      </section>
+
+      <section id="langs">
+        <p class="dc-eye">Démarrer</p>
+        <h1>Langues des visiteurs</h1>
+        <p class="dc-lead">L'assistant répond dans la langue de la question, même si votre site est en français.</p>
+        <ul>
+          <li>La langue est détectée à chaque message : français, anglais, espagnol, allemand, italien, portugais.</li>
+          <li>Pour un message trop court (« ok », « merci »), il garde la langue du message précédent.</li>
+        </ul>
+      </section>
+
+      <section id="integrations">
+        <p class="dc-eye">Intégrations</p>
+        <h1>WordPress, Shopify, Wix…</h1>
+        <p class="dc-lead">Partout, le principe est le même : coller le script dans le pied de page.</p>
+        <ul>
+          <li><b>WordPress / WooCommerce</b> : avec un module d'insertion d'en-tête et pied de page.</li>
+          <li><b>Shopify</b> : Thèmes → Modifier le code → <code>theme.liquid</code>, avant <code>&lt;/body&gt;</code>.</li>
+          <li><b>Wix / Squarespace</b> : Paramètres → Code personnalisé, sur toutes les pages.</li>
+        </ul>
+      </section>
+
+      <section id="soon">
+        <p class="dc-eye">Bientôt <span class="soon">Bientôt</span></p>
+        <h1>Ce qui arrive</h1>
+        <p class="dc-lead">Ces fonctions sont en préparation.</p>
+        <ul>
+          <li><b>Comptes et abonnements</b> : création de compte et paiement en ligne.</li>
+          <li><b>Tableau de bord</b> : conversations, contacts collectés, statistiques.</li>
+          <li><b>Personnalisation</b> : nom, couleur, message d'accueil de l'assistant.</li>
+          <li><b>Actions</b> : transfert à un humain, collecte de contacts, prise de rendez-vous.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <footer class="kfoot">
+    <p class="kfoot__copy" style="margin-top:0!important">© 2026 Skapa · Kosette.ia — Documentation</p>
+    <div class="kfoot__word" aria-hidden="true">Kosette.ia</div>
+  </footer>
+
+  <script>
+    // Surligne le lien du menu correspondant à la section visible
+    const links = [...document.querySelectorAll('.dc-side a')];
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id));
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    document.querySelectorAll('.dc-main section').forEach(s => obs.observe(s));
+  </script>
+</body>
+</html>

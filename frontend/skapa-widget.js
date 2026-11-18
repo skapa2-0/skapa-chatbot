@@ -10,12 +10,15 @@
  *     data-color="#5b3fd4"
  *   ></script>
  *
+ * data-mode="inline" : affiche le chat toujours ouvert (sans bulle), pour une intégration par <iframe>.
+ *
  * Aucune dépendance externe, pas de build : un seul fichier JS pur.
  */
 (function () {
   "use strict";
 
   var currentScript = document.currentScript;
+  var INLINE   = currentScript.getAttribute("data-mode") === "inline";
   // Accepte "https://api.com" comme "https://api.com/chat" (le README utilisait
   // la 2e forme, ce qui produisait des appels vers /chat/chat -> 404)
   var API_URL  = (currentScript.getAttribute("data-api-url")  || "http://localhost:8000")
@@ -61,6 +64,11 @@
     "transition:opacity .15s}" +
     "#skapa-form button:hover{opacity:.9}" +
     "#skapa-form button:focus-visible{outline:3px solid " + ACCENT + ";outline-offset:2px}";
+  if (INLINE) {
+    style.textContent +=
+      "html,body{margin:0;height:100%}" +
+      "#skapa-panel{display:flex;inset:0;width:auto;max-width:none;max-height:none;border-radius:0;border:0;box-shadow:none}";
+  }
   document.head.appendChild(style);
 
   /* ── DOM ── */
@@ -86,7 +94,7 @@
     "</form>";
 
   panel.querySelector("#skapa-header").textContent = TITLE;
-  document.body.appendChild(bubble);
+  if (!INLINE) document.body.appendChild(bubble);
   document.body.appendChild(panel);
 
   var history = [];

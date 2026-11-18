@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Chat</title>
+</head>
+<body>
+<!--
+  Exemple d'iframe à coller sur le site du client :
+  <iframe src="https://chat.skapa.design/embed.html?site=https://mon-site.fr&title=Assistant&color=%235b3fd4" title="Assistant" loading="lazy" style="width:100%;max-width:420px;height:600px;border:0;border-radius:16px"></iframe>
+-->
+<script>
+  (function () {
+    var params = new URLSearchParams(location.search);
+    var site  = params.get("site")  || "";
+    var title = (params.get("title") || "Assistant").slice(0, 60);
+    var color = params.get("color") || "";
+
+    var s = document.createElement("script");
+    s.src = location.origin + "/skapa-widget.js";
+    s.setAttribute("data-mode", "inline");
+    s.setAttribute("data-api-url", location.origin);
+    if (site)  s.setAttribute("data-site-url", site);
+    s.setAttribute("data-title", title);
+    if (color && /^#[0-9a-fA-F]{3,8}$/.test(color)) {
+      s.setAttribute("data-color", color);
+    }
+    document.head.appendChild(s);
+  })();
+</script>
+</body>
+</html>

@@ -142,7 +142,7 @@ function loadSites(sites) {
     tr.insertCell().appendChild(btn);
     // Code widget à copier
     const origin = location.origin;
-    const snippet = `<script src="${origin}/skapa-widget.js" data-site="${site.domain}"><\/script>`;
+    const snippet = `<script src="${origin}/skapa-widget.js" data-api-url="${origin}" data-site-url="https://${site.domain}" async><\/script>`;
     const code = document.createElement('code'); code.className = 'widget-code'; code.textContent = snippet;
     const copyBtn = document.createElement('button'); copyBtn.className = 'btn-action'; copyBtn.textContent = 'Copier';
     copyBtn.onclick = () => { navigator.clipboard.writeText(snippet); copyBtn.textContent = '✓'; setTimeout(() => { copyBtn.textContent = 'Copier'; }, 1500); };
