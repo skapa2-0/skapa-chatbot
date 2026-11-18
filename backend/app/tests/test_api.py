@@ -149,6 +149,20 @@ def test_history_is_forwarded(client):
     assert roles == ["user", "assistant", "user"]
 
 
+def test_chat_detects_language_and_includes_prompt_reminder(client):
+    _scrape(client)
+    response = client.post("/chat", json={
+        "message": "What training do you offer?",
+        "site_url": "https://skapa.fr",
+    })
+    data = response.get_json()
+
+    assert data["language"] == "en"
+    prompt = client.llm_calls[-1]["system"]
+    assert "ENTIÈREMENT en anglais (English)" in prompt
+    assert prompt.endswith("RAPPEL : réponds uniquement en anglais (English).")
+
+
 def test_site_status_endpoint(client):
     _scrape(client)
     data = client.get("/api/site?url=https://skapa.fr").get_json()

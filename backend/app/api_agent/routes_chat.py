@@ -6,6 +6,7 @@ from flask import jsonify, request
 
 from app import llm, metadata
 from app.api_agent import app
+from app.api_agent.lang import visitor_language
 from app.api_agent.rag_helpers import (
     clean_history, default_platform_name, domain_count, retrieve,
 )
@@ -43,6 +44,7 @@ def chat():
     source_domain = domain_key(site_url) if site_url else None
     platform_name = data.get("platform_name") or default_platform_name(source_domain)
     history = clean_history(data.get("history"))
+    lang = visitor_language(user_message, history)
 
     if source_domain and domain_count(source_domain) == 0:
         return jsonify({
@@ -51,7 +53,7 @@ def chat():
                       "puis reposez votre question."),
             "sources_used": 0, "sources": [],
             "site_filter": source_domain, "platform_name": platform_name,
-            "indexed": False, "actions": [], "links": [],
+            "indexed": False, "actions": [], "links": [], "language": lang,
         })
 
     last_user = next((m["content"] for m in reversed(history) if m["role"] == "user"), None)
@@ -80,7 +82,7 @@ def chat():
         lines = "\n".join(f"- {a['label']} : {a['url']}" for a in raw_actions)
         context += f"\n\nACTIONS DISPONIBLES SUR CE SITE (liens directs à citer) :\n{lines}"
 
-    system_prompt = build_system_prompt(platform_name, source_domain, context)
+    system_prompt = build_system_prompt(platform_name, source_domain, context, lang)
     t0 = time.time()
     try:
         reply_text = llm.chat(system_prompt, [*history, {"role": "user", "content": user_message}])
@@ -111,4 +113,5 @@ def chat():
         "platform_name": platform_name,
         "indexed": bool(hits),
         "actions": actions,
+        "language": lang,
     })

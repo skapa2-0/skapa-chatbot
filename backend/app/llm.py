@@ -22,7 +22,7 @@ class LLMError(RuntimeError):
 def _ollama_chat(system_prompt, messages):
     msgs = [{"role": "system", "content": system_prompt}, *messages]
 
-    # Essai cloud (gpt-oss:20b, think=low, 15 s). Fallback silencieux sur local.
+    # Essai cloud (gpt-oss:20b, think=low, 15 s), puis fallback sur local.
     api_key = os.getenv("OLLAMA_API_KEY")
     if api_key:
         try:
@@ -40,8 +40,9 @@ def _ollama_chat(system_prompt, messages):
             )
             resp.raise_for_status()
             return resp.json()["message"]["content"].strip()
-        except (requests.RequestException, KeyError, ValueError):
-            pass  # bascule sur le local
+        except (requests.RequestException, KeyError, ValueError) as exc:
+            print(f"[llm] gpt-oss:20b (cloud) indisponible ({exc.__class__.__name__}) "
+                  "-> réponse générée par llama3.2:1b (local)", flush=True)
 
     payload = {
         "model": "llama3.2:1b",

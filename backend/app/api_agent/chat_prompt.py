@@ -3,20 +3,40 @@
 import re
 from collections import Counter
 
+from app.api_agent.lang import LANGUAGE_NAMES
 from app.api_agent.site_map import is_home, is_legal, norm_url
 from scraper.pipeline.titles import path_label
 
 _URL_RE = re.compile(r"https?://[^\s<>()\[\]\"']+")
 MAX_LINKS = 2
 
+def _language_rules(lang):
+    if lang:
+        name = LANGUAGE_NAMES[lang]
+        rule = (f"- LANGUE : le visiteur écrit en {name}. Ta réponse doit être ENTIÈREMENT "
+                f"en {name}, même si le CONTEXTE est en français. Traduis les informations, "
+                "mais garde tels quels les noms propres, les noms de formations ou de "
+                "produits, les prix et les URLs.\n")
+        reminder = f"RAPPEL : réponds uniquement en {name}."
+    else:
+        rule = ("- LANGUE : réponds dans la langue du dernier message du visiteur, même si le "
+                "CONTEXTE est dans une autre langue. Traduis les informations, mais garde tels "
+                "quels les noms propres, les prix et les URLs. Si la langue est impossible à "
+                "déterminer, réponds en français.\n")
+        reminder = "RAPPEL : réponds dans la langue du dernier message du visiteur."
+    return rule, reminder
 
-def build_system_prompt(platform_name, source_domain, context):
+
+def build_system_prompt(platform_name, source_domain, context, lang=None):
     domain_hint = f" ({source_domain})" if source_domain else ""
+    lang_rule, lang_reminder = _language_rules(lang)
     return (
         f"Tu es l'assistant virtuel officiel du site {platform_name}{domain_hint}.\n\n"
         "Règles absolues :\n"
-        "- Réponds dans la langue du visiteur (français par défaut), de façon claire et "
-        "professionnelle.\n"
+        f"{lang_rule}"
+        "- Garde le même ton du début à la fin de la réponse (vouvoiement ou "
+        "tutoiement, sans mélanger).\n"
+        "- Réponds de façon claire et professionnelle.\n"
         "- Utilise UNIQUEMENT les informations du CONTEXTE ci-dessous (extraits du site, "
         "plan du site, actions).\n"
         "- Réponds TOUJOURS d'abord avec le contenu concret : noms, durées, prix, dates, "
@@ -33,8 +53,16 @@ def build_system_prompt(platform_name, source_domain, context):
         f"- Si la question ne concerne pas {platform_name}, recentre poliment la conversation.\n"
         "- N'invente jamais de prix, de date, de nom ou de coordonnées.\n"
         "- Pas de tableau.\n\n"
-        f"CONTEXTE :\n{context}"
+        f"CONTEXTE :\n{context}\n\n"
+        f"{lang_reminder}"
     )
+
+
+'''cette fonction est utilisée pour extraire les liens cités dans la réponse du LLM et
+les associer aux pages du site. Elle filtre les liens pour éviter les doublons, les pages d'accueil, 
+les pages légales et les URLs déjà affichées en bouton d'action. Elle retourne une liste de dictionnaires 
+contenant le titre et l'URL des pages citées,
+avec un maximum de MAX_LINKS.'''
 
 
 def cited_links(reply, pages, exclude_urls=()):
