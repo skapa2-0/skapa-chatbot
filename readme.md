@@ -1,5 +1,7 @@
 # Skapa Chatbot
 
+[![Tests](https://github.com/skapa2-0/skapa-chatbot/actions/workflows/tests.yml/badge.svg)](https://github.com/skapa2-0/skapa-chatbot/actions/workflows/tests.yml)
+
 > Dernière mise à jour : 2026-10-19
 
 Chatbot intégrable sur n'importe quel site. On saisit l'adresse d'un site, le
