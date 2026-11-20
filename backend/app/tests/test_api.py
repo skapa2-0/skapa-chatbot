@@ -100,6 +100,38 @@ def test_chat_before_scrape_says_site_not_indexed(client):
     assert client.llm_calls == []
 
 
+def test_chat_rate_limit_per_ip(client, monkeypatch):
+    from app.api_agent import public_guard
+
+    public_guard.reset_for_tests()
+    monkeypatch.setattr(public_guard, "CHAT_RATE_PER_MINUTE", 10)
+    monkeypatch.setattr(public_guard, "CHAT_RATE_PER_HOUR", 100)
+    headers = {"X-Forwarded-For": "1.2.3.4"}
+    for _ in range(10):
+        response = client.post(
+            "/chat", json={"message": "Question ?", "site_url": "https://skapa.fr"},
+            headers=headers,
+        )
+        assert response.status_code == 200
+
+    response = client.post(
+        "/chat", json={"message": "Question ?", "site_url": "https://skapa.fr"},
+        headers=headers,
+    )
+    assert response.status_code == 429
+    assert response.get_json()["error"] == (
+        "Trop de questions envoyées. Merci de patienter un instant avant de réessayer."
+    )
+    assert int(response.headers["Retry-After"]) > 0
+
+    response = client.post(
+        "/chat", json={"message": "Question ?", "site_url": "https://skapa.fr"},
+        headers={"X-Forwarded-For": "5.5.5.5"},
+    )
+    assert response.status_code == 200
+    public_guard.reset_for_tests()
+
+
 def test_full_flow_scrape_then_chat_uses_site_content(client):
     job = _scrape(client)
     assert job["result"]["pages_scraped"] == 2

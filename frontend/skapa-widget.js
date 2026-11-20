@@ -64,6 +64,9 @@
     "transition:opacity .15s}" +
     "#skapa-form button:hover{opacity:.9}" +
     "#skapa-form button:focus-visible{outline:3px solid " + ACCENT + ";outline-offset:2px}";
+  style.textContent +=
+    ".skapa-disclosure{padding:0 10px 8px;background:#f7f8fa;color:#404040;" +
+    "font-size:11px;line-height:1.4;flex-shrink:0}";
   if (INLINE) {
     style.textContent +=
       "html,body{margin:0;height:100%}" +
@@ -94,6 +97,10 @@
     "</form>";
 
   panel.querySelector("#skapa-header").textContent = TITLE;
+  var disclosure = document.createElement("div");
+  disclosure.className = "skapa-disclosure";
+  disclosure.textContent = "Réponses générées par une IA à partir du contenu du site. Évitez de saisir des données personnelles.";
+  panel.appendChild(disclosure);
   if (!INLINE) document.body.appendChild(bubble);
   document.body.appendChild(panel);
 

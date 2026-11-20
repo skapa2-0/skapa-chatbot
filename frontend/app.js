@@ -94,8 +94,10 @@ const messagesEl = $('messages');
 const chipsWrap = $('chips');
 const form = $('chatForm');
 const input = $('messageInput');
+const chatDisclosure = $('chatDisclosure');
 const chatName = $('chatName');
 const chatAvatar = $('chatAvatar');
+chatDisclosure.textContent = 'Réponses générées par une IA à partir du contenu du site. Évitez de saisir des données personnelles.';
 
 const siteUrlInput = $('siteUrlInput');
 const analyseBtn = $('analyseBtn');

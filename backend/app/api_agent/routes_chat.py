@@ -6,6 +6,7 @@ from flask import jsonify, request
 
 from app import llm, metadata
 from app.api_agent import app
+from app.api_agent import public_guard
 from app.api_agent.lang import visitor_language
 from app.api_agent.rag_helpers import (
     clean_history, default_platform_name, domain_count, retrieve,
@@ -34,6 +35,15 @@ def _log_req(domain, t0, is_error):
 
 @app.route("/chat", methods=["POST"])
 def chat():
+    retry_after = public_guard.hit_chat_rate_limit(public_guard.client_ip(request))
+    if retry_after is not None:
+        response = jsonify({
+            "error": "Trop de questions envoyées. Merci de patienter un instant avant de réessayer."
+        })
+        response.status_code = 429
+        response.headers["Retry-After"] = str(retry_after)
+        return response
+
     data = request.get_json(silent=True) or {}
     user_message = str(data.get("message") or "").strip()
     if not user_message:

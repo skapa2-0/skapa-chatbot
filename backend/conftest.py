@@ -18,6 +18,15 @@ sys.path.insert(0, os.path.dirname(__file__))
 os.environ.setdefault("ANONYMIZED_TELEMETRY", "False")
 
 
+@pytest.fixture(autouse=True)
+def reset_public_guard():
+    from app.api_agent import public_guard
+
+    public_guard.reset_for_tests()
+    yield
+    public_guard.reset_for_tests()
+
+
 class FakeEmbedding:
     """Sac de mots haché -> suffisant pour tester la recherche par mots-clés."""
 

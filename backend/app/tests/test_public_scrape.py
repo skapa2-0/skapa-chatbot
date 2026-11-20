@@ -72,6 +72,33 @@ def test_rate_limit_per_ip(client, monkeypatch):
     assert r.status_code == 429
 
 
+def test_chat_and_scrape_rate_limits_are_independent(client, monkeypatch):
+    from app.api_agent import public_guard
+
+    public_guard.reset_for_tests()
+    monkeypatch.setattr(public_guard, "COOLDOWN_HOURS", 0)
+    monkeypatch.setattr(public_guard, "RATE_PER_HOUR", 2)
+    monkeypatch.setattr(public_guard, "CHAT_RATE_PER_MINUTE", 2)
+    ip_headers = {"X-Forwarded-For": "1.2.3.4"}
+
+    first_scrape = _start(client, url="https://site1.fr", ip="1.2.3.4")
+    assert first_scrape.status_code == 202
+    _wait(first_scrape)
+
+    chat_response = client.post(
+        "/chat", json={"message": "Question ?", "site_url": "https://skapa.fr"},
+        headers=ip_headers,
+    )
+    assert chat_response.status_code == 200
+
+    second_scrape = _start(client, url="https://site2.fr", ip="1.2.3.4")
+    assert second_scrape.status_code == 202
+    _wait(second_scrape)
+
+    assert _start(client, url="https://site3.fr", ip="1.2.3.4").status_code == 429
+    public_guard.reset_for_tests()
+
+
 def test_allowed_domains(client, monkeypatch):
     monkeypatch.setenv("SCRAPE_ALLOWED_DOMAINS", "www.skapa.fr, autre.com")
     assert _start(client, url="https://evil.com").status_code == 403

@@ -7,6 +7,7 @@ import threading
 import time
 from collections import defaultdict, deque
 from datetime import datetime, timezone
+from math import ceil
 
 from app import config, jobs
 from app.chroma_client import get_collection
@@ -17,9 +18,13 @@ MAX_DEPTH = config.env_int("SCRAPE_PUBLIC_MAX_DEPTH", 3)
 RATE_PER_HOUR = config.env_int("SCRAPE_PUBLIC_RATE", 3)
 MAX_JOBS = config.env_int("SCRAPE_PUBLIC_MAX_JOBS", 2)
 COOLDOWN_HOURS = config.env_float("SCRAPE_PUBLIC_COOLDOWN_HOURS", 24)
+CHAT_RATE_PER_MINUTE = config.env_int("CHAT_RATE_PER_MINUTE", 10)
+CHAT_RATE_PER_HOUR = config.env_int("CHAT_RATE_PER_HOUR", 100)
 
 _hits = defaultdict(deque)
 _lock = threading.Lock()
+_chat_hits = defaultdict(deque)
+_chat_lock = threading.Lock()
 
 
 def allowed_domains():
@@ -62,6 +67,44 @@ def hit_rate_limit(ip):
         return True
 
 
+def hit_chat_rate_limit(ip):
+    """Enregistre une question. Renvoie le délai d'attente en secondes si limitée."""
+    now = time.time()
+    with _chat_lock:
+        q = _chat_hits[ip]
+        while q and q[0] < now - 3600:
+            q.popleft()
+
+        minute_hits = [hit for hit in q if hit >= now - 60]
+        retry_after = 0
+        if CHAT_RATE_PER_MINUTE <= 0:
+            retry_after = 60
+        elif len(minute_hits) >= CHAT_RATE_PER_MINUTE:
+            retry_after = max(
+                retry_after,
+                ceil(minute_hits[-CHAT_RATE_PER_MINUTE] + 60 - now),
+            )
+        if CHAT_RATE_PER_HOUR <= 0:
+            retry_after = max(retry_after, 3600)
+        elif len(q) >= CHAT_RATE_PER_HOUR:
+            retry_after = max(retry_after, ceil(q[-CHAT_RATE_PER_HOUR] + 3600 - now))
+
+        if retry_after:
+            retry_after = max(1, retry_after)
+        else:
+            q.append(now)
+
+        # évite que le dict grossisse indéfiniment
+        if len(_chat_hits) > 10000:
+            for key, hits in list(_chat_hits.items()):
+                while hits and hits[0] < now - 3600:
+                    hits.popleft()
+                if not hits:
+                    del _chat_hits[key]
+
+        return retry_after or None
+
+
 def running_public_jobs():
     return jobs.running_count()
 
@@ -99,3 +142,5 @@ def recent_index(domain):
 def reset_for_tests():
     with _lock:
         _hits.clear()
+    with _chat_lock:
+        _chat_hits.clear()
