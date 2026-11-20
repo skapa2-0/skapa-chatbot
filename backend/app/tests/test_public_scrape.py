@@ -7,10 +7,11 @@ from app.tests.test_api import PAGES
 
 @pytest.fixture
 def client(temp_store, monkeypatch):
-    from app import api_agent, config
+    from app import api_agent, config, llm
     from app.api_agent import public_guard
     from scraper import pipeline
 
+    monkeypatch.setattr(llm, "chat", lambda system_prompt, messages: "réponse simulée")
     seen = []
 
     def fake_crawl(url, mp, md, progress):
