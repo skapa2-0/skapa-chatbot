@@ -137,6 +137,16 @@ dig +short chat.skapa.design A @1.1.1.1
 ```caddy
 chat.skapa.design {
     encode zstd gzip
+    handle /index.html {
+        redir / 301
+    }
+    handle /documentation.html {
+        redir /documentation 301
+    }
+    handle /documentation {
+        rewrite * /documentation.html
+        reverse_proxy 172.18.0.1:8765
+    }
     # Backend Flask (chat + endpoints admin) tourne sur l'hote, port 8000
     handle /chat* {
         reverse_proxy 172.18.0.1:8000

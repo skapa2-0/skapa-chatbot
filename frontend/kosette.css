@@ -1,0 +1,84 @@
+/* =====================================================================
+   kosette.css — ajouts visuels (barre de navigation, sections, pied de page)
+   Fichier séparé : styles.css n'est pas modifié.
+   ===================================================================== */
+.soon{display:inline-block;font-size:11px;font-weight:700;letter-spacing:0;text-transform:none;color:#5b3fd4;background:#ede9ff;border:1px solid #d6ccfb;border-radius:999px;padding:1px 8px;vertical-align:middle;margin-left:4px}
+.soon--dark{color:#cbb8ff;background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.4)}
+
+/* Barre de navigation claire */
+.knav{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:28px;padding:14px 48px;background:linear-gradient(90deg,rgba(239,234,253,.92),rgba(246,238,251,.92) 60%,rgba(238,246,253,.92));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid #e3dcf8}
+.knav__logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:20px;letter-spacing:-.02em;color:#141827;text-decoration:none}
+.knav__logo img{width:36px;height:36px;border-radius:9px;object-fit:cover}
+.knav__logo b{color:#ec4899}
+.knav__links{display:flex;gap:24px;margin-left:16px}
+.knav__links a{color:#3b4256;text-decoration:none;font-weight:500;font-size:15px}
+.knav__links a:hover{color:#5b3fd4}
+.knav__right{margin-left:auto;display:flex;align-items:center;gap:18px}
+.knav__login{color:#8a90a2;font-size:15px}
+.knav__cta{background:#5b3fd4;color:#fff;border:0;border-radius:999px;padding:10px 20px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
+.knav__cta:hover{background:#4730b0}
+
+/* Sections */
+.ksec{padding:90px 24px}
+.ksec--white{background:#fff}
+.ksec__inner{max-width:1120px;margin:0 auto}
+.ksec__eyebrow{color:#5b3fd4;font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 12px}
+.ksec__title{font-size:44px;line-height:1.08;letter-spacing:-.035em;font-weight:800;color:#141827;margin:0}
+.ksec__lead{font-size:19px;color:#5a6177;margin:16px 0 0;max-width:680px;line-height:1.55}
+
+.ksteps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px}
+.kstep{background:#fff;border:1px solid #e2e5ef;border-radius:20px;padding:26px}
+.ksec--white .kstep{background:#f7f8fb}
+.kstep span{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#ede9ff;color:#5b3fd4;font-weight:800}
+.kstep h3{font-size:19px;margin:16px 0 6px;color:#141827}
+.kstep p{color:#5a6177;margin:0;line-height:1.55}
+
+.kint{display:grid;grid-template-columns:1fr 1fr;gap:22px 48px;margin-top:36px}
+.kint__item{display:flex;gap:16px;align-items:center}
+.kint__item i{font-style:normal;flex:none;width:60px;height:60px;border-radius:16px;border:1px solid #e2e5ef;background:#fafafe;display:grid;place-items:center;font-weight:800;color:#5b3fd4}
+.kint__item b{font-size:17px;color:#141827}
+.kint__item p{color:#5a6177;margin:2px 0 0}
+
+.kplans{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:36px}
+.kplan{background:#fff;border:1px solid #e2e5ef;border-radius:18px;padding:22px;opacity:.88}
+.kplan b{display:block;color:#5a6177}
+.kplan strong{display:block;font-size:34px;letter-spacing:-.02em;margin:6px 0;color:#141827}
+.kplan span{color:#5a6177;font-size:14px}
+.kplan--hl{border:2px solid #5b3fd4;opacity:1}
+.kplans__note{margin-top:14px;font-size:13px;color:#8a90a2}
+
+.kdev{background:#121116;color:#fff;padding:90px 24px}
+.kdev .ksec__eyebrow{color:#a78bfa}.kdev .ksec__title{color:#fff}.kdev .ksec__lead{color:#b8b5c6}
+.kdev__btn{display:inline-block;margin-top:26px;background:#6a3df0;color:#fff;text-decoration:none;font-weight:700;padding:13px 24px;border-radius:999px}
+.kdev__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:50px}
+.kdev__grid div{border-left:3px solid #8b5cf6;padding-left:16px}
+.kdev__grid b{color:#c4b5fd}.kdev__grid p{color:#e4e2ec;margin:8px 0 0;line-height:1.55}
+
+.kcta{margin:0 auto;max-width:1120px;border-radius:28px;padding:64px 56px;background:radial-gradient(circle at 0% 100%,#b37bf0 0,transparent 45%),radial-gradient(circle at 100% 100%,#f6b98a 0,transparent 40%),linear-gradient(120deg,#e9ddfb,#fbeff6 55%,#fdf1e7)}
+.kcta h2{font-size:46px;letter-spacing:-.035em;line-height:1.08;color:#141827;margin:0;max-width:720px}
+.kcta p{font-size:19px;margin:14px 0 0;color:#3b4256}
+.kcta .knav__cta{margin-top:30px;padding:14px 26px;font-size:16px}
+
+/* Pied de page */
+.kfoot{background:radial-gradient(ellipse at 50% 0%,#4a2a86 0,#151318 55%);color:#c9c6d6;padding:70px 48px 0;overflow:hidden}
+.kfoot__grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:30px;max-width:1120px;margin:0 auto}
+.kfoot a.knav__logo{display:flex;color:#fff}
+.kfoot__grid p{max-width:320px;line-height:1.6;margin:14px 0 0}
+.kfoot h4{color:#fff;margin:0 0 12px}
+.kfoot__grid a,.kfoot__grid>div>span{display:block;color:#c9c6d6;text-decoration:none;margin-bottom:9px}
+.kfoot__grid a:hover{color:#fff}
+.kfoot__copy{max-width:1120px;margin:40px auto 0;font-size:13px;color:#8f8aa3}
+.kfoot__word{font-size:17vw;font-weight:800;letter-spacing:-.05em;line-height:.85;margin-top:30px;text-align:center;background:linear-gradient(180deg,#5b2db8 0%,rgba(91,45,184,.12) 85%);-webkit-background-clip:text;background-clip:text;color:transparent;user-select:none}
+
+@media(max-width:900px){
+  .knav{padding:12px 18px;gap:12px}.knav__links,.knav__login{display:none}
+  .ksteps,.kint,.kplans,.kdev__grid,.kfoot__grid{grid-template-columns:1fr}
+  .ksec__title,.kcta h2{font-size:32px}.kcta{padding:40px 24px}
+}
+
+/* Tarifs : bloc « Arrive bientôt » (sans plans) */
+.ksoon{display:flex;align-items:center;gap:20px;margin-top:34px;background:#fff;border:1px dashed #cfc4f6;border-radius:20px;padding:26px 28px}
+.ksoon__icon{font-size:30px;width:58px;height:58px;border-radius:16px;background:#ede9ff;display:grid;place-items:center;flex:none}
+.ksoon b{font-size:18px;color:#141827}.ksoon p{margin:4px 0 0;color:#5a6177;line-height:1.5}
+.ksoon .knav__cta{margin-left:auto;white-space:nowrap}
+@media(max-width:900px){.ksoon{flex-direction:column;align-items:flex-start}.ksoon .knav__cta{margin-left:0}}

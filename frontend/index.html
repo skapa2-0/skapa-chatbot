@@ -3,11 +3,38 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Assistant Skapa</title>
+    <title>Accueil - Kosette.ia</title>
     <link rel="stylesheet" href="./styles.css?v=3" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%235b3fd1'/><text x='16' y='22' font-size='18' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>S</text></svg>">
+    <link rel="stylesheet" href="./kosette.css?v=2" />
+    <link rel="icon" type="image/png" href="/logo.png?v=2" />
+    <style>
+      .chat-disclosure {
+        flex-shrink: 0;
+        margin: 0;
+        padding: 0 12px 8px;
+        background: #f7f8fa;
+        color: #404040;
+        font-size: 11px;
+        line-height: 1.4;
+      }
+    </style>
   </head>
   <body>
+
+    <!-- ── BARRE DE NAVIGATION (ajout Kosette) ── -->
+    <header class="knav">
+      <a class="knav__logo" href="/"><img src="/logo.png?v=2" alt="" /><span>Kosette<b>.ia</b></span></a>
+      <nav class="knav__links">
+        <a href="#comment">Comment ça marche</a>
+        <a href="#integrations">Intégrations</a>
+        <a href="#tarifs">Tarifs <span class="soon">Bientôt</span></a>
+        <a href="/documentation">Documentation</a>
+      </nav>
+      <div class="knav__right">
+        <span class="knav__login">Connexion <span class="soon">Bientôt</span></span>
+        <button type="button" class="knav__cta" data-scroll-to-analyse>Analyser mon site</button>
+      </div>
+    </header>
 
     <!-- ── HERO SECTION ── -->
     <section class="hero">
@@ -106,6 +133,65 @@
       </div>
     </section>
 
+    <!-- ══════════ AJOUTS KOSETTE : sections ══════════ -->
+    <section class="ksec ksec--white" id="comment">
+      <div class="ksec__inner">
+        <p class="ksec__eyebrow">Comment ça marche</p>
+        <h2 class="ksec__title">Votre assistant prêt en trois étapes</h2>
+        <div class="ksteps">
+          <div class="kstep"><span>1</span><h3>Collez l'adresse</h3><p>Entrez l'adresse de votre site dans la carte « Connecter un site ».</p></div>
+          <div class="kstep"><span>2</span><h3>L'assistant lit vos pages</h3><p>Il parcourt votre site et apprend vos contenus en quelques instants.</p></div>
+          <div class="kstep"><span>3</span><h3>Il répond à vos visiteurs</h3><p>Dans leur langue, avec le lien de la page d'où vient chaque réponse.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ksec" id="integrations">
+      <div class="ksec__inner">
+        <p class="ksec__eyebrow">Installation</p>
+        <h2 class="ksec__title">Compatible avec votre site, quel qu'il soit</h2>
+        <p class="ksec__lead">Une adresse pour l'analyse, une ligne de code pour l'installation.</p>
+        <div class="kint">
+          <div class="kint__item"><i>W</i><div><b>WordPress et WooCommerce</b><p>Collez le script dans le pied de page du thème.</p></div></div>
+          <div class="kint__item"><i>S</i><div><b>Shopify</b><p>Dans theme.liquid, juste avant &lt;/body&gt;.</p></div></div>
+          <div class="kint__item"><i>Wix</i><div><b>Wix et Squarespace</b><p>Paramètres → Code personnalisé.</p></div></div>
+          <div class="kint__item"><i>&lt;/&gt;</i><div><b>Site sur mesure</b><p>Une balise &lt;script&gt; suffit.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ksec ksec--white" id="tarifs">
+      <div class="ksec__inner">
+        <p class="ksec__eyebrow">Tarifs <span class="soon">Bientôt</span></p>
+        <h2 class="ksec__title">Des offres simples, sans crédits cachés</h2>
+                <div class="ksoon">
+          <span class="ksoon__icon">⏳</span>
+          <div><b>Arrive bientôt</b><p>Les offres et le paiement en ligne sont en préparation. L'analyse de votre site reste gratuite en attendant.</p></div>
+          <button type="button" class="knav__cta" data-scroll-to-analyse>Analyser mon site gratuitement</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="ksec ksec--white">
+      <div class="kcta">
+        <h2>Votre assistant en ligne en quelques minutes</h2>
+        <p>Collez l'adresse de votre site : l'analyse démarre en un clic.</p>
+        <button type="button" class="knav__cta" data-scroll-to-analyse>Analyser mon site</button>
+      </div>
+    </section>
+
+    <footer class="kfoot">
+      <div class="kfoot__grid">
+        <div><a class="knav__logo" href="/"><img src="/logo.png?v=2" alt="" /><span>Kosette<b>.ia</b></span></a><p>Le chatbot qui apprend votre site et répond à vos visiteurs. Une solution Skapa.</p></div>
+        <div><h4>Produit</h4><a href="#comment">Comment ça marche</a><a href="#integrations">Intégrations</a><a href="#tarifs">Tarifs</a></div>
+        <div><h4>Ressources</h4><a href="/documentation">Documentation</a></div>
+        <div><h4>Skapa</h4><a href="https://skapa-academy.fr" target="_blank" rel="noopener">Skapa Academy</a><span>Confidentialité <span class="soon soon--dark">Bientôt</span></span></div>
+      </div>
+      <p class="kfoot__copy">© 2026 Skapa · Kosette.ia</p>
+      <div class="kfoot__word" aria-hidden="true">Kosette.ia</div>
+    </footer>
+    <!-- ══════════ fin des ajouts Kosette ══════════ -->
+
     <!-- ── FLOATING CHAT WIDGET ── -->
     <div id="chatWidget" class="chat-widget" hidden>
       <div id="chatPanel" class="chat-panel" role="dialog" aria-label="Assistant virtuel" aria-modal="true">
@@ -143,6 +229,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </button>
           </form>
+          <p id="chatDisclosure" class="chat-disclosure"></p>
         </div>
       </div>
 
@@ -170,5 +257,6 @@
     </script>
     <script src="./markdown.js?v=1"></script>
     <script src="./app.js?v=4"></script>
+    <script src="./kosette.js?v=1"></script>
   </body>
 </html>
