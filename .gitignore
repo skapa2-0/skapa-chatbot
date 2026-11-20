@@ -29,3 +29,7 @@ __pycache__/
 .claude/
 .vscode/
 .idea/
+
+# Bases de données (fichiers temporaires SQLite)
+*.db-shm
+*.db-wal
